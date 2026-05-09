@@ -89,7 +89,7 @@ const Home: FC = () => {
               type="button"
               onClick={addLoop}
               disabled={draft.trim().length === 0}
-              className="inline-flex items-center justify-center rounded-full bg-lavender px-6 py-3 text-sm font-semibold text-white transition duration-200 disabled:cursor-not-allowed disabled:bg-lavender-soft/70"
+              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition duration-200 enabled:bg-lavender enabled:text-white enabled:shadow-soft enabled:hover:bg-lavender-dark disabled:bg-lavender-soft/50 disabled:text-charcoal/50 disabled:cursor-not-allowed"
             >
               Add Loop
             </button>
