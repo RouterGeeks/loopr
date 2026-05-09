@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 
-type LoopStatus = 'pending' | 'do' | 'delay' | 'drop';
+type LoopStatus = 'active' | 'delayed' | 'done' | 'dropped';
 
 interface LoopItem {
   id: number;
@@ -10,14 +10,14 @@ interface LoopItem {
 
 interface LoopCardProps {
   loop: LoopItem;
-  onAction: (id: number, action: Exclude<LoopStatus, 'pending'>) => void;
+  onAction: (id: number, action: 'done' | 'delayed' | 'dropped') => void;
 }
 
 const statusLabel: Record<LoopStatus, string> = {
-  pending: 'Pending',
-  do: 'Do',
-  delay: 'Delay',
-  drop: 'Drop',
+  active: 'Active',
+  delayed: 'Delayed',
+  done: 'Done',
+  dropped: 'Dropped',
 };
 
 const LoopCard: FC<LoopCardProps> = ({ loop, onAction }) => {
@@ -33,21 +33,21 @@ const LoopCard: FC<LoopCardProps> = ({ loop, onAction }) => {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => onAction(loop.id, 'do')}
+            onClick={() => onAction(loop.id, 'done')}
             className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
           >
             Do
           </button>
           <button
             type="button"
-            onClick={() => onAction(loop.id, 'delay')}
+            onClick={() => onAction(loop.id, 'delayed')}
             className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
           >
             Delay
           </button>
           <button
             type="button"
-            onClick={() => onAction(loop.id, 'drop')}
+            onClick={() => onAction(loop.id, 'dropped')}
             className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
           >
             Drop

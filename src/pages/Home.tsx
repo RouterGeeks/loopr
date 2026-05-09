@@ -7,7 +7,7 @@ import LoopCard from '../components/LoopCard';
 interface LoopItem {
   id: number;
   text: string;
-  status: 'pending' | 'do' | 'delay' | 'drop';
+  status: 'active' | 'delayed' | 'done' | 'dropped';
 }
 
 const STORAGE_KEY = 'loopr.loops';
@@ -19,11 +19,21 @@ const Home: FC = () => {
     if (!saved) return [];
 
     try {
-      const parsed = JSON.parse(saved) as LoopItem[];
-      return Array.isArray(parsed) ? parsed : [];
+      const parsed = JSON.parse(saved) as any[];
+      if (Array.isArray(parsed)) {
+        return parsed.map((item) => ({
+          ...item,
+          status: item.status === 'pending' ? 'active' :
+                  item.status === 'do' ? 'done' :
+                  item.status === 'delay' ? 'delayed' :
+                  item.status === 'drop' ? 'dropped' :
+                  item.status as 'active' | 'delayed' | 'done' | 'dropped'
+        }));
+      }
     } catch {
-      return [];
+      // Ignore invalid stored data and continue with empty state.
     }
+    return [];
   });
 
   useEffect(() => {
@@ -35,13 +45,13 @@ const Home: FC = () => {
     if (!trimmed) return;
 
     setLoops((current) => [
-      { id: Date.now(), text: trimmed, status: 'pending' },
+      { id: Date.now(), text: trimmed, status: 'active' },
       ...current,
     ]);
     setDraft('');
   };
 
-  const handleAction = (id: number, action: 'do' | 'delay' | 'drop') => {
+  const handleAction = (id: number, action: 'done' | 'delayed' | 'dropped') => {
     setLoops((current) =>
       current.map((loop) =>
         loop.id === id ? { ...loop, status: action } : loop
@@ -88,12 +98,12 @@ const Home: FC = () => {
       </SectionCard>
 
       <div className="mt-8 space-y-4">
-        {loops.length === 0 ? (
+        {loops.filter(loop => loop.status === 'active').length === 0 ? (
           <SectionCard>
             <p className="text-charcoal text-opacity-75 leading-relaxed">Your captured loops will appear here as cards below the input. Use the action buttons to mark each loop.</p>
           </SectionCard>
         ) : (
-          loops.map((loop) => (
+          loops.filter(loop => loop.status === 'active').map((loop) => (
             <LoopCard key={loop.id} loop={loop} onAction={handleAction} />
           ))
         )}
