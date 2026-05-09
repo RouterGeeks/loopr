@@ -1,7 +1,7 @@
-import React from 'react';
+import { FC } from 'react';
 import { NavLink } from 'react-router-dom';
 
-const BottomNav: React.FC = () => {
+const BottomNav: FC = () => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-lavender shadow-soft">
       <div className="flex justify-around py-2">
