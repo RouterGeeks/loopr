@@ -59,6 +59,8 @@ const Home: FC = () => {
     );
   };
 
+  const canAddLoop = draft.trim().length > 0;
+
   return (
     <PageContainer>
       <div className="mb-8">
@@ -88,8 +90,12 @@ const Home: FC = () => {
             <button
               type="button"
               onClick={addLoop}
-              disabled={draft.trim().length === 0}
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition duration-200 enabled:bg-lavender enabled:text-white enabled:shadow-soft enabled:hover:bg-lavender-dark disabled:bg-lavender-soft/50 disabled:text-charcoal/50 disabled:cursor-not-allowed"
+              disabled={!canAddLoop}
+              className={`inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition duration-200 ${
+                canAddLoop
+                  ? 'bg-lavender text-white shadow-soft hover:bg-lavender-dark'
+                  : 'bg-lavender-soft/50 text-charcoal/50 cursor-not-allowed'
+              }`}
             >
               Add Loop
             </button>
