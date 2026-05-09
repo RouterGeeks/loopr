@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
@@ -12,14 +12,21 @@ interface LoopItem {
 const STORAGE_KEY = 'loopr.loops';
 
 const Settings: FC = () => {
-  const [loops, setLoops] = useState<LoopItem[]>(() => {
+  const [loops, setLoops] = useState<LoopItem[]>([]);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  // Load loops from localStorage on mount and whenever modal closes
+  useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (!saved) return [];
+    if (!saved) {
+      setLoops([]);
+      return;
+    }
 
     try {
       const parsed = JSON.parse(saved) as any[];
       if (Array.isArray(parsed)) {
-        return parsed.map((item) => ({
+        const mapped = parsed.map((item) => ({
           ...item,
           status:
             item.status === 'pending'
@@ -36,14 +43,12 @@ const Settings: FC = () => {
                   | 'done'
                   | 'dropped'),
         }));
+        setLoops(mapped);
       }
     } catch {
-      return [];
+      setLoops([]);
     }
-    return [];
-  });
-
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  }, [showConfirmation]);
 
   const activeCount = loops.filter((loop) => loop.status === 'active')
     .length;
