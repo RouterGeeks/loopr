@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
 

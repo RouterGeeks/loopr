@@ -1,5 +1,5 @@
-import { FC } from 'react';
 import { NavLink } from 'react-router-dom';
+import type { FC } from 'react';
 
 const BottomNav: FC = () => {
   return (

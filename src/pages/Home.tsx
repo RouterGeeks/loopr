@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
@@ -10,9 +10,25 @@ interface LoopItem {
   status: 'pending' | 'do' | 'delay' | 'drop';
 }
 
+const STORAGE_KEY = 'loopr.loops';
+
 const Home: FC = () => {
   const [draft, setDraft] = useState('');
-  const [loops, setLoops] = useState<LoopItem[]>([]);
+  const [loops, setLoops] = useState<LoopItem[]>(() => {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (!saved) return [];
+
+    try {
+      const parsed = JSON.parse(saved) as LoopItem[];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(loops));
+  }, [loops]);
 
   const addLoop = () => {
     const trimmed = draft.trim();

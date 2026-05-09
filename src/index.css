@@ -5,11 +5,13 @@ html {
 }
 
 body {
-  @apply bg-cream text-charcoal antialiased;
   margin: 0;
   font-family: system-ui, sans-serif;
   min-height: 100%;
+  background-color: #F5EFE6;
   color: rgba(43, 43, 43, 0.95);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background-image: radial-gradient(circle at top left, rgba(209, 192, 228, 0.12), transparent 28%),
     radial-gradient(circle at bottom right, rgba(242, 228, 210, 0.16), transparent 30%);
 }
