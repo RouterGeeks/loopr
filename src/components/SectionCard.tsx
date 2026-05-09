@@ -7,8 +7,10 @@ interface SectionCardProps {
 
 const SectionCard: FC<SectionCardProps> = ({ children, className = '' }) => {
   return (
-    <div className={`bg-cream-light rounded-3xl shadow-card p-6 border border-lavender-light border-opacity-35 ${className}`}>
-      {children}
+    <div className={`rounded-[2rem] bg-cream-surface shadow-card p-6 border border-lavender-soft/40 ${className}`}>
+      <div className="rounded-[1.75rem] bg-white/90 p-5 shadow-soft ring-1 ring-lavender-light/30">
+        {children}
+      </div>
     </div>
   );
 };

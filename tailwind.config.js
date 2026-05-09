@@ -8,16 +8,20 @@ export default {
     extend: {
       colors: {
         cream: '#F5EFE6',
-        'cream-light': '#FAF8F3',
-        lavender: '#B19CD9',
-        'lavender-light': '#D4CCE8',
-        'lavender-dark': '#9B7BC4',
+        'cream-light': '#FBF7F1',
+        'cream-surface': '#F9F3E9',
+        lavender: '#B89DD8',
+        'lavender-soft': '#D7CBED',
+        'lavender-light': '#E6DFF4',
+        'lavender-dark': '#8E70B0',
         seafoam: '#A8DADC',
         charcoal: '#2B2B2B',
+        'charcoal-soft': '#3A3A3A',
       },
       boxShadow: {
-        soft: '0 2px 8px rgba(43, 43, 43, 0.08)',
-        'card': '0 4px 12px rgba(43, 43, 43, 0.1)',
+        soft: '0 10px 28px rgba(43, 43, 43, 0.08)',
+        'card': '0 8px 24px rgba(43, 43, 43, 0.09)',
+        'nav': '0 -1px 18px rgba(43, 43, 43, 0.08)',
       },
       spacing: {
         'safe': 'max(1rem, env(safe-area-inset-bottom))',
