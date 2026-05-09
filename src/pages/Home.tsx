@@ -108,6 +108,24 @@ const Home: FC = () => {
         </p>
       </div>
 
+      {/* Loop Counts */}
+      {loops.length > 0 && (
+        <div className="mb-8 flex gap-3">
+          <div className="rounded-full bg-lavender-soft/40 px-4 py-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-lavender-dark">
+              Active: {loops.filter((l) => l.status === 'active').length}
+            </p>
+          </div>
+
+          <div className="rounded-full bg-lavender-soft/40 px-4 py-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-lavender-dark">
+              Delayed:{' '}
+              {loops.filter((l) => l.status === 'delayed').length}
+            </p>
+          </div>
+        </div>
+      )}
+
       <SectionCard className="space-y-6">
         <div className="space-y-4">
           <div className="space-y-3">
