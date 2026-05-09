@@ -6,11 +6,15 @@ const Home: FC = () => {
   return (
     <PageContainer>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-charcoal mb-2">Home</h1>
-        <p className="text-charcoal text-opacity-60 text-sm font-medium tracking-wide">Capture your thoughts</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-lavender-dark opacity-90 mb-3">Loopr</p>
+        <h1 className="text-4xl font-bold text-charcoal leading-tight mb-3">Home</h1>
+        <p className="max-w-xl text-charcoal text-opacity-70 text-base leading-7">A calm, mobile-first home where your open loops are softly presented and ready to be captured.</p>
       </div>
-      <SectionCard>
-        <p className="text-charcoal leading-relaxed">Welcome to Loopr. This is where you'll capture your open loops and decide what to do with them.</p>
+      <SectionCard className="space-y-4">
+        <div className="rounded-3xl bg-white/80 p-5 shadow-soft border border-lavender-light/40">
+          <p className="text-lg font-semibold text-charcoal">Your space to pause and reflect</p>
+          <p className="text-charcoal text-opacity-75 leading-relaxed">Loopr helps you collect thoughts in a warm, focused space — no clutter, no features you don't need yet.</p>
+        </div>
       </SectionCard>
     </PageContainer>
   );

@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+html {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-cream text-charcoal antialiased;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  min-height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
