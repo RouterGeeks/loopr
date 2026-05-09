@@ -7,6 +7,7 @@ interface LoopItem {
   id: number;
   text: string;
   status: 'active' | 'delayed' | 'done' | 'dropped';
+  revisitAt?: string;
 }
 
 const STORAGE_KEY = 'loopr.loops';

@@ -8,6 +8,7 @@ interface LoopItem {
   id: number;
   text: string;
   status: 'active' | 'delayed' | 'done' | 'dropped';
+  revisitAt?: string;
 }
 
 const STORAGE_KEY = 'loopr.loops';
@@ -71,7 +72,7 @@ const Home: FC = () => {
 
   const handleAction = (
     id: number,
-    action: 'done' | 'delayed' | 'dropped'
+    action: 'done' | 'dropped'
   ) => {
     setLoops((current) =>
       current.map((loop) =>
@@ -80,6 +81,16 @@ const Home: FC = () => {
               ...loop,
               status: action,
             }
+          : loop
+      )
+    );
+  };
+
+  const handleDelay = (id: number, revisitAt: string) => {
+    setLoops((current) =>
+      current.map((loop) =>
+        loop.id === id
+          ? { ...loop, status: 'delayed', revisitAt }
           : loop
       )
     );
@@ -193,6 +204,7 @@ const Home: FC = () => {
               key={loop.id}
               loop={loop}
               onAction={handleAction}
+              onDelay={handleDelay}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />

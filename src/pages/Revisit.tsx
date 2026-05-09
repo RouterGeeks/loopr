@@ -8,6 +8,7 @@ interface LoopItem {
   id: number;
   text: string;
   status: 'active' | 'delayed' | 'done' | 'dropped';
+  revisitAt?: string;
 }
 
 const STORAGE_KEY = 'loopr.loops';
@@ -39,10 +40,18 @@ const Revisit: FC = () => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(loops));
   }, [loops]);
 
-  const handleAction = (id: number, action: 'done' | 'delayed' | 'dropped') => {
+  const handleAction = (id: number, action: 'done' | 'dropped') => {
     setLoops((current) =>
       current.map((loop) =>
         loop.id === id ? { ...loop, status: action } : loop
+      )
+    );
+  };
+
+  const handleDelay = (id: number, revisitAt: string) => {
+    setLoops((current) =>
+      current.map((loop) =>
+        loop.id === id ? { ...loop, status: 'delayed', revisitAt } : loop
       )
     );
   };
@@ -59,7 +68,14 @@ const Revisit: FC = () => {
     setLoops((current) => current.filter((loop) => loop.id !== id));
   };
 
-  const delayedLoops = loops.filter(loop => loop.status === 'delayed');
+  const delayedLoops = loops
+    .filter((loop) => loop.status === 'delayed')
+    .slice()
+    .sort((a, b) => {
+      const aTime = a.revisitAt ? new Date(a.revisitAt).getTime() : Infinity;
+      const bTime = b.revisitAt ? new Date(b.revisitAt).getTime() : Infinity;
+      return aTime - bTime;
+    });
 
   return (
     <PageContainer>
@@ -106,6 +122,7 @@ const Revisit: FC = () => {
               key={loop.id}
               loop={loop}
               onAction={handleAction}
+              onDelay={handleDelay}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
