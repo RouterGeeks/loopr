@@ -1,13 +1,18 @@
 import { FC } from 'react';
+import PageContainer from '../components/PageContainer';
+import SectionCard from '../components/SectionCard';
 
 const Revisit: FC = () => {
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Revisit</h1>
-      <div className="bg-white rounded-lg shadow-soft p-4">
-        <p>Revisit your delayed loops here.</p>
+    <PageContainer>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-charcoal mb-2">Revisit</h1>
+        <p className="text-charcoal text-opacity-60 text-sm font-medium tracking-wide">Review delayed loops</p>
       </div>
-    </div>
+      <SectionCard>
+        <p className="text-charcoal leading-relaxed">Your delayed loops will appear here when it's time to revisit them.</p>
+      </SectionCard>
+    </PageContainer>
   );
 };
 

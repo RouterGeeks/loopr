@@ -7,14 +7,12 @@ import BottomNav from './components/BottomNav';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-cream text-charcoal">
-        <main className="pb-16">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/revisit" element={<Revisit />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </main>
+      <div className="bg-cream text-charcoal">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/revisit" element={<Revisit />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
         <BottomNav />
       </div>
     </Router>
