@@ -47,6 +47,18 @@ const Revisit: FC = () => {
     );
   };
 
+  const handleEdit = (id: number, newText: string) => {
+    setLoops((current) =>
+      current.map((loop) =>
+        loop.id === id ? { ...loop, text: newText } : loop
+      )
+    );
+  };
+
+  const handleDelete = (id: number) => {
+    setLoops((current) => current.filter((loop) => loop.id !== id));
+  };
+
   const delayedLoops = loops.filter(loop => loop.status === 'delayed');
 
   return (
@@ -94,6 +106,8 @@ const Revisit: FC = () => {
               key={loop.id}
               loop={loop}
               onAction={handleAction}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           ))
         )}
