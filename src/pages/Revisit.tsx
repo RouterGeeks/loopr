@@ -10,6 +10,8 @@ interface LoopItem {
   status: 'active' | 'delayed' | 'done' | 'dropped';
   revisitAt?: string;
   createdAt?: string;
+  doneAt?: string;
+  droppedAt?: string;
 }
 
 const STORAGE_KEY = 'loopr.loops';
@@ -48,9 +50,16 @@ const Revisit: FC = () => {
 
   const handleAction = (id: number, action: 'done' | 'dropped') => {
     setLoops((current) =>
-      current.map((loop) =>
-        loop.id === id ? { ...loop, status: action } : loop
-      )
+      current.map((loop) => {
+        if (loop.id !== id) return loop;
+        const now = new Date().toISOString();
+        return {
+          ...loop,
+          status: action,
+          ...(action === 'done' ? { doneAt: now } : {}),
+          ...(action === 'dropped' ? { droppedAt: now } : {}),
+        };
+      })
     );
   };
 
@@ -113,11 +122,13 @@ const Revisit: FC = () => {
           </div>
         </div>
       )}
-      <SectionCard className="space-y-4">
-        {delayedLoops.length === 0 ? (
+      {delayedLoops.length === 0 ? (
+        <SectionCard>
           <p className="text-charcoal/70">Nothing waiting right now.</p>
-        ) : (
-          delayedLoops.map((loop) => (
+        </SectionCard>
+      ) : (
+        <div className="space-y-4">
+          {delayedLoops.map((loop) => (
             <LoopCard
               key={loop.id}
               loop={loop}
@@ -126,9 +137,9 @@ const Revisit: FC = () => {
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
-          ))
-        )}
-      </SectionCard>
+          ))}
+        </div>
+      )}
     </PageContainer>
   );
 };

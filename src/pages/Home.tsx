@@ -10,6 +10,8 @@ interface LoopItem {
   status: 'active' | 'delayed' | 'done' | 'dropped';
   revisitAt?: string;
   createdAt?: string;
+  doneAt?: string;
+  droppedAt?: string;
 }
 
 const STORAGE_KEY = 'loopr.loops';
@@ -84,14 +86,16 @@ const Home: FC = () => {
     action: 'done' | 'dropped'
   ) => {
     setLoops((current) =>
-      current.map((loop) =>
-        loop.id === id
-          ? {
-              ...loop,
-              status: action,
-            }
-          : loop
-      )
+      current.map((loop) => {
+        if (loop.id !== id) return loop;
+        const now = new Date().toISOString();
+        return {
+          ...loop,
+          status: action,
+          ...(action === 'done' ? { doneAt: now } : {}),
+          ...(action === 'dropped' ? { droppedAt: now } : {}),
+        };
+      })
     );
   };
 

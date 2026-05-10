@@ -9,6 +9,8 @@ interface LoopItem {
   status: 'active' | 'delayed' | 'done' | 'dropped';
   revisitAt?: string;
   createdAt?: string;
+  doneAt?: string;
+  droppedAt?: string;
 }
 
 const STORAGE_KEY = 'loopr.loops';
