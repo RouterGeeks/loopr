@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import type { FC, ReactNode } from 'react';
 
 const linkClass = (isActive: boolean) =>
-  `flex flex-col items-center gap-1 rounded-3xl px-5 py-2.5 transition-all duration-200 ${
+  `flex flex-col items-center gap-1 rounded-3xl px-3 py-2.5 transition-all duration-200 ${
     isActive
       ? 'bg-lavender-soft text-lavender-dark shadow-soft'
       : 'text-charcoal hover:bg-cream-light hover:text-lavender-dark/80'
@@ -34,6 +34,14 @@ const RevisitIcon = (): ReactNode => (
   </svg>
 );
 
+const ArchiveIcon = (): ReactNode => (
+  <svg {...iconProps}>
+    <rect x="3.5" y="5" width="17" height="3.5" rx="0.8" />
+    <path d="M5 8.5V19h14V8.5" />
+    <line x1="10" y1="13" x2="14" y2="13" />
+  </svg>
+);
+
 const SettingsIcon = (): ReactNode => (
   <svg {...iconProps}>
     <circle cx="12" cy="12" r="3" />
@@ -44,7 +52,7 @@ const SettingsIcon = (): ReactNode => (
 const BottomNav: FC = () => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-cream shadow-nav border-t border-lavender-light/30 backdrop-blur-sm">
-      <div className="flex justify-around py-3 px-4 pb-safe">
+      <div className="flex justify-around py-3 px-2 pb-safe">
         <NavLink to="/" className={({ isActive }) => linkClass(isActive)}>
           <HomeIcon />
           <span className="text-xs font-semibold">Home</span>
@@ -56,6 +64,14 @@ const BottomNav: FC = () => {
         >
           <RevisitIcon />
           <span className="text-xs font-semibold">Revisit</span>
+        </NavLink>
+
+        <NavLink
+          to="/archive"
+          className={({ isActive }) => linkClass(isActive)}
+        >
+          <ArchiveIcon />
+          <span className="text-xs font-semibold">Archive</span>
         </NavLink>
 
         <NavLink
