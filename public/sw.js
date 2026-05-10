@@ -1,11 +1,10 @@
-const CACHE = 'loopr-shell-v2';
+const CACHE = 'loopr-shell-v4';
+
 const SHELL = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  '/favicon.svg',
-  '/icon.svg',
-  '/icon-maskable.svg',
+  '/favicon.png',
   '/icon-192.png',
   '/icon-512.png',
   '/apple-touch-icon.png',
@@ -26,7 +25,9 @@ self.addEventListener('activate', (event) => {
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))
+          keys
+            .filter((key) => key !== CACHE)
+            .map((key) => caches.delete(key))
         )
       )
       .then(() => self.clients.claim())
@@ -36,9 +37,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
+  // Only cache GET requests
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
+
+  // Ignore cross-origin requests
   if (url.origin !== self.location.origin) return;
 
   event.respondWith(
@@ -46,17 +50,30 @@ self.addEventListener('fetch', (event) => {
       .then((response) => {
         if (response.ok) {
           const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy));
+
+          caches.open(CACHE).then((cache) => {
+            cache.put(request, copy);
+          });
         }
+
         return response;
       })
       .catch(async () => {
         const cached = await caches.match(request);
-        if (cached) return cached;
+
+        if (cached) {
+          return cached;
+        }
+
+        // SPA route fallback
         if (request.mode === 'navigate') {
           const fallback = await caches.match('/index.html');
-          if (fallback) return fallback;
+
+          if (fallback) {
+            return fallback;
+          }
         }
+
         return Response.error();
       })
   );
