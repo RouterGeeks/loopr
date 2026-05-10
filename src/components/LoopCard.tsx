@@ -8,6 +8,7 @@ interface LoopItem {
   text: string;
   status: LoopStatus;
   revisitAt?: string;
+  createdAt?: string;
 }
 
 interface LoopCardProps {
@@ -78,6 +79,27 @@ const formatScheduledDate = (iso: string): string => {
 
 const startOfDay = (d: Date): Date =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+const relativeAddedLabel = (iso: string, now: Date): string | null => {
+  const created = new Date(iso);
+  if (Number.isNaN(created.getTime())) return null;
+
+  const daysAgo = Math.round(
+    (startOfDay(now).getTime() - startOfDay(created).getTime()) / 86400000
+  );
+
+  if (daysAgo <= 0) return 'Added today';
+  if (daysAgo === 1) return 'Added yesterday';
+  if (daysAgo < 7) return `Added ${daysAgo} days ago`;
+  if (daysAgo < 30) {
+    const weeks = Math.floor(daysAgo / 7);
+    return weeks === 1 ? 'Added 1 week ago' : `Added ${weeks} weeks ago`;
+  }
+  return `Added ${created.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  })}`;
+};
 
 const relativeRevisitLabel = (iso: string, now: Date): string | null => {
   const target = new Date(iso);
@@ -184,6 +206,10 @@ const LoopCard: FC<LoopCardProps> = ({
       tone: text === 'Due now' ? ('due' as const) : ('scheduled' as const),
     };
   })();
+
+  const addedLabel = loop.createdAt
+    ? relativeAddedLabel(loop.createdAt, new Date())
+    : null;
 
   if (mode === 'editing') {
     return (
@@ -362,22 +388,44 @@ const LoopCard: FC<LoopCardProps> = ({
             </div>
           </div>
 
-          <div className="mt-4 flex justify-end gap-2 border-t border-lavender-light/30 pt-3">
-            <button
-              type="button"
-              onClick={startEdit}
-              className="rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/85 transition duration-200 hover:bg-white/70 hover:text-charcoal"
-            >
-              Edit
-            </button>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-lavender-light/30 pt-3">
+            {addedLabel ? (
+              <p className="text-[0.7rem] text-charcoal/50">{addedLabel}</p>
+            ) : (
+              <span aria-hidden />
+            )}
 
-            <button
-              type="button"
-              onClick={startDelete}
-              className="rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/85 transition duration-200 hover:bg-white/70 hover:text-charcoal"
-            >
-              Delete
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={startEdit}
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal transition duration-200 hover:bg-white/70"
+              >
+                <svg
+                  viewBox="0 0 16 16"
+                  width="11"
+                  height="11"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M10.5 2.5l3 3L5 14H2v-3z" />
+                  <path d="M9.5 3.5l3 3" />
+                </svg>
+                Edit
+              </button>
+
+              <button
+                type="button"
+                onClick={startDelete}
+                className="rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/75 transition duration-200 hover:bg-white/70 hover:text-charcoal"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </>
       )}

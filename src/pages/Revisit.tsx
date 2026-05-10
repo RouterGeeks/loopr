@@ -9,6 +9,7 @@ interface LoopItem {
   text: string;
   status: 'active' | 'delayed' | 'done' | 'dropped';
   revisitAt?: string;
+  createdAt?: string;
 }
 
 const STORAGE_KEY = 'loopr.loops';
@@ -23,6 +24,11 @@ const Revisit: FC = () => {
       if (Array.isArray(parsed)) {
         return parsed.map((item) => ({
           ...item,
+          createdAt:
+            item.createdAt ??
+            (typeof item.id === 'number'
+              ? new Date(item.id).toISOString()
+              : new Date().toISOString()),
           status: item.status === 'pending' ? 'active' :
                   item.status === 'do' ? 'done' :
                   item.status === 'delay' ? 'delayed' :
@@ -97,25 +103,19 @@ const Revisit: FC = () => {
       {/* Delayed Count */}
       {delayedLoops.length > 0 && (
         <div className="mb-8">
-          <div className="inline-block rounded-full bg-lavender-soft/40 px-4 py-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-lavender-dark">
-              Delayed: {delayedLoops.length}
+          <div className="inline-block min-w-[5.5rem] rounded-2xl bg-lavender-soft/40 px-4 py-3">
+            <p className="text-2xl font-bold leading-none text-charcoal">
+              {delayedLoops.length}
+            </p>
+            <p className="mt-1.5 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-charcoal/55">
+              Delayed
             </p>
           </div>
         </div>
       )}
       <SectionCard className="space-y-4">
         {delayedLoops.length === 0 ? (
-          <div className="space-y-3">
-            <p className="text-lg font-semibold text-charcoal">
-              Nothing to revisit yet
-            </p>
-
-            <p className="text-charcoal/70">
-              When you delay a loop from home, it will appear here. Take
-              your time—there's no rush.
-            </p>
-          </div>
+          <p className="text-charcoal/70">Nothing waiting right now.</p>
         ) : (
           delayedLoops.map((loop) => (
             <LoopCard

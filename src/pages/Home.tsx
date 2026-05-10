@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { FC } from 'react';
+import type { FC, KeyboardEvent } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
 import LoopCard from '../components/LoopCard';
@@ -9,6 +9,7 @@ interface LoopItem {
   text: string;
   status: 'active' | 'delayed' | 'done' | 'dropped';
   revisitAt?: string;
+  createdAt?: string;
 }
 
 const STORAGE_KEY = 'loopr.loops';
@@ -26,6 +27,11 @@ const Home: FC = () => {
       if (Array.isArray(parsed)) {
         return parsed.map((item) => ({
           ...item,
+          createdAt:
+            item.createdAt ??
+            (typeof item.id === 'number'
+              ? new Date(item.id).toISOString()
+              : new Date().toISOString()),
           status:
             item.status === 'pending'
               ? 'active'
@@ -58,11 +64,14 @@ const Home: FC = () => {
 
     if (!trimmed) return;
 
+    const now = new Date();
+
     setLoops((current) => [
       {
-        id: Date.now(),
+        id: now.getTime(),
         text: trimmed,
         status: 'active',
+        createdAt: now.toISOString(),
       },
       ...current,
     ]);
@@ -108,11 +117,23 @@ const Home: FC = () => {
     setLoops((current) => current.filter((loop) => loop.id !== id));
   };
 
+  const handleDraftKeyDown = (
+    event: KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      addLoop();
+    }
+  };
+
   const canAddLoop = draft.trim().length > 0;
 
   const activeLoops = loops.filter(
     (loop) => loop.status === 'active'
   );
+
+  const activeCount = activeLoops.length;
+  const delayedCount = loops.filter((l) => l.status === 'delayed').length;
 
   return (
     <PageContainer>
@@ -134,16 +155,21 @@ const Home: FC = () => {
       {/* Loop Counts */}
       {loops.length > 0 && (
         <div className="mb-8 flex gap-3">
-          <div className="rounded-full bg-lavender-soft/40 px-4 py-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-lavender-dark">
-              Active: {loops.filter((l) => l.status === 'active').length}
+          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/40 px-4 py-3">
+            <p className="text-2xl font-bold leading-none text-charcoal">
+              {activeCount}
+            </p>
+            <p className="mt-1.5 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-charcoal/55">
+              Active
             </p>
           </div>
 
-          <div className="rounded-full bg-lavender-soft/40 px-4 py-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-lavender-dark">
-              Delayed:{' '}
-              {loops.filter((l) => l.status === 'delayed').length}
+          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/40 px-4 py-3">
+            <p className="text-2xl font-bold leading-none text-charcoal">
+              {delayedCount}
+            </p>
+            <p className="mt-1.5 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-charcoal/55">
+              Delayed
             </p>
           </div>
         </div>
@@ -163,6 +189,7 @@ const Home: FC = () => {
               id="loop-input"
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={handleDraftKeyDown}
               rows={4}
               placeholder="Capture a task, idea, or note..."
               className="w-full rounded-3xl border border-lavender-soft/40 bg-white/90 p-4 text-base leading-7 text-charcoal shadow-soft focus:border-lavender focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
@@ -193,10 +220,7 @@ const Home: FC = () => {
       <div className="mt-8 space-y-4">
         {activeLoops.length === 0 ? (
           <SectionCard>
-            <p className="leading-relaxed text-charcoal/75">
-              Your captured loops will appear here as cards below the input.
-              Use the action buttons to decide what to do next.
-            </p>
+            <p className="text-charcoal/70">Quiet for now.</p>
           </SectionCard>
         ) : (
           activeLoops.map((loop) => (

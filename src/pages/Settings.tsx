@@ -8,6 +8,7 @@ interface LoopItem {
   text: string;
   status: 'active' | 'delayed' | 'done' | 'dropped';
   revisitAt?: string;
+  createdAt?: string;
 }
 
 const STORAGE_KEY = 'loopr.loops';
@@ -29,6 +30,11 @@ const Settings: FC = () => {
       if (Array.isArray(parsed)) {
         const mapped = parsed.map((item) => ({
           ...item,
+          createdAt:
+            item.createdAt ??
+            (typeof item.id === 'number'
+              ? new Date(item.id).toISOString()
+              : new Date().toISOString()),
           status:
             item.status === 'pending'
               ? 'active'
@@ -86,22 +92,22 @@ const Settings: FC = () => {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <div className="flex-1 rounded-2xl bg-white/60 p-4">
-              <p className="text-sm font-semibold text-lavender-dark">
-                Active Loops
+              <p className="text-3xl font-bold leading-none text-charcoal">
+                {activeCount}
               </p>
 
-              <p className="mt-1 text-3xl font-bold text-charcoal">
-                {activeCount}
+              <p className="mt-2 text-xs font-medium uppercase tracking-[0.2em] text-charcoal/55">
+                Active loops
               </p>
             </div>
 
             <div className="flex-1 rounded-2xl bg-white/60 p-4">
-              <p className="text-sm font-semibold text-lavender-dark">
-                Delayed Loops
+              <p className="text-3xl font-bold leading-none text-charcoal">
+                {delayedCount}
               </p>
 
-              <p className="mt-1 text-3xl font-bold text-charcoal">
-                {delayedCount}
+              <p className="mt-2 text-xs font-medium uppercase tracking-[0.2em] text-charcoal/55">
+                Delayed loops
               </p>
             </div>
           </div>

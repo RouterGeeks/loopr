@@ -1,45 +1,69 @@
 import { NavLink } from 'react-router-dom';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
+
+const linkClass = (isActive: boolean) =>
+  `flex flex-col items-center gap-1 rounded-3xl px-5 py-2.5 transition-all duration-200 ${
+    isActive
+      ? 'bg-lavender-soft text-lavender-dark shadow-soft'
+      : 'text-charcoal hover:bg-cream-light hover:text-lavender-dark/80'
+  }`;
+
+const iconProps = {
+  width: 22,
+  height: 22,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.6,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+  'aria-hidden': true,
+};
+
+const HomeIcon = (): ReactNode => (
+  <svg {...iconProps}>
+    <path d="M3.5 11L12 4l8.5 7" />
+    <path d="M5.5 9.5V20h13V9.5" />
+  </svg>
+);
+
+const RevisitIcon = (): ReactNode => (
+  <svg {...iconProps}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 7.5V12l3 2" />
+  </svg>
+);
+
+const SettingsIcon = (): ReactNode => (
+  <svg {...iconProps}>
+    <circle cx="12" cy="12" r="3" />
+    <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M5.2 18.8l2.1-2.1M16.7 7.3l2.1-2.1" />
+  </svg>
+);
 
 const BottomNav: FC = () => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-cream shadow-nav border-t border-lavender-light/30 backdrop-blur-sm">
-      <div className="flex justify-around py-4 px-4 pb-safe">
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-1 rounded-3xl px-5 py-3 transition-all duration-200 ${
-              isActive
-                ? 'bg-lavender-soft text-lavender-dark shadow-soft'
-                : 'text-charcoal hover:bg-cream-light hover:text-lavender-dark/80'
-            }`
-          }
-        >
-          <span className="text-sm font-semibold">Home</span>
+      <div className="flex justify-around py-3 px-4 pb-safe">
+        <NavLink to="/" className={({ isActive }) => linkClass(isActive)}>
+          <HomeIcon />
+          <span className="text-xs font-semibold">Home</span>
         </NavLink>
+
         <NavLink
           to="/revisit"
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-1 rounded-3xl px-5 py-3 transition-all duration-200 ${
-              isActive
-                ? 'bg-lavender-soft text-lavender-dark shadow-soft'
-                : 'text-charcoal hover:bg-cream-light hover:text-lavender-dark/80'
-            }`
-          }
+          className={({ isActive }) => linkClass(isActive)}
         >
-          <span className="text-sm font-semibold">Revisit</span>
+          <RevisitIcon />
+          <span className="text-xs font-semibold">Revisit</span>
         </NavLink>
+
         <NavLink
           to="/settings"
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-1 rounded-3xl px-5 py-3 transition-all duration-200 ${
-              isActive
-                ? 'bg-lavender-soft text-lavender-dark shadow-soft'
-                : 'text-charcoal hover:bg-cream-light hover:text-lavender-dark/80'
-            }`
-          }
+          className={({ isActive }) => linkClass(isActive)}
         >
-          <span className="text-sm font-semibold">Settings</span>
+          <SettingsIcon />
+          <span className="text-xs font-semibold">Settings</span>
         </NavLink>
       </div>
     </nav>
