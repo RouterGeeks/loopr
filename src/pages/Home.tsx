@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FC, KeyboardEvent } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
@@ -11,10 +11,18 @@ type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 const Home: FC = () => {
   const [draft, setDraft] = useState('');
   const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
+  const captureRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     saveLoops(loops);
   }, [loops]);
+
+  // Focus the capture field on mount and when navigating back to Home.
+  // useEffect is more reliable than the HTML autofocus attribute under
+  // React hydration in an SPA.
+  useEffect(() => {
+    captureRef.current?.focus({ preventScroll: true });
+  }, []);
 
   const addLoop = () => {
     const trimmed = draft.trim();
@@ -147,6 +155,7 @@ const Home: FC = () => {
 
             <textarea
               id="loop-input"
+              ref={captureRef}
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={handleDraftKeyDown}
