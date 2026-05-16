@@ -25,7 +25,21 @@ const Archive: FC = () => {
         };
         if (loop.revisitAt) restored.revisitAt = loop.revisitAt;
         if (loop.startedAt) restored.startedAt = loop.startedAt;
+        if (loop.note) restored.note = loop.note;
         return restored;
+      })
+    );
+  };
+
+  const handleEditNote = (id: number, note: string) => {
+    setLoops((current) =>
+      current.map((loop) => {
+        if (loop.id !== id) return loop;
+        const trimmed = note.trim();
+        const next: LoopItem = { ...loop };
+        if (trimmed) next.note = trimmed;
+        else delete next.note;
+        return next;
       })
     );
   };
@@ -101,6 +115,7 @@ const Archive: FC = () => {
                     key={loop.id}
                     loop={loop}
                     onRestore={handleRestore}
+                    onEditNote={handleEditNote}
                     onDelete={handlePermanentDelete}
                   />
                 ))}
@@ -125,6 +140,7 @@ const Archive: FC = () => {
                     key={loop.id}
                     loop={loop}
                     onRestore={handleRestore}
+                    onEditNote={handleEditNote}
                     onDelete={handlePermanentDelete}
                   />
                 ))}

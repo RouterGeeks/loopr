@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
 import type { LoopItem, LoopStatus } from '../lib/loops';
+import NoteEditor from './NoteEditor';
 
 type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
@@ -9,10 +10,16 @@ interface LoopCardProps {
   onTransition: (id: number, status: TransitionStatus) => void;
   onDelay: (id: number, revisitAt: string) => void;
   onEdit: (id: number, newText: string) => void;
+  onEditNote: (id: number, note: string) => void;
   onDelete: (id: number) => void;
 }
 
-type CardMode = 'view' | 'editing' | 'choosing-delay' | 'confirming-delete';
+type CardMode =
+  | 'view'
+  | 'editing'
+  | 'editing-note'
+  | 'choosing-delay'
+  | 'confirming-delete';
 
 type DelayPreset = 'tomorrow' | 'weekend' | 'nextWeek';
 
@@ -133,11 +140,30 @@ const relativeRevisitLabel = (iso: string, now: Date): string | null => {
   return `Scheduled for ${formatScheduledDate(iso)}`;
 };
 
+const NoteIcon: FC = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="12"
+    height="12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <line x1="3" y1="5" x2="13" y2="5" />
+    <line x1="3" y1="8" x2="10" y2="8" />
+    <line x1="3" y1="11" x2="13" y2="11" />
+  </svg>
+);
+
 const LoopCard: FC<LoopCardProps> = ({
   loop,
   onTransition,
   onDelay,
   onEdit,
+  onEditNote,
   onDelete,
 }) => {
   const [mode, setMode] = useState<CardMode>('view');
@@ -172,6 +198,13 @@ const LoopCard: FC<LoopCardProps> = ({
     setMode('view');
   };
 
+  const startNote = () => setMode('editing-note');
+  const cancelNote = () => setMode('view');
+  const saveNote = (value: string) => {
+    onEditNote(loop.id, value);
+    setMode('view');
+  };
+
   const startDelay = () => setMode('choosing-delay');
   const cancelDelay = () => setMode('view');
 
@@ -194,6 +227,7 @@ const LoopCard: FC<LoopCardProps> = ({
   const confirmDelete = () => onDelete(loop.id);
 
   const canSaveEdit = draft.trim().length > 0;
+  const hasNote = Boolean(loop.note && loop.note.trim());
 
   const now = new Date();
 
@@ -295,7 +329,14 @@ const LoopCard: FC<LoopCardProps> = ({
         )}
       </div>
 
-      {mode === 'choosing-delay' ? (
+      {mode === 'editing-note' ? (
+        <NoteEditor
+          loopId={loop.id}
+          initialValue={loop.note ?? ''}
+          onSave={saveNote}
+          onCancel={cancelNote}
+        />
+      ) : mode === 'choosing-delay' ? (
         <div className="space-y-3 rounded-2xl bg-white/60 p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/70">
             When should we revisit?
@@ -423,6 +464,22 @@ const LoopCard: FC<LoopCardProps> = ({
             )}
 
             <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={startNote}
+                aria-label={hasNote ? 'Edit note' : 'Add note'}
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-lavender-light/40 transition duration-200 hover:bg-white hover:text-charcoal"
+              >
+                <NoteIcon />
+                Note
+                {hasNote && (
+                  <span
+                    aria-hidden
+                    className="ml-0.5 h-1.5 w-1.5 rounded-full bg-lavender-dark/70"
+                  />
+                )}
+              </button>
+
               <button
                 type="button"
                 onClick={startEdit}

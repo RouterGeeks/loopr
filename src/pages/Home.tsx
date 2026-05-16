@@ -75,6 +75,19 @@ const Home: FC = () => {
     );
   };
 
+  const handleEditNote = (id: number, note: string) => {
+    setLoops((current) =>
+      current.map((loop) => {
+        if (loop.id !== id) return loop;
+        const trimmed = note.trim();
+        const next: LoopItem = { ...loop };
+        if (trimmed) next.note = trimmed;
+        else delete next.note;
+        return next;
+      })
+    );
+  };
+
   const handleDelete = (id: number) => {
     setLoops((current) => current.filter((loop) => loop.id !== id));
   };
@@ -203,6 +216,7 @@ const Home: FC = () => {
               onTransition={handleTransition}
               onDelay={handleDelay}
               onEdit={handleEdit}
+              onEditNote={handleEditNote}
               onDelete={handleDelete}
             />
           ))

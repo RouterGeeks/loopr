@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import type { FC } from 'react';
 import type { LoopItem } from '../lib/loops';
+import NoteEditor from './NoteEditor';
 
 interface ArchiveCardProps {
   loop: LoopItem;
   onRestore: (id: number) => void;
+  onEditNote: (id: number, note: string) => void;
   onDelete: (id: number) => void;
 }
+
+type CardMode = 'view' | 'editing-note' | 'confirming-delete';
 
 const startOfDay = (d: Date): Date =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -32,8 +36,31 @@ const relativeAgoLabel = (iso: string, now: Date): string | null => {
   });
 };
 
-const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
+const NoteIcon: FC = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="11"
+    height="11"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <line x1="3" y1="5" x2="13" y2="5" />
+    <line x1="3" y1="8" x2="10" y2="8" />
+    <line x1="3" y1="11" x2="13" y2="11" />
+  </svg>
+);
+
+const ArchiveCard: FC<ArchiveCardProps> = ({
+  loop,
+  onRestore,
+  onEditNote,
+  onDelete,
+}) => {
+  const [mode, setMode] = useState<CardMode>('view');
 
   const now = new Date();
 
@@ -61,6 +88,12 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
   ].filter((part): part is string => Boolean(part));
 
   const statusLabel = loop.status === 'done' ? 'Done' : 'Dropped';
+  const hasNote = Boolean(loop.note && loop.note.trim());
+
+  const saveNote = (value: string) => {
+    onEditNote(loop.id, value);
+    setMode('view');
+  };
 
   return (
     <div className="rounded-3xl bg-cream-surface shadow-soft p-4">
@@ -72,7 +105,16 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
         </p>
       )}
 
-      {confirmingDelete ? (
+      {mode === 'editing-note' ? (
+        <div className="mt-3">
+          <NoteEditor
+            loopId={loop.id}
+            initialValue={loop.note ?? ''}
+            onSave={saveNote}
+            onCancel={() => setMode('view')}
+          />
+        </div>
+      ) : mode === 'confirming-delete' ? (
         <div className="mt-3 rounded-2xl bg-white/60 p-3">
           <p className="mb-3 text-sm leading-6 text-charcoal/80">
             Permanently delete this loop?
@@ -81,7 +123,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
           <div className="flex flex-wrap items-center justify-end gap-2">
             <button
               type="button"
-              onClick={() => setConfirmingDelete(false)}
+              onClick={() => setMode('view')}
               className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-lavender-light/40 hover:bg-cream-light"
             >
               Cancel
@@ -105,6 +147,22 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
+              onClick={() => setMode('editing-note')}
+              aria-label={hasNote ? 'Edit note' : 'Add note'}
+              className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-lavender-light/40 transition duration-200 hover:bg-white hover:text-charcoal"
+            >
+              <NoteIcon />
+              Note
+              {hasNote && (
+                <span
+                  aria-hidden
+                  className="ml-0.5 h-1.5 w-1.5 rounded-full bg-lavender-dark/70"
+                />
+              )}
+            </button>
+
+            <button
+              type="button"
               onClick={() => onRestore(loop.id)}
               className="rounded-full bg-white/90 px-4 py-1.5 text-xs font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
             >
@@ -113,7 +171,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
 
             <button
               type="button"
-              onClick={() => setConfirmingDelete(true)}
+              onClick={() => setMode('confirming-delete')}
               className="rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/65 transition duration-200 hover:bg-white/70 hover:text-charcoal"
             >
               Delete

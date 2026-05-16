@@ -235,6 +235,9 @@ Current / near-term features:
   `/settings` → `/dials`
 - Relative resurfacing labels
 - Edit and delete loops
+- Optional per-loop notes (collapsed by default — context breadcrumbs,
+  not project management; available in every state including Done and
+  Dropped)
 - Local storage persistence with backward-compatible migration
 - PWA install support
 - Offline shell support

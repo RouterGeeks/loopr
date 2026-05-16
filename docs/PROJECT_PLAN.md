@@ -150,6 +150,9 @@ All AI-assisted development sessions should review /docs before making significa
 - Edit
 - Delete
 - Restore from Done or Dropped back to Do
+- Optional note on any loop (collapsed; expand to add/edit; small dot
+  indicator when a note exists; works in Do / Doing / Delayed / Done /
+  Dropped)
 - Relative timestamps (Added / Started / Completed / Dropped)
 
 ## Delay Scheduling
@@ -350,9 +353,32 @@ No state-model, persistence, or workflow logic changed.
 
 ---
 
+## Sprint 13 — Optional Loop Notes
+Completed:
+- Added optional `note?: string` field to LoopItem; existing loops
+  without a note continue to work
+- New shared `NoteEditor` component (textarea + Save / Cancel, with
+  Cmd/Ctrl+Enter to save and Esc to cancel)
+- Note affordance lives in the utility row on both LoopCard and
+  ArchiveCard, alongside Edit / Delete — collapsed by default
+- Tiny lavender dot indicator on the Note button when a note exists
+- Notes available in every state: Do, Doing, Delayed, Done, Dropped
+- Notes persist through state transitions and through Restore
+- Empty Save clears the note field (data stays clean — no empty strings)
+- Loader treats blank stored notes as absent for backward compatibility
+- Verified headlessly via Playwright (19/19): notes save, edit, clear,
+  persist across reload, survive Do→Doing→Done, work on ArchiveCard for
+  Done and Dropped, legacy loops without `note` render fine, Cancel
+  discards the draft
+
+No state-model, persistence-schema, or workflow logic changed beyond
+adding the optional note field.
+
+---
+
 # Upcoming Priorities
 
-(Sprint 12 complete — next sprint to be planned.)
+(Sprint 13 complete — next sprint to be planned.)
 
 ---
 

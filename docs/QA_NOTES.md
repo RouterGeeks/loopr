@@ -51,6 +51,34 @@ with `/archive` redirecting.
 
 ---
 
+## Loop Notes (Sprint 13)
+
+Notes are intentionally minimal: a single optional string per loop,
+collapsed by default, accessible through a "Note" button in the utility
+row of every card. They are framed as **context breadcrumbs**, not task
+management — Loopr is not becoming a project tracker.
+
+Behavior:
+
+* Notes exist in every state (Do, Doing, Delayed, Done, Dropped)
+* Notes persist through state transitions and through Restore
+* An empty Save deletes the field entirely (no empty-string artifacts)
+* Cancel and Esc discard the draft
+* A small lavender dot on the Note button indicates a note exists, but
+  there is no count, no preview, and no metric — recognition only
+
+What notes are NOT:
+
+* not a comments thread
+* not a todo sublist
+* not a checklist
+* not a place for assignments, due dates, or tags
+
+If we add structure here later (e.g. a second field for "next action"),
+it should still feel like context, not project management.
+
+---
+
 ## Drop vs Delete
 
 Drop is intentionally reversible.

@@ -9,6 +9,7 @@ export interface LoopItem {
   startedAt?: string;
   doneAt?: string;
   droppedAt?: string;
+  note?: string;
 }
 
 export const STORAGE_KEY = 'loopr.loops';
@@ -100,6 +101,9 @@ export const loadLoops = (): LoopItem[] => {
       if (typeof item.startedAt === 'string') loop.startedAt = item.startedAt;
       if (typeof item.doneAt === 'string') loop.doneAt = item.doneAt;
       if (typeof item.droppedAt === 'string') loop.droppedAt = item.droppedAt;
+      if (typeof item.note === 'string' && item.note.trim()) {
+        loop.note = item.note;
+      }
 
       return loop;
     });

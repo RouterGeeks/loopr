@@ -83,6 +83,24 @@
 
 ---
 
+# Notes
+
+* [ ] Note button visible on every card (Do, Doing, Delayed, Done, Dropped)
+* [ ] Notes are collapsed by default (no expanded editor on first render)
+* [ ] Clicking Note opens an inline editor with a focused textarea
+* [ ] Save persists the note to localStorage
+* [ ] Edit replaces the previous value
+* [ ] Empty Save clears the note (no empty-string artifact in storage)
+* [ ] Cancel discards the draft without changing the stored value
+* [ ] Esc cancels the editor; Cmd/Ctrl+Enter saves
+* [ ] Small dot indicator appears on the Note button when a note exists
+* [ ] Note carries through state transitions (Do → Doing → Done)
+* [ ] Note carries through Restore (Done/Dropped → Do)
+* [ ] Notes persist after a full page refresh
+* [ ] Cards do not feel crowded with the new Note affordance
+
+---
+
 # Delay Scheduling
 
 * [ ] Tomorrow works
@@ -131,7 +149,7 @@
 
 ---
 
-# Persistence
+## Persistence
 
 * [ ] localStorage persists correctly
 * [ ] Refresh preserves state
@@ -139,7 +157,9 @@
 * [ ] Done page (Done + Dropped) persists
 * [ ] Delay timestamps persist
 * [ ] `startedAt` persists for Doing loops
+* [ ] `note` field persists for any state
 * [ ] Legacy data (`active` / `pending` / `delay` / `drop` / legacy `do`) migrates on first load
+* [ ] Legacy loops without a `note` field render and function normally
 
 ---
 
@@ -183,8 +203,9 @@
 # Regression Smoke Test
 
 * [ ] Add loop (lands in Do on Dashboard)
-* [ ] Press Do — loop moves to Doing page
-* [ ] Press Done on Doing card — loop moves to Done page (Done section)
+* [ ] Add a note to that loop; verify dot indicator appears
+* [ ] Press Do — loop moves to Doing page; note persists
+* [ ] Press Done on Doing card — loop moves to Done page (Done section); note persists
 * [ ] Add another loop, press Delay → schedule
 * [ ] Verify Delayed page shows it
 * [ ] Press Do on a Delayed card → moves to Doing
