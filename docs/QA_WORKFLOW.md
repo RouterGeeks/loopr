@@ -178,6 +178,17 @@ Run regression smoke test:
 
 ---
 
+# AI-Assisted Development
+
+Before implementing significant features or architectural changes:
+
+* review all files in /docs
+* preserve Loopr's emotional UX principles
+* preserve low-friction interaction design
+* avoid introducing urgency, guilt, or gamification mechanics
+
+---
+
 # Philosophy
 
 Loopr QA is not only about correctness.
