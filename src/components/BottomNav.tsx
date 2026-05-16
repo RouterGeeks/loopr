@@ -51,8 +51,12 @@ const DoneIcon = (): ReactNode => (
 
 const DialsIcon = (): ReactNode => (
   <svg {...iconProps}>
-    <circle cx="12" cy="12" r="3" />
-    <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M5.2 18.8l2.1-2.1M16.7 7.3l2.1-2.1" />
+    <line x1="3.5" y1="7" x2="20.5" y2="7" />
+    <circle cx="16" cy="7" r="2.2" fill="currentColor" stroke="none" />
+    <line x1="3.5" y1="12" x2="20.5" y2="12" />
+    <circle cx="8" cy="12" r="2.2" fill="currentColor" stroke="none" />
+    <line x1="3.5" y1="17" x2="20.5" y2="17" />
+    <circle cx="14" cy="17" r="2.2" fill="currentColor" stroke="none" />
   </svg>
 );
 
