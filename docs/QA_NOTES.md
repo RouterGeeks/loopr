@@ -51,6 +51,64 @@ with `/archive` redirecting.
 
 ---
 
+## Voice Capture (Sprint 14)
+
+Voice-to-text uses the browser's `SpeechRecognition` (Chrome/Edge) or
+`webkitSpeechRecognition` (Safari, including iOS) directly. There is no
+backend, no cloud transcription, and no Anthropic/OpenAI integration.
+
+Hard constraints baked into the implementation:
+
+* **No audio is ever stored.** The Web Speech API exposes transcripts
+  only; we never touch MediaRecorder, AudioBuffer, or Blob. Storage
+  schema unchanged.
+* **Transcripts are always editable.** Voice fills (or appends to) the
+  same textarea the user types into. Save is still an explicit user
+  action.
+* **Append semantics** in both the Dashboard capture and NoteEditor:
+  if the textarea already has content, voice text appends with a single
+  space separator. If empty, voice text fills it directly.
+* **Feature-detected at module load.** When the API is absent, the mic
+  is hidden entirely and a calm fallback line ("Voice capture isn't
+  available in this browser yet.") takes its place. Users never see a
+  broken mic affordance.
+* **Continuous mode is OFF.** `recognition.continuous = false` so the
+  API auto-stops on natural silence. Cleaner UX on iOS and avoids
+  surprise hot-mic situations. Users can tap mic again to add more.
+* **StrictMode-safe.** The hook aborts any active recognition on
+  unmount, and `start()` early-returns when a recognition is already
+  active.
+
+Error → user-facing copy mapping:
+
+| API error          | Copy shown                              |
+|--------------------|------------------------------------------|
+| `not-allowed`      | "Microphone permission was denied."     |
+| `no-speech`        | "Didn't catch that."                    |
+| `audio-capture`    | "No microphone found."                  |
+| `aborted`          | (silent — intentional)                  |
+| anything else      | "Voice capture had a hiccup."           |
+
+Capacitor / iOS wrapper readiness:
+
+* The Web API works inside an iOS WKWebView when the host app adds
+  `NSSpeechRecognitionUsageDescription` and
+  `NSMicrophoneUsageDescription` to its Info.plist.
+* No app-side code change is needed for the wrapper. If we ever want
+  native-quality transcription on iOS, we could swap the hook
+  implementation for `@capacitor-community/speech-recognition` behind
+  the same `useSpeechCapture` interface.
+
+What voice is **not**:
+
+* not an AI summary or rewrite — transcripts are saved verbatim (after
+  user edits)
+* not background recording — listening only fires from explicit user
+  taps
+* not cloud-routed — everything happens locally in the browser
+
+---
+
 ## Loop Notes (Sprint 13)
 
 Notes are intentionally minimal: a single optional string per loop,

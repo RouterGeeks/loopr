@@ -238,13 +238,14 @@ Current / near-term features:
 - Optional per-loop notes (collapsed by default — context breadcrumbs,
   not project management; available in every state including Done and
   Dropped)
+- Voice-to-text capture using the browser's Web Speech API: append-only,
+  transcripts always editable, no audio ever stored
 - Local storage persistence with backward-compatible migration
 - PWA install support
 - Offline shell support
 - Contextual timestamps (Added / Started / Completed / Dropped)
 
 Future considerations:
-- Voice capture
 - Gentle notifications
 - Resurface insights
 - Smaller-step suggestions

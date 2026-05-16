@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FC, KeyboardEvent } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
 import LoopCard from '../components/LoopCard';
+import MicButton from '../components/MicButton';
 import { loadLoops, saveLoops } from '../lib/loops';
 import type { LoopItem, LoopStatus } from '../lib/loops';
+import { isSpeechCaptureSupported } from '../lib/useSpeechCapture';
 
 type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
@@ -99,6 +101,13 @@ const Home: FC = () => {
     }
   };
 
+  const appendVoiceTextToDraft = useCallback((text: string) => {
+    setDraft((prev) => (prev ? `${prev.trimEnd()} ${text}` : text));
+    captureRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  const speechSupported = isSpeechCaptureSupported();
+
   const canAddLoop = draft.trim().length > 0;
 
   const doLoops = loops.filter((loop) => loop.status === 'do');
@@ -179,9 +188,25 @@ const Home: FC = () => {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-charcoal/45">
-              Cmd or Ctrl + Enter to capture.
-            </p>
+            <div className="flex flex-col gap-1.5">
+              <div className="flex flex-wrap items-center gap-3">
+                {speechSupported && (
+                  <MicButton
+                    onText={appendVoiceTextToDraft}
+                    label="Voice capture for new loop"
+                  />
+                )}
+                <p className="text-xs text-charcoal/45">
+                  Cmd or Ctrl + Enter to capture.
+                </p>
+              </div>
+
+              {!speechSupported && (
+                <p className="text-xs italic text-charcoal/45">
+                  Voice capture isn't available in this browser yet.
+                </p>
+              )}
+            </div>
 
             <button
               type="button"

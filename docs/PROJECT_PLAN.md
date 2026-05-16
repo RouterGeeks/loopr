@@ -140,6 +140,9 @@ All AI-assisted development sessions should review /docs before making significa
 - Quick text capture
 - Multiline support
 - Cmd/Ctrl + Enter submit
+- Voice-to-text via browser SpeechRecognition (append-only; transcripts
+  editable; mic hidden + calm fallback when API unsupported; no audio
+  stored)
 - Immediate local persistence
 
 ## Loop Management
@@ -376,9 +379,48 @@ adding the optional note field.
 
 ---
 
+## Sprint 14 — Voice-to-Text Capture
+Completed:
+- Added `useSpeechCapture` hook wrapping the browser `SpeechRecognition`
+  / `webkitSpeechRecognition` API with minimal TS typings, error
+  classification, and StrictMode-safe cleanup
+- New `MicButton` component (icon button + Listening… indicator + calm
+  inline error messages)
+- Mic surfaced inside the Dashboard capture textarea row and inside the
+  NoteEditor; both append transcripts to the current draft and refocus
+  the textarea so the transcript stays editable
+- Feature-detect at module load: when the API is unavailable, mic is
+  hidden entirely and a calm fallback line reads "Voice capture isn't
+  available in this browser yet."
+- Friendly error mapping for `not-allowed`, `no-speech`, `audio-capture`;
+  silent on intentional `aborted`
+- **No audio is ever stored.** The Web Speech API exposes transcripts
+  only; nothing else is written to localStorage. Verified by inspecting
+  the persisted JSON in the headless test
+- Verified headlessly via Playwright (19/19): mic visibility under
+  supported/unsupported, transcript fills then appends with spacing,
+  transcripts remain editable, voice flow works in notes and persists
+  as edited text, error states surface calmly, no console errors
+
+Compatibility notes:
+- Chrome/Edge: full support
+- Safari (macOS + iOS): supports `webkitSpeechRecognition`; requires a
+  user gesture (button tap is fine) and microphone permission
+- Firefox desktop: no support → fallback message
+- Capacitor wrapper: the Web API works inside iOS WebView when the host
+  app adds `NSSpeechRecognitionUsageDescription` and
+  `NSMicrophoneUsageDescription` to Info.plist. No app-side code change
+  is needed.
+
+No state model, persistence schema, workflow logic, or stored data
+shape changed. The only new behaviour is the transcribed-text input
+path.
+
+---
+
 # Upcoming Priorities
 
-(Sprint 13 complete — next sprint to be planned.)
+(Sprint 14 complete — next sprint to be planned.)
 
 ---
 

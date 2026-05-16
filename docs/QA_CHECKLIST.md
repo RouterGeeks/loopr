@@ -67,6 +67,27 @@
 
 ---
 
+# Voice Capture
+
+* [ ] Mic button visible on Dashboard capture row (supported browsers)
+* [ ] Mic button visible inside NoteEditor (supported browsers)
+* [ ] First mic tap requests microphone permission (real browser)
+* [ ] Listening… indicator appears while recording
+* [ ] Spoken text fills the loop textarea
+* [ ] Spoken text appends to a non-empty textarea with a space separator
+* [ ] Transcript is editable before Save / Add Loop
+* [ ] Spoken text in a note appends to the existing note value
+* [ ] Permission denied shows "Microphone permission was denied."
+* [ ] Silence shows "Didn't catch that."
+* [ ] No microphone shows "No microphone found."
+* [ ] In an unsupported browser (Firefox desktop), the mic is hidden
+      and "Voice capture isn't available in this browser yet." appears
+* [ ] No audio data appears in localStorage — only the transcribed text
+* [ ] Safari/iPhone: works after a user-gesture tap
+* [ ] Safari/iPhone: layout doesn't break when mic is rendered
+
+---
+
 # Loop Actions
 
 * [ ] Do moves loop from Do → Doing
