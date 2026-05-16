@@ -64,6 +64,9 @@
 * [ ] Ctrl+Enter works
 * [ ] Enter creates newline only
 * [ ] Keyboard capture persists after refresh
+* [ ] "Cmd or Ctrl + Enter to capture." hint visible on desktop (fine pointer)
+* [ ] Hint hidden on phones/tablets (coarse pointer)
+* [ ] Hint hidden when running inside a Capacitor wrapper
 
 ---
 

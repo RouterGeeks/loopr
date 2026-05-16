@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { FC, KeyboardEvent } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
@@ -108,6 +108,15 @@ const Home: FC = () => {
 
   const speechSupported = isSpeechCaptureSupported();
 
+  // The Cmd/Ctrl+Enter hint is only useful with a physical keyboard.
+  // Hide it on coarse-pointer devices (phones/tablets) and inside a
+  // Capacitor native wrapper, where it's noise.
+  const showKeyboardHint = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    if ((window as { Capacitor?: unknown }).Capacitor) return false;
+    return window.matchMedia?.('(pointer: fine)').matches ?? false;
+  }, []);
+
   const canAddLoop = draft.trim().length > 0;
 
   const doLoops = loops.filter((loop) => loop.status === 'do');
@@ -196,9 +205,11 @@ const Home: FC = () => {
                     label="Voice capture for new loop"
                   />
                 )}
-                <p className="text-xs text-charcoal/45">
-                  Cmd or Ctrl + Enter to capture.
-                </p>
+                {showKeyboardHint && (
+                  <p className="text-xs text-charcoal/45">
+                    Cmd or Ctrl + Enter to capture.
+                  </p>
+                )}
               </div>
 
               {!speechSupported && (

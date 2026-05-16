@@ -51,6 +51,27 @@ with `/archive` redirecting.
 
 ---
 
+## Keyboard Hint Visibility
+
+The "Cmd or Ctrl + Enter to capture." hint under the Dashboard textarea
+is desktop-only. It renders only when:
+
+* `window.matchMedia('(pointer: fine)').matches` is true (mouse / trackpad
+  / stylus primary), **and**
+* `window.Capacitor` is undefined (i.e. not running inside a Capacitor
+  native wrapper)
+
+On phones and tablets the hint would just be noise — no physical keyboard
+is reachable. Inside Capacitor, even if the primary pointer happens to be
+fine (e.g. iPad with keyboard), the hint stays hidden, because the host
+app should be the source of truth for input affordances in that context.
+
+The detection runs once at mount via `useMemo`. If a user plugs in a
+keyboard mid-session, the hint will appear after the next reload — a
+minor staleness we accept to keep the implementation calm.
+
+---
+
 ## Voice Capture (Sprint 14)
 
 Voice-to-text uses the browser's `SpeechRecognition` (Chrome/Edge) or
