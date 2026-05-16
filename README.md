@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# Loopr
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Capture open loops and decide what to do next.
 
-Currently, two official plugins are available:
+## What Loopr Is
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Loopr is a mobile-first PWA designed to reduce cognitive friction around recurring thoughts. It's built for fast, low-pressure capture and a simple triage workflow:
 
-## React Compiler
+**Capture → Do / Delay / Drop → Revisit**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+It's local-first, requires no account, and follows neurodivergent-friendly UX principles: recognition over recall, minimal decision fatigue, and emotional safety.
 
-## Expanding the ESLint configuration
+## Core Philosophy
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Loops are recurring thoughts, not failures.
+- Capture should never take more than two or three seconds.
+- The interface stays calm: no streaks, no urgency badges, no gamification, no red overdue states.
+- Delayed loops resurface; they don't accumulate as guilt.
+- Dropped loops are consciously released — and recoverable from the Archive.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- localStorage
+- PWA (service worker offline shell, installable)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+No backend. No required login. No cloud sync in V1.
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The dev server runs at `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Production build and local preview:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
+npm run preview
 ```
+
+## Documentation
+
+The `/docs` directory holds the working documentation:
+
+- `LOOPR_CONTEXT.md` — product philosophy and tone
+- `PROJECT_PLAN.md` — product direction, sprint history, repository structure
+- `QA_WORKFLOW.md` — pre-commit and pre-merge QA process
+- `QA_CHECKLIST.md` — exhaustive QA list
+- `QA_NOTES.md` — known noise and clarifications
+
+Read these before making significant changes.
