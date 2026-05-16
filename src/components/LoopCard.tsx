@@ -188,7 +188,9 @@ const LoopCard: FC<LoopCardProps> = ({
 }) => {
   const [mode, setMode] = useState<CardMode>('view');
   const [draft, setDraft] = useState(loop.text);
+  const [departing, setDeparting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const departTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (mode === 'editing' && textareaRef.current) {
@@ -197,6 +199,44 @@ const LoopCard: FC<LoopCardProps> = ({
       el.setSelectionRange(el.value.length, el.value.length);
     }
   }, [mode]);
+
+  useEffect(
+    () => () => {
+      if (departTimerRef.current !== null) {
+        window.clearTimeout(departTimerRef.current);
+      }
+    },
+    []
+  );
+
+  const triggerDo = () => {
+    if (departing) return;
+
+    // Gentle haptic on devices that support it (Android / some PWAs).
+    // iOS Safari ignores this silently, which is fine.
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      try {
+        navigator.vibrate(10);
+      } catch {
+        /* ignore */
+      }
+    }
+
+    const motionReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+    if (motionReduced) {
+      onTransition(loop.id, 'doing');
+      return;
+    }
+
+    setDeparting(true);
+    departTimerRef.current = window.setTimeout(() => {
+      departTimerRef.current = null;
+      onTransition(loop.id, 'doing');
+    }, 180);
+  };
 
   const startEdit = () => {
     setDraft(loop.text);
@@ -285,7 +325,7 @@ const LoopCard: FC<LoopCardProps> = ({
     // Both 'do' and 'delayed' surface "Do" to start engaging.
     return {
       label: 'Do',
-      onClick: () => onTransition(loop.id, 'doing'),
+      onClick: triggerDo,
       ariaLabel: 'Start doing this loop',
     };
   })();
@@ -333,7 +373,11 @@ const LoopCard: FC<LoopCardProps> = ({
   }
 
   return (
-    <div className="rounded-[1.75rem] bg-cream-surface shadow-card p-5">
+    <div
+      className={`rounded-[1.75rem] bg-cream-surface shadow-card p-5 transition-all duration-200 ease-out motion-reduce:transition-none ${
+        departing ? 'pointer-events-none -translate-y-1 opacity-0' : ''
+      }`}
+    >
       <div className="mb-4">
         <p className="text-base leading-7 text-charcoal">{loop.text}</p>
 
