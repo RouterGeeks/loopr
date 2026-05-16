@@ -158,6 +158,26 @@ const NoteIcon: FC = () => (
   </svg>
 );
 
+const TrashIcon: FC = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="13"
+    height="13"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M3 4.5h10" />
+    <path d="M6.5 4.5V3.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 .75.75V4.5" />
+    <path d="M4.75 4.5l.55 8.3a1 1 0 0 0 1 .95h3.4a1 1 0 0 0 1-.95l.55-8.3" />
+    <path d="M7 7v4" />
+    <path d="M9 7v4" />
+  </svg>
+);
+
 const LoopCard: FC<LoopCardProps> = ({
   loop,
   onTransition,
@@ -513,9 +533,10 @@ const LoopCard: FC<LoopCardProps> = ({
               <button
                 type="button"
                 onClick={startDelete}
-                className="rounded-full px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/55 transition duration-200 hover:bg-white/70 hover:text-charcoal"
+                aria-label="Delete loop"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-white/70 hover:text-charcoal"
               >
-                Delete
+                <TrashIcon />
               </button>
             </div>
           </div>
