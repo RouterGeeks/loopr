@@ -83,8 +83,9 @@
 * [ ] Permission denied shows "Microphone permission was denied."
 * [ ] Silence shows "Didn't catch that."
 * [ ] No microphone shows "No microphone found."
-* [ ] In an unsupported browser (Firefox desktop), the mic is hidden
-      and "Voice capture isn't available in this browser yet." appears
+* [ ] In an unsupported browser (Firefox desktop, iOS PWA mode), the
+      mic is hidden and "Voice capture isn't built into this browser.
+      Try your keyboard's mic instead." appears
 * [ ] No audio data appears in localStorage — only the transcribed text
 * [ ] Safari/iPhone: works after a user-gesture tap
 * [ ] Safari/iPhone: layout doesn't break when mic is rendered

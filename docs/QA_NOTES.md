@@ -90,9 +90,11 @@ Hard constraints baked into the implementation:
   if the textarea already has content, voice text appends with a single
   space separator. If empty, voice text fills it directly.
 * **Feature-detected at module load.** When the API is absent, the mic
-  is hidden entirely and a calm fallback line ("Voice capture isn't
-  available in this browser yet.") takes its place. Users never see a
-  broken mic affordance.
+  is hidden entirely and a calm fallback line takes its place:
+  "Voice capture isn't built into this browser. Try your keyboard's
+  mic instead." Users never see a broken mic affordance, and they get
+  pointed at the universal fallback (system-level dictation) rather
+  than being told voice is simply unavailable.
 * **Continuous mode is OFF.** `recognition.continuous = false` so the
   API auto-stops on natural silence. Cleaner UX on iOS and avoids
   surprise hot-mic situations. Users can tap mic again to add more.
@@ -127,6 +129,26 @@ What voice is **not**:
 * not background recording — listening only fires from explicit user
   taps
 * not cloud-routed — everything happens locally in the browser
+
+## Two voice paths, one text field
+
+Every platform Loopr runs on has a **system-level dictation** path that
+types speech into any focused text field, independent of any web API:
+
+| Platform | System dictation |
+|---|---|
+| iPhone / iPad | Mic on the on-screen keyboard (iOS Dictation) |
+| Android | Mic on Gboard / SwiftKey (Google Voice Typing) |
+| macOS | Fn key twice / Edit → Start Dictation |
+| Windows | Win + H |
+
+Loopr's in-app mic is a **convenience**, not the only path. When the
+Web Speech API is unsupported (notably iOS PWA mode in some versions),
+users can still dictate via their keyboard. The fallback copy points
+them there explicitly.
+
+This is also why we don't try harder to detect iOS specifically — the
+fallback message works universally.
 
 ---
 

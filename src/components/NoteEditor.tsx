@@ -73,7 +73,8 @@ const NoteEditor: FC<NoteEditorProps> = ({
             />
           ) : (
             <span className="text-xs italic text-charcoal/45">
-              Voice capture isn't available in this browser yet.
+              Voice capture isn't built into this browser. Try your
+              keyboard's mic instead.
             </span>
           )}
         </div>
