@@ -94,15 +94,13 @@ const Doing: FC = () => {
       </div>
 
       {doingLoops.length > 0 && (
-        <div className="mb-8">
-          <div className="inline-block min-w-[5.5rem] rounded-2xl bg-seafoam/25 px-4 py-3.5">
-            <p className="text-3xl font-semibold leading-none tracking-tight text-charcoal tabular-nums">
+        <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
               {doingLoops.length}
-            </p>
-            <p className="mt-2 text-[0.6rem] font-medium uppercase tracking-[0.25em] text-charcoal/45">
-              Doing
-            </p>
-          </div>
+            </span>
+            Doing
+          </span>
         </div>
       )}
 

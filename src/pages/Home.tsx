@@ -139,7 +139,7 @@ const Home: FC = () => {
         </h1>
 
         <p className="max-w-xl text-base leading-7 text-charcoal/70">
-          Capture a loop, then decide what to do with it later.
+          A landing pad for thoughts.
         </p>
       </div>
 

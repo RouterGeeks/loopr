@@ -55,19 +55,19 @@ const Settings: FC = () => {
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-charcoal">Your loops</h2>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             {countTiles.map((tile) => (
               <div
                 key={tile.label}
-                className="rounded-2xl bg-white/60 p-4"
+                className="flex items-baseline gap-1.5 rounded-xl bg-white/60 px-3 py-2.5"
               >
-                <p className="text-[2.25rem] font-semibold leading-none tracking-tight text-charcoal tabular-nums">
+                <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
                   {tile.value}
-                </p>
+                </span>
 
-                <p className="mt-2.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
+                <span className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
                   {tile.label}
-                </p>
+                </span>
               </div>
             ))}
           </div>
