@@ -89,6 +89,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
 
   const statusLabel = loop.status === 'done' ? 'Done' : 'Dropped';
   const hasNote = Boolean(loop.note && loop.note.trim());
+  const notePreview = hasNote ? loop.note!.split('\n')[0].trim() : '';
 
   const saveNote = (value: string) => {
     onEditNote(loop.id, value);
@@ -98,6 +99,12 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
   return (
     <div className="rounded-3xl bg-cream-surface shadow-soft p-4">
       <p className="text-base leading-7 text-charcoal/85">{loop.text}</p>
+
+      {hasNote && mode !== 'editing-note' && (
+        <p className="mt-1.5 truncate text-sm italic text-charcoal/55">
+          {notePreview}
+        </p>
+      )}
 
       {metaParts.length > 0 && (
         <p className="mt-2 text-[0.7rem] text-charcoal/50">

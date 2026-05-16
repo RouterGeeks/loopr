@@ -83,7 +83,7 @@ const Revisit: FC = () => {
         </h1>
 
         <p className="max-w-xl text-base leading-7 text-charcoal/70">
-          A quiet place to look back on loops that need a second look later.
+          Loops set aside to resurface later.
         </p>
       </div>
 

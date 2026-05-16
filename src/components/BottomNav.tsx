@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import type { FC, ReactNode } from 'react';
 
 const linkClass = (isActive: boolean) =>
-  `flex flex-col items-center gap-1 rounded-3xl px-2 py-2.5 transition-all duration-200 ${
+  `flex min-w-0 flex-col items-center gap-1 rounded-2xl px-1 py-2.5 transition-all duration-200 ${
     isActive
       ? 'bg-lavender-soft text-lavender-dark shadow-soft'
       : 'text-charcoal hover:bg-cream-light hover:text-lavender-dark/80'
@@ -63,10 +63,10 @@ const DialsIcon = (): ReactNode => (
 const BottomNav: FC = () => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-cream shadow-nav border-t border-lavender-light/30 backdrop-blur-sm">
-      <div className="flex justify-around py-3 px-1 pb-safe">
+      <div className="grid grid-cols-5 gap-1 px-2 py-3 pb-safe">
         <NavLink to="/" className={({ isActive }) => linkClass(isActive)} end>
           <DashboardIcon />
-          <span className="text-xs font-semibold">Dashboard</span>
+          <span className="text-[11px] font-semibold sm:text-xs">Dashboard</span>
         </NavLink>
 
         <NavLink
@@ -74,7 +74,7 @@ const BottomNav: FC = () => {
           className={({ isActive }) => linkClass(isActive)}
         >
           <DoingIcon />
-          <span className="text-xs font-semibold">Doing</span>
+          <span className="text-[11px] font-semibold sm:text-xs">Doing</span>
         </NavLink>
 
         <NavLink
@@ -82,7 +82,7 @@ const BottomNav: FC = () => {
           className={({ isActive }) => linkClass(isActive)}
         >
           <DelayedIcon />
-          <span className="text-xs font-semibold">Delayed</span>
+          <span className="text-[11px] font-semibold sm:text-xs">Delayed</span>
         </NavLink>
 
         <NavLink
@@ -90,7 +90,7 @@ const BottomNav: FC = () => {
           className={({ isActive }) => linkClass(isActive)}
         >
           <DoneIcon />
-          <span className="text-xs font-semibold">Done</span>
+          <span className="text-[11px] font-semibold sm:text-xs">Done</span>
         </NavLink>
 
         <NavLink
@@ -98,7 +98,7 @@ const BottomNav: FC = () => {
           className={({ isActive }) => linkClass(isActive)}
         >
           <DialsIcon />
-          <span className="text-xs font-semibold">Dials</span>
+          <span className="text-[11px] font-semibold sm:text-xs">Dials</span>
         </NavLink>
       </div>
     </nav>

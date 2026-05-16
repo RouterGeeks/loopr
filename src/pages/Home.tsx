@@ -129,12 +129,12 @@ const Home: FC = () => {
 
   return (
     <PageContainer>
-      <div className="mb-8">
-        <p className="mb-3 text-xs uppercase tracking-[0.3em] text-lavender-dark opacity-90">
+      <div className="mb-6">
+        <p className="mb-2 text-xs uppercase tracking-[0.3em] text-lavender-dark opacity-90">
           Loopr
         </p>
 
-        <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
+        <h1 className="mb-2 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
           Dashboard
         </h1>
 
@@ -144,57 +144,41 @@ const Home: FC = () => {
       </div>
 
       {hasAnyOpenWork && (
-        <div className="mb-8 flex flex-wrap gap-3">
-          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/30 px-4 py-3.5">
-            <p className="text-3xl font-semibold leading-none tracking-tight text-charcoal tabular-nums">
+        <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
               {doCount}
-            </p>
-            <p className="mt-2 text-[0.6rem] font-medium uppercase tracking-[0.25em] text-charcoal/45">
-              Do
-            </p>
-          </div>
-
-          <div className="min-w-[5.5rem] rounded-2xl bg-seafoam/25 px-4 py-3.5">
-            <p className="text-3xl font-semibold leading-none tracking-tight text-charcoal tabular-nums">
+            </span>
+            Do
+          </span>
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
               {doingCount}
-            </p>
-            <p className="mt-2 text-[0.6rem] font-medium uppercase tracking-[0.25em] text-charcoal/45">
-              Doing
-            </p>
-          </div>
-
-          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/30 px-4 py-3.5">
-            <p className="text-3xl font-semibold leading-none tracking-tight text-charcoal tabular-nums">
+            </span>
+            Doing
+          </span>
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
               {delayedCount}
-            </p>
-            <p className="mt-2 text-[0.6rem] font-medium uppercase tracking-[0.25em] text-charcoal/45">
-              Delayed
-            </p>
-          </div>
+            </span>
+            Delayed
+          </span>
         </div>
       )}
 
       <SectionCard className="space-y-6">
         <div className="space-y-4">
-          <div className="space-y-3">
-            <label
-              htmlFor="loop-input"
-              className="block text-sm font-semibold text-charcoal/80"
-            >
-              New loop
-            </label>
-
-            <textarea
-              id="loop-input"
-              ref={captureRef}
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyDown={handleDraftKeyDown}
-              rows={4}
-              placeholder="Capture a task, idea, or note..."
-              className="w-full rounded-3xl border border-lavender-soft/40 bg-white/90 p-4 text-base leading-7 text-charcoal shadow-soft focus:border-lavender focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
-            />
-          </div>
+          <textarea
+            id="loop-input"
+            ref={captureRef}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={handleDraftKeyDown}
+            rows={4}
+            aria-label="New loop"
+            placeholder="Capture a thought, idea, or note..."
+            className="w-full rounded-3xl border border-lavender-soft/40 bg-white/90 p-4 text-base leading-7 text-charcoal shadow-soft focus:border-lavender focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
+          />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col gap-1.5">

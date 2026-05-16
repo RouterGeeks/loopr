@@ -113,7 +113,7 @@ const relativeDaysAgoPhrase = (iso: string, now: Date): string | null => {
 const relativeRevisitLabel = (iso: string, now: Date): string | null => {
   const target = new Date(iso);
   if (Number.isNaN(target.getTime())) return null;
-  if (target.getTime() <= now.getTime()) return 'Due now';
+  if (target.getTime() <= now.getTime()) return 'Back today';
 
   const daysDiff = Math.round(
     (startOfDay(target).getTime() - startOfDay(now).getTime()) / 86400000
@@ -228,6 +228,7 @@ const LoopCard: FC<LoopCardProps> = ({
 
   const canSaveEdit = draft.trim().length > 0;
   const hasNote = Boolean(loop.note && loop.note.trim());
+  const notePreview = hasNote ? loop.note!.split('\n')[0].trim() : '';
 
   const now = new Date();
 
@@ -237,7 +238,7 @@ const LoopCard: FC<LoopCardProps> = ({
     if (!text) return null;
     return {
       text,
-      tone: text === 'Due now' ? ('due' as const) : ('scheduled' as const),
+      tone: text === 'Back today' ? ('due' as const) : ('scheduled' as const),
     };
   })();
 
@@ -315,6 +316,12 @@ const LoopCard: FC<LoopCardProps> = ({
     <div className="rounded-[1.75rem] bg-cream-surface shadow-card p-5">
       <div className="mb-4">
         <p className="text-base leading-7 text-charcoal">{loop.text}</p>
+
+        {hasNote && mode !== 'editing-note' && (
+          <p className="mt-1.5 truncate text-sm italic text-charcoal/55">
+            {notePreview}
+          </p>
+        )}
 
         {revisitSublabel && (
           <p
