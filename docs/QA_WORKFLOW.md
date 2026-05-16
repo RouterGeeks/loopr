@@ -60,9 +60,9 @@ Validate:
 ## Core Interaction
 
 * capture flow
-* Do / Delay / Drop
+* Do (Do → Doing) / Done (Doing → Done) / Delay / Drop
 * Edit / Delete
-* Restore behavior
+* Restore behavior (back to Do)
 * keyboard shortcuts
 
 ## UX
@@ -109,8 +109,9 @@ Validate:
 ## Offline
 
 * Home works offline
+* Doing works offline
 * Revisit works offline
-* Archive works offline
+* Resolved (/archive) works offline
 * Settings works offline
 
 ## Routing
@@ -121,8 +122,9 @@ Validate:
 ## Persistence
 
 * localStorage persists correctly
-* Archive persists correctly
+* Resolved (Done + Dropped) persists correctly
 * delay scheduling persists
+* legacy data migrates on first load
 
 ## Cache Validation
 
@@ -168,12 +170,13 @@ npm run preview
 
 Run regression smoke test:
 
-* add loop
-* delay loop
-* revisit loop
-* archive loop
-* restore loop
-* refresh routes
+* add loop (lands in Do)
+* press Do — loop moves to Doing
+* press Done on a Doing loop — moves to Resolved → Done
+* delay a loop and verify it appears in Revisit
+* drop a loop and verify it appears in Resolved → Dropped
+* restore from Resolved — loop returns to Do
+* refresh every route
 * verify persistence
 
 ---

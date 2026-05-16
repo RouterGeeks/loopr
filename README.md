@@ -4,11 +4,25 @@
 
 ## What Loopr Is
 
-Loopr is a mobile-first PWA designed to reduce cognitive friction around recurring thoughts. It's built for fast, low-pressure capture and a simple triage workflow:
+Loopr is a mobile-first PWA designed to reduce cognitive friction around recurring thoughts. It's built for fast, low-pressure capture and a simple cognitive workflow:
 
-**Capture → Do / Delay / Drop → Revisit**
+**Capture → Do → Doing → Done / Dropped / Delayed → Revisit**
 
 It's local-first, requires no account, and follows neurodivergent-friendly UX principles: recognition over recall, minimal decision fatigue, and emotional safety.
+
+## Loop States
+
+Loopr distinguishes engagement from completion. Loops live in one of five states:
+
+| State | Where it lives |
+|---|---|
+| Do | Home — captured, awaiting triage |
+| Doing | Doing — actively engaging with |
+| Delayed | Revisit — resurfacing later |
+| Done | Resolved — completed |
+| Dropped | Resolved — consciously released |
+
+Pressing **Do** moves a captured loop into **Doing**, not into Done. Completion is reachable only via Doing → Done. This gives in-progress work its own visible state.
 
 ## Core Philosophy
 
@@ -16,7 +30,7 @@ It's local-first, requires no account, and follows neurodivergent-friendly UX pr
 - Capture should never take more than two or three seconds.
 - The interface stays calm: no streaks, no urgency badges, no gamification, no red overdue states.
 - Delayed loops resurface; they don't accumulate as guilt.
-- Dropped loops are consciously released — and recoverable from the Archive.
+- Dropped loops are consciously released — and recoverable from Resolved.
 
 ## Tech Stack
 

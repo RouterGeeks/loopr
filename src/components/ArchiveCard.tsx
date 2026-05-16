@@ -1,17 +1,6 @@
 import { useState } from 'react';
 import type { FC } from 'react';
-
-type LoopStatus = 'active' | 'delayed' | 'done' | 'dropped';
-
-interface LoopItem {
-  id: number;
-  text: string;
-  status: LoopStatus;
-  revisitAt?: string;
-  createdAt?: string;
-  doneAt?: string;
-  droppedAt?: string;
-}
+import type { LoopItem } from '../lib/loops';
 
 interface ArchiveCardProps {
   loop: LoopItem;
@@ -109,7 +98,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
         </div>
       ) : (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-lavender-light/30 pt-3">
-          <div className="rounded-full bg-lavender-soft/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-lavender-dark">
+          <div className="rounded-full bg-cream-light px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-charcoal/65">
             {statusLabel}
           </div>
 

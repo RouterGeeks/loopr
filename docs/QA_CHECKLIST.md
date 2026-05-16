@@ -28,8 +28,9 @@
 # Routing & Navigation
 
 * [ ] Home loads
+* [ ] Doing loads
 * [ ] Revisit loads
-* [ ] Archive loads
+* [ ] Resolved loads (route /archive)
 * [ ] Settings loads
 * [ ] Refresh works on all routes
 * [ ] No 404s
@@ -60,14 +61,17 @@
 
 # Loop Actions
 
-* [ ] Do works
-* [ ] Delay works
-* [ ] Drop works
-* [ ] Edit works
-* [ ] Delete works
-* [ ] Restore works
+* [ ] Do moves loop from Do → Doing
+* [ ] Done moves loop from Doing → Resolved (Done)
+* [ ] Delay moves loop from any state → Delayed
+* [ ] Do on a Delayed loop moves it to Doing
+* [ ] Drop moves loop from Do / Doing / Delayed → Resolved (Dropped)
+* [ ] Edit works in Do, Doing, and Delayed states
+* [ ] Delete works in every state
+* [ ] Restore from Resolved sends loop back to Do
 * [ ] Delete confirmation appears
 * [ ] No double borders/cards
+* [ ] Doing pill is visually distinct (seafoam tone) but calm
 
 ---
 
@@ -88,27 +92,30 @@
 * [ ] Only delayed loops appear
 * [ ] Delayed loops editable
 * [ ] Delayed loops deletable
-* [ ] Do from Revisit moves to Archive → Done
-* [ ] Drop from Revisit moves to Archive → Dropped
+* [ ] Do from Revisit moves loop to Doing
+* [ ] Drop from Revisit moves loop to Resolved → Dropped
+* [ ] Delay from Revisit re-schedules the loop
 * [ ] Empty state displays correctly
 
 ---
 
-# Archive
+# Resolved (route /archive)
 
+* [ ] Page heading reads "Resolved"
 * [ ] Done section works
 * [ ] Dropped section works
-* [ ] Restore works
+* [ ] Restore sends loops back to Do
 * [ ] Permanent delete works
 * [ ] Empty state displays correctly
-* [ ] Archive feels calm and uncluttered
+* [ ] Page feels calm and uncluttered
 
 ---
 
 # Settings
 
-* [ ] Counts are correct
-* [ ] Counts update live
+* [ ] Do / Doing / Delayed / Resolved counts are correct
+* [ ] Counts update live after Clear All
+* [ ] Counts reload when the confirmation modal closes
 * [ ] Clear All confirmation works
 * [ ] Clear All resets app correctly
 
@@ -119,8 +126,10 @@
 * [ ] localStorage persists correctly
 * [ ] Refresh preserves state
 * [ ] Route changes preserve state
-* [ ] Archive persists
+* [ ] Resolved (Done + Dropped) persists
 * [ ] Delay timestamps persist
+* [ ] `startedAt` persists for Doing loops
+* [ ] Legacy data (`active` / `pending` / `delay` / `drop` / legacy `do`) migrates on first load
 
 ---
 
@@ -130,8 +139,9 @@
 * [ ] Service worker registers
 * [ ] Offline shell works
 * [ ] Home works offline
+* [ ] Doing works offline
 * [ ] Revisit works offline
-* [ ] Archive works offline
+* [ ] Resolved (route /archive) works offline
 * [ ] Settings works offline
 * [ ] Install prompt works
 * [ ] Icons display correctly
@@ -162,18 +172,16 @@
 
 # Regression Smoke Test
 
-* [ ] Add loop
-* [ ] Delay loop
-* [ ] Verify Revisit
-* [ ] Mark Do
-* [ ] Verify Archive → Done
-* [ ] Add another loop
-* [ ] Drop loop
-* [ ] Verify Archive → Dropped
-* [ ] Restore archived loop
-* [ ] Verify Home
-* [ ] Refresh all routes
-* [ ] Verify persistence
+* [ ] Add loop (lands in Do on Home)
+* [ ] Press Do — loop moves to Doing page
+* [ ] Press Done on Doing card — loop moves to Resolved → Done
+* [ ] Add another loop, press Delay → schedule
+* [ ] Verify Revisit shows it
+* [ ] Press Do on Delayed card → moves to Doing
+* [ ] Add another loop, press Drop → Resolved → Dropped
+* [ ] Restore a Resolved loop → reappears in Do on Home
+* [ ] Refresh every route, verify persistence
+* [ ] Verify offline shell still loads each route
 
 ---
 

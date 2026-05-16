@@ -2,70 +2,35 @@ import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
-
-interface LoopItem {
-  id: number;
-  text: string;
-  status: 'active' | 'delayed' | 'done' | 'dropped';
-  revisitAt?: string;
-  createdAt?: string;
-  doneAt?: string;
-  droppedAt?: string;
-}
-
-const STORAGE_KEY = 'loopr.loops';
+import { clearLoops, loadLoops } from '../lib/loops';
+import type { LoopItem } from '../lib/loops';
 
 const Settings: FC = () => {
   const [loops, setLoops] = useState<LoopItem[]>([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  // Load loops from localStorage on mount and whenever modal closes
   useEffect(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (!saved) {
-      setLoops([]);
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(saved) as any[];
-      if (Array.isArray(parsed)) {
-        const mapped = parsed.map((item) => ({
-          ...item,
-          createdAt:
-            item.createdAt ??
-            (typeof item.id === 'number'
-              ? new Date(item.id).toISOString()
-              : new Date().toISOString()),
-          status:
-            item.status === 'pending'
-              ? 'active'
-              : item.status === 'do'
-              ? 'done'
-              : item.status === 'delay'
-              ? 'delayed'
-              : item.status === 'drop'
-              ? 'dropped'
-              : (item.status as
-                  | 'active'
-                  | 'delayed'
-                  | 'done'
-                  | 'dropped'),
-        }));
-        setLoops(mapped);
-      }
-    } catch {
-      setLoops([]);
-    }
+    setLoops(loadLoops());
   }, [showConfirmation]);
 
-  const activeCount = loops.filter((loop) => loop.status === 'active')
-    .length;
-  const delayedCount = loops.filter((loop) => loop.status === 'delayed')
-    .length;
+  const doCount = loops.filter((loop) => loop.status === 'do').length;
+  const doingCount = loops.filter((loop) => loop.status === 'doing').length;
+  const delayedCount = loops.filter(
+    (loop) => loop.status === 'delayed'
+  ).length;
+  const resolvedCount = loops.filter(
+    (loop) => loop.status === 'done' || loop.status === 'dropped'
+  ).length;
+
+  const countTiles: Array<{ label: string; value: number }> = [
+    { label: 'Do', value: doCount },
+    { label: 'Doing', value: doingCount },
+    { label: 'Delayed', value: delayedCount },
+    { label: 'Resolved', value: resolvedCount },
+  ];
 
   const handleClearData = () => {
-    window.localStorage.removeItem(STORAGE_KEY);
+    clearLoops();
     setLoops([]);
     setShowConfirmation(false);
   };
@@ -77,45 +42,37 @@ const Settings: FC = () => {
           Loopr
         </p>
 
-        <h1 className="mb-3 text-4xl font-bold leading-tight text-charcoal">
+        <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
           Settings
         </h1>
 
         <p className="max-w-xl text-base leading-7 text-charcoal/70">
-          A gentle space to adjust the app at your pace — simple, warm,
-          and clean.
+          A quiet place to adjust the basics.
         </p>
       </div>
 
       <SectionCard className="space-y-6">
-        {/* Loop Counts */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-charcoal">Your Loops</h2>
+          <h2 className="text-lg font-semibold text-charcoal">Your loops</h2>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <div className="flex-1 rounded-2xl bg-white/60 p-4">
-              <p className="text-3xl font-bold leading-none text-charcoal">
-                {activeCount}
-              </p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+            {countTiles.map((tile) => (
+              <div
+                key={tile.label}
+                className="rounded-2xl bg-white/60 p-4"
+              >
+                <p className="text-[2.25rem] font-semibold leading-none tracking-tight text-charcoal tabular-nums">
+                  {tile.value}
+                </p>
 
-              <p className="mt-2 text-xs font-medium uppercase tracking-[0.2em] text-charcoal/55">
-                Active loops
-              </p>
-            </div>
-
-            <div className="flex-1 rounded-2xl bg-white/60 p-4">
-              <p className="text-3xl font-bold leading-none text-charcoal">
-                {delayedCount}
-              </p>
-
-              <p className="mt-2 text-xs font-medium uppercase tracking-[0.2em] text-charcoal/55">
-                Delayed loops
-              </p>
-            </div>
+                <p className="mt-2.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
+                  {tile.label}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Clear Data Section */}
         <div className="space-y-3 border-t border-lavender-light/30 pt-6">
           <h2 className="text-lg font-semibold text-charcoal">Data</h2>
 
@@ -134,7 +91,6 @@ const Settings: FC = () => {
         </div>
       </SectionCard>
 
-      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm">
           <div className="max-w-sm rounded-3xl bg-cream-surface p-6 shadow-card sm:p-8">
@@ -143,8 +99,8 @@ const Settings: FC = () => {
             </h3>
 
             <p className="mb-6 text-charcoal/70">
-              This will delete all your active, delayed, done, and dropped
-              loops. This action cannot be undone.
+              This will delete every loop on this device, across Do, Doing,
+              Delayed, Done, and Dropped. This action cannot be undone.
             </p>
 
             <div className="flex gap-3">

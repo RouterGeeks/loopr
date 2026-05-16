@@ -3,66 +3,30 @@ import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
 import ArchiveCard from '../components/ArchiveCard';
-
-interface LoopItem {
-  id: number;
-  text: string;
-  status: 'active' | 'delayed' | 'done' | 'dropped';
-  revisitAt?: string;
-  createdAt?: string;
-  doneAt?: string;
-  droppedAt?: string;
-}
-
-const STORAGE_KEY = 'loopr.loops';
+import { loadLoops, saveLoops } from '../lib/loops';
+import type { LoopItem } from '../lib/loops';
 
 const Archive: FC = () => {
-  const [loops, setLoops] = useState<LoopItem[]>(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (!saved) return [];
-
-    try {
-      const parsed = JSON.parse(saved) as any[];
-      if (Array.isArray(parsed)) {
-        return parsed.map((item) => ({
-          ...item,
-          createdAt:
-            item.createdAt ??
-            (typeof item.id === 'number'
-              ? new Date(item.id).toISOString()
-              : new Date().toISOString()),
-          status:
-            item.status === 'pending'
-              ? 'active'
-              : item.status === 'do'
-              ? 'done'
-              : item.status === 'delay'
-              ? 'delayed'
-              : item.status === 'drop'
-              ? 'dropped'
-              : (item.status as
-                  | 'active'
-                  | 'delayed'
-                  | 'done'
-                  | 'dropped'),
-        }));
-      }
-    } catch {
-      // Ignore invalid stored data
-    }
-
-    return [];
-  });
+  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(loops));
+    saveLoops(loops);
   }, [loops]);
 
   const handleRestore = (id: number) => {
     setLoops((current) =>
-      current.map((loop) =>
-        loop.id === id ? { ...loop, status: 'active' } : loop
-      )
+      current.map((loop) => {
+        if (loop.id !== id) return loop;
+        const restored: LoopItem = {
+          id: loop.id,
+          text: loop.text,
+          status: 'do',
+          createdAt: loop.createdAt,
+        };
+        if (loop.revisitAt) restored.revisitAt = loop.revisitAt;
+        if (loop.startedAt) restored.startedAt = loop.startedAt;
+        return restored;
+      })
     );
   };
 
@@ -101,31 +65,35 @@ const Archive: FC = () => {
           Loopr
         </p>
 
-        <h1 className="mb-3 text-4xl font-bold leading-tight text-charcoal">
-          Archive
+        <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
+          Resolved
         </h1>
 
         <p className="max-w-xl text-base leading-7 text-charcoal/70">
-          Resolved and released loops live here, in case you want to find
-          them again.
+          Loops you've completed or consciously released. Restore one any time.
         </p>
       </div>
 
       {isEmpty ? (
         <SectionCard className="space-y-2">
-          <p className="text-charcoal/75">Nothing archived right now.</p>
+          <p className="text-charcoal/75">Nothing resolved yet.</p>
 
           <p className="text-sm text-charcoal/55">
-            Resolved and released loops will appear here.
+            Completed and released loops will appear here.
           </p>
         </SectionCard>
       ) : (
         <div className="space-y-10">
           {doneLoops.length > 0 && (
             <div>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/55">
-                Done
-              </h2>
+              <div className="mb-3 flex items-baseline gap-2.5">
+                <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-charcoal/55">
+                  Done
+                </h2>
+                <span className="text-sm font-semibold leading-none text-charcoal/65 tabular-nums">
+                  {doneLoops.length}
+                </span>
+              </div>
 
               <div className="space-y-3">
                 {doneLoops.map((loop) => (
@@ -142,9 +110,14 @@ const Archive: FC = () => {
 
           {droppedLoops.length > 0 && (
             <div>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/55">
-                Dropped
-              </h2>
+              <div className="mb-3 flex items-baseline gap-2.5">
+                <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-charcoal/55">
+                  Dropped
+                </h2>
+                <span className="text-sm font-semibold leading-none text-charcoal/65 tabular-nums">
+                  {droppedLoops.length}
+                </span>
+              </div>
 
               <div className="space-y-3">
                 {droppedLoops.map((loop) => (

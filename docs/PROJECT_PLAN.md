@@ -10,7 +10,12 @@ The goal is not maximizing output.
 The goal is reducing executive-function friction while preserving clarity, calmness, and emotional safety.
 
 Core philosophy:
-Capture → Do / Delay / Drop → Revisit
+Capture → Do → Doing → Done / Dropped / Delayed → Revisit
+
+Loopr distinguishes between engagement (Doing) and completion (Done).
+Pressing "Do" on an open loop moves it into Doing — not into Done. This
+separation supports neurodivergent cognition by giving "in progress" its
+own visible state.
 
 The app should feel:
 - fast
@@ -107,6 +112,10 @@ No AI processing in V1.
 
 /public
 /src
+  /components   reusable UI (LoopCard, ArchiveCard, BottomNav, ...)
+  /pages        route components (Home, Doing, Revisit, Archive, Settings)
+                  Archive.tsx renders the "Resolved" page; route is /archive
+  /lib          shared logic — loops.ts owns the state model, migration, persistence
 ```
 
 The /docs directory contains:
@@ -130,12 +139,14 @@ All AI-assisted development sessions should review /docs before making significa
 - Immediate local persistence
 
 ## Loop Management
-- Do
-- Delay
-- Drop
+- Do (engage, moves to Doing)
+- Done (complete, from Doing)
+- Delay (re-schedule, from any state)
+- Drop (release)
 - Edit
 - Delete
-- Relative timestamps
+- Restore from Done or Dropped back to Do
+- Relative timestamps (Added / Started / Completed / Dropped)
 
 ## Delay Scheduling
 - Tomorrow
@@ -145,14 +156,25 @@ All AI-assisted development sessions should review /docs before making significa
 - Due Now labeling
 - Human-readable resurfacing labels
 
+## Doing
+- Dedicated view for actively engaged loops
+- Seafoam-toned status pill for subtle visual distinction
+- "Started X" contextual timestamp
+- Transitions to Done, Delayed, or Dropped
+
 ## Revisit
 - Delayed loops sorted by revisit time
 - Relative resurfacing states
 - Empty-state support
 
+## Resolved (route /archive)
+- Done and Dropped surfaced as named sections
+- Restore returns loops to Do
+- Permanent delete with confirmation
+- Empty-state support
+
 ## Settings
-- Active count
-- Delayed count
+- Four-tile count grid: Do / Doing / Delayed / Resolved
 - Clear all data
 - Confirmation protection
 
@@ -243,16 +265,41 @@ Completed:
 
 ---
 
+## Sprint 9 — Capture & Context Polish
+Completed:
+- Confirmed navigation icons remain subtle and recognition-first
+- Verified contextual timestamps on active, delayed, and archived loops
+- Strengthened count hierarchy on Home, Revisit, and Settings
+- Added inline counts beside Archive section headers and an Archived total in Settings
+- Made Edit slightly more discoverable while keeping it secondary to Do / Delay / Drop
+- Refined empty-state copy on Home and Revisit with calm supporting lines
+- Tightened mobile heading sizes and SectionCard padding for better scanability
+- Replaced performative capture copy with a quiet keyboard-shortcut cue
+- Softened Settings subtitle to remove marketing-leaning language
+
+---
+
+## Sprint 10 — Cognitive State Model
+Completed:
+- Introduced Doing as a first-class state distinct from Done
+- Pressing Do now moves a loop into Doing, not into the resolved set
+- Added a dedicated Doing page with its own LoopCard treatment (seafoam pill)
+- Renamed the Archive page label to "Resolved" while keeping the /archive route
+- Surfaced Done and Dropped as named sections inside Resolved
+- Added 5-tab bottom navigation: Home / Doing / Revisit / Resolved / Settings
+- Extracted shared `lib/loops.ts` module with typed migration and persistence
+- Added backward-compatible migration for `active`, `pending`, `delay`, `drop`,
+  legacy `do` (completed), and current schema strings
+- Tracked `startedAt` on Doing transitions for contextual "Started X" timestamps
+- Updated Settings counts to a 4-tile grid: Do / Doing / Delayed / Resolved
+- Surfaced Do / Doing / Delayed counts on Home for orientation
+- Restore now sends Done or Dropped loops back to Do (not directly to Doing)
+
+---
+
 # Upcoming Priorities
 
-## Sprint 9 — Capture & Context Polish
-Planned:
-- Navigation icons
-- Contextual timestamps
-- Improved count hierarchy
-- Improved Edit visibility
-- Additional capture friction reduction
-- Neurodivergent-friendly UX refinements
+(Sprint 10 complete — next sprint to be planned.)
 
 ---
 

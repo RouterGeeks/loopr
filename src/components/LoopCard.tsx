@@ -1,19 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
+import type { LoopItem, LoopStatus } from '../lib/loops';
 
-type LoopStatus = 'active' | 'delayed' | 'done' | 'dropped';
-
-interface LoopItem {
-  id: number;
-  text: string;
-  status: LoopStatus;
-  revisitAt?: string;
-  createdAt?: string;
-}
+type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 interface LoopCardProps {
   loop: LoopItem;
-  onAction: (id: number, action: 'done' | 'dropped') => void;
+  onTransition: (id: number, status: TransitionStatus) => void;
   onDelay: (id: number, revisitAt: string) => void;
   onEdit: (id: number, newText: string) => void;
   onDelete: (id: number) => void;
@@ -24,10 +17,19 @@ type CardMode = 'view' | 'editing' | 'choosing-delay' | 'confirming-delete';
 type DelayPreset = 'tomorrow' | 'weekend' | 'nextWeek';
 
 const statusLabel: Record<LoopStatus, string> = {
-  active: 'Active',
+  do: 'Do',
+  doing: 'Doing',
   delayed: 'Delayed',
   done: 'Done',
   dropped: 'Dropped',
+};
+
+const statusPillClass: Record<LoopStatus, string> = {
+  do: 'bg-lavender-soft/70 text-lavender-dark',
+  doing: 'bg-seafoam/40 text-charcoal/80',
+  delayed: 'bg-lavender-soft/70 text-lavender-dark',
+  done: 'bg-cream-light text-charcoal/65',
+  dropped: 'bg-cream-light text-charcoal/65',
 };
 
 const at9amLocal = (d: Date): Date => {
@@ -80,25 +82,25 @@ const formatScheduledDate = (iso: string): string => {
 const startOfDay = (d: Date): Date =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
-const relativeAddedLabel = (iso: string, now: Date): string | null => {
-  const created = new Date(iso);
-  if (Number.isNaN(created.getTime())) return null;
+const relativeDaysAgoPhrase = (iso: string, now: Date): string | null => {
+  const stamp = new Date(iso);
+  if (Number.isNaN(stamp.getTime())) return null;
 
   const daysAgo = Math.round(
-    (startOfDay(now).getTime() - startOfDay(created).getTime()) / 86400000
+    (startOfDay(now).getTime() - startOfDay(stamp).getTime()) / 86400000
   );
 
-  if (daysAgo <= 0) return 'Added today';
-  if (daysAgo === 1) return 'Added yesterday';
-  if (daysAgo < 7) return `Added ${daysAgo} days ago`;
+  if (daysAgo <= 0) return 'today';
+  if (daysAgo === 1) return 'yesterday';
+  if (daysAgo < 7) return `${daysAgo} days ago`;
   if (daysAgo < 30) {
     const weeks = Math.floor(daysAgo / 7);
-    return weeks === 1 ? 'Added 1 week ago' : `Added ${weeks} weeks ago`;
+    return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
   }
-  return `Added ${created.toLocaleDateString(undefined, {
+  return stamp.toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
-  })}`;
+  });
 };
 
 const relativeRevisitLabel = (iso: string, now: Date): string | null => {
@@ -114,9 +116,6 @@ const relativeRevisitLabel = (iso: string, now: Date): string | null => {
   const todayDow = now.getDay();
   const targetDow = target.getDay();
 
-  // "This weekend" mirrors the preset logic: Sun targets next Sat (+6);
-  // Mon–Fri target upcoming Sat or Sun. Saturday's only future weekend day
-  // is Sunday, which is already covered by "Tomorrow".
   const isThisWeekend = (() => {
     if (todayDow === 0) return daysDiff === 6 && targetDow === 6;
     if (todayDow === 6) return false;
@@ -127,7 +126,6 @@ const relativeRevisitLabel = (iso: string, now: Date): string | null => {
   })();
   if (isThisWeekend) return 'This weekend';
 
-  // "Next week" = the upcoming Monday.
   const daysToNextMonday =
     todayDow === 1 ? 7 : (8 - todayDow) % 7 || 7;
   if (daysDiff === daysToNextMonday && targetDow === 1) return 'Next week';
@@ -137,7 +135,7 @@ const relativeRevisitLabel = (iso: string, now: Date): string | null => {
 
 const LoopCard: FC<LoopCardProps> = ({
   loop,
-  onAction,
+  onTransition,
   onDelay,
   onEdit,
   onDelete,
@@ -197,9 +195,11 @@ const LoopCard: FC<LoopCardProps> = ({
 
   const canSaveEdit = draft.trim().length > 0;
 
+  const now = new Date();
+
   const revisitSublabel = (() => {
     if (loop.status !== 'delayed' || !loop.revisitAt) return null;
-    const text = relativeRevisitLabel(loop.revisitAt, new Date());
+    const text = relativeRevisitLabel(loop.revisitAt, now);
     if (!text) return null;
     return {
       text,
@@ -207,9 +207,33 @@ const LoopCard: FC<LoopCardProps> = ({
     };
   })();
 
-  const addedLabel = loop.createdAt
-    ? relativeAddedLabel(loop.createdAt, new Date())
-    : null;
+  const footerLabel = (() => {
+    if (loop.status === 'doing' && loop.startedAt) {
+      const rel = relativeDaysAgoPhrase(loop.startedAt, now);
+      return rel ? `Started ${rel}` : null;
+    }
+    if (loop.createdAt) {
+      const rel = relativeDaysAgoPhrase(loop.createdAt, now);
+      return rel ? `Added ${rel}` : null;
+    }
+    return null;
+  })();
+
+  const primaryAction = (() => {
+    if (loop.status === 'doing') {
+      return {
+        label: 'Done',
+        onClick: () => onTransition(loop.id, 'done'),
+        ariaLabel: 'Mark loop done',
+      };
+    }
+    // Both 'do' and 'delayed' surface "Do" to start engaging.
+    return {
+      label: 'Do',
+      onClick: () => onTransition(loop.id, 'doing'),
+      ariaLabel: 'Start doing this loop',
+    };
+  })();
 
   if (mode === 'editing') {
     return (
@@ -357,17 +381,20 @@ const LoopCard: FC<LoopCardProps> = ({
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="rounded-full bg-lavender-soft/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-lavender-dark">
+            <div
+              className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${statusPillClass[loop.status]}`}
+            >
               {statusLabel[loop.status]}
             </div>
 
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => onAction(loop.id, 'done')}
+                onClick={primaryAction.onClick}
+                aria-label={primaryAction.ariaLabel}
                 className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
               >
-                Do
+                {primaryAction.label}
               </button>
 
               <button
@@ -380,7 +407,7 @@ const LoopCard: FC<LoopCardProps> = ({
 
               <button
                 type="button"
-                onClick={() => onAction(loop.id, 'dropped')}
+                onClick={() => onTransition(loop.id, 'dropped')}
                 className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
               >
                 Drop
@@ -388,23 +415,24 @@ const LoopCard: FC<LoopCardProps> = ({
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-lavender-light/30 pt-3">
-            {addedLabel ? (
-              <p className="text-[0.7rem] text-charcoal/50">{addedLabel}</p>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-lavender-light/30 pt-3">
+            {footerLabel ? (
+              <p className="text-[0.7rem] text-charcoal/45">{footerLabel}</p>
             ) : (
               <span aria-hidden />
             )}
 
-            <div className="flex gap-2">
+            <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={startEdit}
-                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal transition duration-200 hover:bg-white/70"
+                aria-label="Edit loop"
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-lavender-light/40 transition duration-200 hover:bg-white hover:text-charcoal"
               >
                 <svg
                   viewBox="0 0 16 16"
-                  width="11"
-                  height="11"
+                  width="12"
+                  height="12"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.6"
@@ -421,7 +449,7 @@ const LoopCard: FC<LoopCardProps> = ({
               <button
                 type="button"
                 onClick={startDelete}
-                className="rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/75 transition duration-200 hover:bg-white/70 hover:text-charcoal"
+                className="rounded-full px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/55 transition duration-200 hover:bg-white/70 hover:text-charcoal"
               >
                 Delete
               </button>

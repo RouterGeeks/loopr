@@ -3,67 +3,21 @@ import type { FC, KeyboardEvent } from 'react';
 import PageContainer from '../components/PageContainer';
 import SectionCard from '../components/SectionCard';
 import LoopCard from '../components/LoopCard';
+import { loadLoops, saveLoops } from '../lib/loops';
+import type { LoopItem, LoopStatus } from '../lib/loops';
 
-interface LoopItem {
-  id: number;
-  text: string;
-  status: 'active' | 'delayed' | 'done' | 'dropped';
-  revisitAt?: string;
-  createdAt?: string;
-  doneAt?: string;
-  droppedAt?: string;
-}
-
-const STORAGE_KEY = 'loopr.loops';
+type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 const Home: FC = () => {
   const [draft, setDraft] = useState('');
-  const [loops, setLoops] = useState<LoopItem[]>(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-
-    if (!saved) return [];
-
-    try {
-      const parsed = JSON.parse(saved) as any[];
-
-      if (Array.isArray(parsed)) {
-        return parsed.map((item) => ({
-          ...item,
-          createdAt:
-            item.createdAt ??
-            (typeof item.id === 'number'
-              ? new Date(item.id).toISOString()
-              : new Date().toISOString()),
-          status:
-            item.status === 'pending'
-              ? 'active'
-              : item.status === 'do'
-              ? 'done'
-              : item.status === 'delay'
-              ? 'delayed'
-              : item.status === 'drop'
-              ? 'dropped'
-              : (item.status as
-                  | 'active'
-                  | 'delayed'
-                  | 'done'
-                  | 'dropped'),
-        }));
-      }
-    } catch {
-      // Ignore invalid stored data
-    }
-
-    return [];
-  });
+  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(loops));
+    saveLoops(loops);
   }, [loops]);
 
   const addLoop = () => {
     const trimmed = draft.trim();
-
     if (!trimmed) return;
 
     const now = new Date();
@@ -72,7 +26,7 @@ const Home: FC = () => {
       {
         id: now.getTime(),
         text: trimmed,
-        status: 'active',
+        status: 'do',
         createdAt: now.toISOString(),
       },
       ...current,
@@ -81,20 +35,16 @@ const Home: FC = () => {
     setDraft('');
   };
 
-  const handleAction = (
-    id: number,
-    action: 'done' | 'dropped'
-  ) => {
+  const handleTransition = (id: number, status: TransitionStatus) => {
     setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const now = new Date().toISOString();
-        return {
-          ...loop,
-          status: action,
-          ...(action === 'done' ? { doneAt: now } : {}),
-          ...(action === 'dropped' ? { droppedAt: now } : {}),
-        };
+        const next: LoopItem = { ...loop, status };
+        if (status === 'doing') next.startedAt = now;
+        if (status === 'done') next.doneAt = now;
+        if (status === 'dropped') next.droppedAt = now;
+        return next;
       })
     );
   };
@@ -121,9 +71,7 @@ const Home: FC = () => {
     setLoops((current) => current.filter((loop) => loop.id !== id));
   };
 
-  const handleDraftKeyDown = (
-    event: KeyboardEvent<HTMLTextAreaElement>
-  ) => {
+  const handleDraftKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
       event.preventDefault();
       addLoop();
@@ -132,12 +80,13 @@ const Home: FC = () => {
 
   const canAddLoop = draft.trim().length > 0;
 
-  const activeLoops = loops.filter(
-    (loop) => loop.status === 'active'
-  );
+  const doLoops = loops.filter((loop) => loop.status === 'do');
 
-  const activeCount = activeLoops.length;
+  const doCount = doLoops.length;
+  const doingCount = loops.filter((l) => l.status === 'doing').length;
   const delayedCount = loops.filter((l) => l.status === 'delayed').length;
+
+  const hasAnyOpenWork = doCount + doingCount + delayedCount > 0;
 
   return (
     <PageContainer>
@@ -146,33 +95,40 @@ const Home: FC = () => {
           Loopr
         </p>
 
-        <h1 className="mb-3 text-4xl font-bold leading-tight text-charcoal">
+        <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
           Capture your open loops
         </h1>
 
         <p className="max-w-xl text-base leading-7 text-charcoal/70">
-          Quickly add a thought, then choose what to do next.
-          This space stays calm and focused as your loop list grows.
+          Add a thought, then decide what to do with it later.
         </p>
       </div>
 
-      {/* Loop Counts */}
-      {loops.length > 0 && (
-        <div className="mb-8 flex gap-3">
-          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/40 px-4 py-3">
-            <p className="text-2xl font-bold leading-none text-charcoal">
-              {activeCount}
+      {hasAnyOpenWork && (
+        <div className="mb-8 flex flex-wrap gap-3">
+          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/30 px-4 py-3.5">
+            <p className="text-3xl font-semibold leading-none tracking-tight text-charcoal tabular-nums">
+              {doCount}
             </p>
-            <p className="mt-1.5 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-charcoal/55">
-              Active
+            <p className="mt-2 text-[0.6rem] font-medium uppercase tracking-[0.25em] text-charcoal/45">
+              Do
             </p>
           </div>
 
-          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/40 px-4 py-3">
-            <p className="text-2xl font-bold leading-none text-charcoal">
+          <div className="min-w-[5.5rem] rounded-2xl bg-seafoam/25 px-4 py-3.5">
+            <p className="text-3xl font-semibold leading-none tracking-tight text-charcoal tabular-nums">
+              {doingCount}
+            </p>
+            <p className="mt-2 text-[0.6rem] font-medium uppercase tracking-[0.25em] text-charcoal/45">
+              Doing
+            </p>
+          </div>
+
+          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/30 px-4 py-3.5">
+            <p className="text-3xl font-semibold leading-none tracking-tight text-charcoal tabular-nums">
               {delayedCount}
             </p>
-            <p className="mt-1.5 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-charcoal/55">
+            <p className="mt-2 text-[0.6rem] font-medium uppercase tracking-[0.25em] text-charcoal/45">
               Delayed
             </p>
           </div>
@@ -201,8 +157,8 @@ const Home: FC = () => {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-charcoal/70">
-              Add a loop to begin building your list.
+            <p className="text-xs text-charcoal/45">
+              Cmd or Ctrl + Enter to capture.
             </p>
 
             <button
@@ -222,16 +178,20 @@ const Home: FC = () => {
       </SectionCard>
 
       <div className="mt-8 space-y-4">
-        {activeLoops.length === 0 ? (
-          <SectionCard>
-            <p className="text-charcoal/70">Quiet for now.</p>
+        {doLoops.length === 0 ? (
+          <SectionCard className="space-y-2">
+            <p className="text-charcoal/75">Quiet for now.</p>
+
+            <p className="text-sm text-charcoal/55">
+              Captured loops will appear here.
+            </p>
           </SectionCard>
         ) : (
-          activeLoops.map((loop) => (
+          doLoops.map((loop) => (
             <LoopCard
               key={loop.id}
               loop={loop}
-              onAction={handleAction}
+              onTransition={handleTransition}
               onDelay={handleDelay}
               onEdit={handleEdit}
               onDelete={handleDelete}

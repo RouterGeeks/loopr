@@ -3,7 +3,7 @@
 Loopr is a mobile-first PWA for capturing open loops and deciding what to do with them.
 
 Core flow:
-Capture → Do / Delay / Drop → Revisit
+Capture → Do → Doing → Done / Dropped / Delayed → Revisit
 
 Loopr is evolving from a lightweight productivity app into a calm cognitive-support tool focused on reducing executive-function friction and helping thoughts resurface safely.
 
@@ -59,21 +59,48 @@ The app should gently support reflection without judgment.
 
 ---
 
+# Loop State Model
+
+Loops move between five distinct states. Each state names a cognitive
+posture rather than a task-management bucket.
+
+| State | Meaning |
+|---|---|
+| Do | captured / open loops awaiting triage |
+| Doing | loops you are actively engaging with |
+| Delayed | resurfacing loops scheduled for later |
+| Done | completed loops |
+| Dropped | consciously released loops |
+
+Transitions are intentional and few:
+
+- Do → Doing (engage), Delayed (push back), Dropped (release)
+- Doing → Done (complete), Delayed (pause), Dropped (release)
+- Delayed → Doing (engage now), Delayed (re-schedule), Dropped (release)
+- Done / Dropped → Do (restore)
+
+"Do" is engagement, not completion. Completion lives only in Done.
+
+---
+
 # Action Language
 
-Do / Delay / Drop are core identity elements and should remain simple and immediately understandable.
+Do / Doing / Delay / Drop / Done are core identity elements and should
+remain simple and immediately understandable.
 
 Definitions:
-- Do → act on it now
+- Do → engage with this loop now (moves it into Doing)
+- Done → mark a Doing loop as complete
 - Delay → revisit later
 - Drop → consciously release it
 
-“Resurface” is supporting emotional language and system framing, not a replacement for clarity.
+"Resurface" is supporting emotional language and system framing, not a
+replacement for clarity.
 
 Examples:
-- delayed loops can “resurface”
-- revisit areas may reference “waiting at the front desk”
-- loops may “resurface today”
+- delayed loops can "resurface"
+- revisit areas may reference "waiting at the front desk"
+- loops may "resurface today"
 
 But users should never need to decode metaphors to use the app.
 
@@ -197,15 +224,17 @@ Not:
 Current / near-term features:
 - Quick text capture
 - Cmd/Ctrl + Enter capture
-- Do / Delay / Drop workflow
+- Do / Doing / Delayed / Done / Dropped state model
+- Dedicated Doing view for active engagement
 - Delay scheduling
-- Revisit view
+- Revisit view for delayed loops
+- Resolved view (Done + Dropped) with restore
 - Relative resurfacing labels
 - Edit and delete loops
-- Local storage persistence
+- Local storage persistence with backward-compatible migration
 - PWA install support
 - Offline shell support
-- Contextual timestamps
+- Contextual timestamps (Added / Started / Completed / Dropped)
 - Simple settings
 
 Future considerations:

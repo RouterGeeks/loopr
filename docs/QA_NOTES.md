@@ -13,14 +13,39 @@ These notes exist to:
 
 # Product Decisions
 
+## State Model (Sprint 10)
+
+Loops live in one of five states: Do, Doing, Delayed, Done, Dropped.
+
+* **Do** — captured/open loops awaiting triage. Lives on Home.
+* **Doing** — actively engaged loops. Lives on the Doing page.
+* **Delayed** — resurfacing loops scheduled for later. Lives on Revisit.
+* **Done** — completed loops. Lives on Resolved.
+* **Dropped** — consciously released loops. Lives on Resolved.
+
+"Do" is engagement, not completion. Completion is only reachable from
+Doing → Done. This separation gives in-progress work its own visible
+state, which matters for neurodivergent users who need to see what they
+are currently holding.
+
+Restore from Done or Dropped returns the loop to Do (not directly to
+Doing), so the user can decide what to do with it as if it were freshly
+captured.
+
+The page formerly known as Archive is labeled "Resolved" in the UI; the
+route remains /archive for compatibility with existing bookmarks and the
+service-worker cache.
+
+---
+
 ## Drop vs Delete
 
 Drop is intentionally reversible.
 
 Behavior:
 
-* Drop moves a loop into Archive → Dropped
-* Dropped loops can be restored later
+* Drop moves a loop into Resolved → Dropped
+* Dropped loops can be restored later (to Do)
 * Drop does NOT require confirmation
 
 Delete is permanent.
@@ -109,6 +134,39 @@ Preferred tone:
 
 ---
 
+## Count Hierarchy (Sprint 9)
+
+Counts across Home, Revisit, Settings, and Resolved emphasize the number and
+de-emphasize the label.
+
+* Number: tabular-nums, semibold, leading-none, tracking-tight
+* Label: smaller, lighter charcoal (~/45–/50), wider tracking
+* Background: soft lavender or white at low opacity — never bright
+
+Avoid:
+
+* bright accent colors
+* dashboard-style energy
+* labels louder than numbers
+
+---
+
+## Edit Visibility (Sprint 9)
+
+Edit on LoopCard sits in the utility row at the bottom of the card, beneath
+the primary action row. It carries a subtle background and ring so it reads
+as a button, but it should never compete with the primary actions.
+
+Delete remains intentionally more recessive — text-only, no default background.
+
+Hierarchy:
+
+1. Primary row — Do / Delay / Drop on Do and Delayed cards; Done / Delay / Drop on Doing cards
+2. Edit (utility, subtle button)
+3. Delete (utility, recessive)
+
+---
+
 # Technical Notes
 
 ## localStorage
@@ -119,12 +177,20 @@ Loopr currently persists data using:
 loopr.loops
 ```
 
+All read/write goes through `src/lib/loops.ts`. The loader detects legacy
+schemas (V1 `pending`/`delay`/`drop`/`do`-as-completed and V4 `active`)
+and normalizes them into the current model. Once the loader has touched
+a dataset, the writer always saves new-schema strings, so the legacy
+detection only fires once per device.
+
 Persistence is verified across:
 
 * refreshes
 * route changes
 * preview mode
 * offline mode
+* upgrade from V4 (`active`/`delayed`/`done`/`dropped`) — existing
+  `active` loops become `do`, all other states preserved
 
 ---
 
