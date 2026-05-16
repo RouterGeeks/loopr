@@ -95,6 +95,32 @@ No AI processing in V1.
 
 ---
 
+# Repository Structure
+
+```
+/docs
+  LOOPR_CONTEXT.md
+  PROJECT_PLAN.md
+  QA_CHECKLIST.md
+  QA_NOTES.md
+  QA_WORKFLOW.md
+
+/public
+/src
+```
+
+The /docs directory contains:
+
+- product philosophy
+- QA workflow
+- sprint planning
+- UX principles
+- development guidance
+
+All AI-assisted development sessions should review /docs before making significant changes.
+
+---
+
 # Current Feature Set
 
 ## Capture
