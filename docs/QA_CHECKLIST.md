@@ -27,15 +27,23 @@
 
 # Routing & Navigation
 
-* [ ] Home loads
-* [ ] Doing loads
-* [ ] Revisit loads
-* [ ] Resolved loads (route /archive)
-* [ ] Settings loads
+* [ ] Dashboard loads (route /)
+* [ ] Doing loads (route /doing)
+* [ ] Delayed loads (route /delayed)
+* [ ] Done loads (route /done)
+* [ ] Dials loads (route /dials)
 * [ ] Refresh works on all routes
 * [ ] No 404s
 * [ ] Active nav state works
 * [ ] Icons display correctly
+* [ ] Nav labels read: Dashboard / Doing / Delayed / Done / Dials
+
+# Legacy Route Redirects
+
+* [ ] /revisit redirects to /delayed
+* [ ] /archive redirects to /done
+* [ ] /settings redirects to /dials
+* [ ] URL bar updates to the new path (replace, not push)
 
 ---
 
@@ -62,13 +70,13 @@
 # Loop Actions
 
 * [ ] Do moves loop from Do → Doing
-* [ ] Done moves loop from Doing → Resolved (Done)
+* [ ] Done moves loop from Doing → Done (Done section)
 * [ ] Delay moves loop from any state → Delayed
 * [ ] Do on a Delayed loop moves it to Doing
-* [ ] Drop moves loop from Do / Doing / Delayed → Resolved (Dropped)
+* [ ] Drop moves loop from Do / Doing / Delayed → Done (Dropped section)
 * [ ] Edit works in Do, Doing, and Delayed states
 * [ ] Delete works in every state
-* [ ] Restore from Resolved sends loop back to Do
+* [ ] Restore from Done page sends loop back to Do
 * [ ] Delete confirmation appears
 * [ ] No double borders/cards
 * [ ] Doing pill is visually distinct (seafoam tone) but calm
@@ -87,21 +95,22 @@
 
 ---
 
-# Revisit
+# Delayed (route /delayed)
 
+* [ ] Page heading reads "Delayed"
 * [ ] Only delayed loops appear
 * [ ] Delayed loops editable
 * [ ] Delayed loops deletable
-* [ ] Do from Revisit moves loop to Doing
-* [ ] Drop from Revisit moves loop to Resolved → Dropped
-* [ ] Delay from Revisit re-schedules the loop
+* [ ] Do from Delayed moves loop to Doing
+* [ ] Drop from Delayed moves loop to Done page (Dropped section)
+* [ ] Delay from Delayed re-schedules the loop
 * [ ] Empty state displays correctly
 
 ---
 
-# Resolved (route /archive)
+# Done (route /done)
 
-* [ ] Page heading reads "Resolved"
+* [ ] Page heading reads "Done"
 * [ ] Done section works
 * [ ] Dropped section works
 * [ ] Restore sends loops back to Do
@@ -111,9 +120,10 @@
 
 ---
 
-# Settings
+# Dials (route /dials)
 
-* [ ] Do / Doing / Delayed / Resolved counts are correct
+* [ ] Page heading reads "Dials"
+* [ ] Do / Doing / Delayed / Done counts are correct
 * [ ] Counts update live after Clear All
 * [ ] Counts reload when the confirmation modal closes
 * [ ] Clear All confirmation works
@@ -126,7 +136,7 @@
 * [ ] localStorage persists correctly
 * [ ] Refresh preserves state
 * [ ] Route changes preserve state
-* [ ] Resolved (Done + Dropped) persists
+* [ ] Done page (Done + Dropped) persists
 * [ ] Delay timestamps persist
 * [ ] `startedAt` persists for Doing loops
 * [ ] Legacy data (`active` / `pending` / `delay` / `drop` / legacy `do`) migrates on first load
@@ -138,11 +148,11 @@
 * [ ] Manifest loads
 * [ ] Service worker registers
 * [ ] Offline shell works
-* [ ] Home works offline
+* [ ] Dashboard works offline
 * [ ] Doing works offline
-* [ ] Revisit works offline
-* [ ] Resolved (route /archive) works offline
-* [ ] Settings works offline
+* [ ] Delayed works offline
+* [ ] Done works offline
+* [ ] Dials works offline
 * [ ] Install prompt works
 * [ ] Icons display correctly
 
@@ -172,14 +182,14 @@
 
 # Regression Smoke Test
 
-* [ ] Add loop (lands in Do on Home)
+* [ ] Add loop (lands in Do on Dashboard)
 * [ ] Press Do — loop moves to Doing page
-* [ ] Press Done on Doing card — loop moves to Resolved → Done
+* [ ] Press Done on Doing card — loop moves to Done page (Done section)
 * [ ] Add another loop, press Delay → schedule
-* [ ] Verify Revisit shows it
-* [ ] Press Do on Delayed card → moves to Doing
-* [ ] Add another loop, press Drop → Resolved → Dropped
-* [ ] Restore a Resolved loop → reappears in Do on Home
+* [ ] Verify Delayed page shows it
+* [ ] Press Do on a Delayed card → moves to Doing
+* [ ] Add another loop, press Drop → Done page (Dropped section)
+* [ ] Restore from Done page → reappears in Do on Dashboard
 * [ ] Refresh every route, verify persistence
 * [ ] Verify offline shell still loads each route
 

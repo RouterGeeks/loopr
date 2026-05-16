@@ -104,11 +104,11 @@ const Home: FC = () => {
         </p>
 
         <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
-          Capture your open loops
+          Dashboard
         </h1>
 
         <p className="max-w-xl text-base leading-7 text-charcoal/70">
-          Add a thought, then decide what to do with it later.
+          Capture a loop, then decide what to do with it later.
         </p>
       </div>
 

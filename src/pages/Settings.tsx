@@ -18,7 +18,7 @@ const Settings: FC = () => {
   const delayedCount = loops.filter(
     (loop) => loop.status === 'delayed'
   ).length;
-  const resolvedCount = loops.filter(
+  const doneCount = loops.filter(
     (loop) => loop.status === 'done' || loop.status === 'dropped'
   ).length;
 
@@ -26,7 +26,7 @@ const Settings: FC = () => {
     { label: 'Do', value: doCount },
     { label: 'Doing', value: doingCount },
     { label: 'Delayed', value: delayedCount },
-    { label: 'Resolved', value: resolvedCount },
+    { label: 'Done', value: doneCount },
   ];
 
   const handleClearData = () => {
@@ -43,7 +43,7 @@ const Settings: FC = () => {
         </p>
 
         <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
-          Settings
+          Dials
         </h1>
 
         <p className="max-w-xl text-base leading-7 text-charcoal/70">

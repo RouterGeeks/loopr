@@ -66,7 +66,7 @@ const Revisit: FC = () => {
         </p>
 
         <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
-          Revisit
+          Delayed
         </h1>
 
         <p className="max-w-xl text-base leading-7 text-charcoal/70">

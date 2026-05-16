@@ -225,17 +225,20 @@ Current / near-term features:
 - Quick text capture
 - Cmd/Ctrl + Enter capture
 - Do / Doing / Delayed / Done / Dropped state model
-- Dedicated Doing view for active engagement
+- Dashboard (capture + overview of open work) at `/`
+- Dedicated Doing view at `/doing`
 - Delay scheduling
-- Revisit view for delayed loops
-- Resolved view (Done + Dropped) with restore
+- Delayed view at `/delayed`
+- Done view (completed + released loops, with restore) at `/done`
+- Dials (settings / control panel) at `/dials`
+- Legacy redirects: `/revisit` → `/delayed`, `/archive` → `/done`,
+  `/settings` → `/dials`
 - Relative resurfacing labels
 - Edit and delete loops
 - Local storage persistence with backward-compatible migration
 - PWA install support
 - Offline shell support
 - Contextual timestamps (Added / Started / Completed / Dropped)
-- Simple settings
 
 Future considerations:
 - Voice capture

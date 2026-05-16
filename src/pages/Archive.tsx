@@ -66,7 +66,7 @@ const Archive: FC = () => {
         </p>
 
         <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
-          Resolved
+          Done
         </h1>
 
         <p className="max-w-xl text-base leading-7 text-charcoal/70">
@@ -76,7 +76,7 @@ const Archive: FC = () => {
 
       {isEmpty ? (
         <SectionCard className="space-y-2">
-          <p className="text-charcoal/75">Nothing resolved yet.</p>
+          <p className="text-charcoal/75">Nothing here yet.</p>
 
           <p className="text-sm text-charcoal/55">
             Completed and released loops will appear here.

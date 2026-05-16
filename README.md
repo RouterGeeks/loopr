@@ -16,13 +16,20 @@ Loopr distinguishes engagement from completion. Loops live in one of five states
 
 | State | Where it lives |
 |---|---|
-| Do | Home — captured, awaiting triage |
+| Do | Dashboard — captured, awaiting triage |
 | Doing | Doing — actively engaging with |
-| Delayed | Revisit — resurfacing later |
-| Done | Resolved — completed |
-| Dropped | Resolved — consciously released |
+| Delayed | Delayed — resurfacing later |
+| Done | Done — completed |
+| Dropped | Done — consciously released |
 
 Pressing **Do** moves a captured loop into **Doing**, not into Done. Completion is reachable only via Doing → Done. This gives in-progress work its own visible state.
+
+## Navigation
+
+Five-tab bottom navigation: **Dashboard / Doing / Delayed / Done / Dials**.
+Routes: `/`, `/doing`, `/delayed`, `/done`, `/dials`. The legacy paths
+`/revisit`, `/archive`, and `/settings` redirect to their new homes so
+old PWA caches and bookmarks keep working.
 
 ## Core Philosophy
 
@@ -30,7 +37,7 @@ Pressing **Do** moves a captured loop into **Doing**, not into Done. Completion 
 - Capture should never take more than two or three seconds.
 - The interface stays calm: no streaks, no urgency badges, no gamification, no red overdue states.
 - Delayed loops resurface; they don't accumulate as guilt.
-- Dropped loops are consciously released — and recoverable from Resolved.
+- Dropped loops are consciously released — and recoverable from Done.
 
 ## Tech Stack
 

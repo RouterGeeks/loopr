@@ -20,7 +20,7 @@ const iconProps = {
   'aria-hidden': true,
 };
 
-const HomeIcon = (): ReactNode => (
+const DashboardIcon = (): ReactNode => (
   <svg {...iconProps}>
     <path d="M3.5 11L12 4l8.5 7" />
     <path d="M5.5 9.5V20h13V9.5" />
@@ -34,14 +34,14 @@ const DoingIcon = (): ReactNode => (
   </svg>
 );
 
-const RevisitIcon = (): ReactNode => (
+const DelayedIcon = (): ReactNode => (
   <svg {...iconProps}>
     <circle cx="12" cy="12" r="8.5" />
     <path d="M12 7.5V12l3 2" />
   </svg>
 );
 
-const ResolvedIcon = (): ReactNode => (
+const DoneIcon = (): ReactNode => (
   <svg {...iconProps}>
     <rect x="3.5" y="5" width="17" height="3.5" rx="0.8" />
     <path d="M5 8.5V19h14V8.5" />
@@ -49,7 +49,7 @@ const ResolvedIcon = (): ReactNode => (
   </svg>
 );
 
-const SettingsIcon = (): ReactNode => (
+const DialsIcon = (): ReactNode => (
   <svg {...iconProps}>
     <circle cx="12" cy="12" r="3" />
     <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M5.2 18.8l2.1-2.1M16.7 7.3l2.1-2.1" />
@@ -61,8 +61,8 @@ const BottomNav: FC = () => {
     <nav className="fixed bottom-0 left-0 right-0 bg-cream shadow-nav border-t border-lavender-light/30 backdrop-blur-sm">
       <div className="flex justify-around py-3 px-1 pb-safe">
         <NavLink to="/" className={({ isActive }) => linkClass(isActive)} end>
-          <HomeIcon />
-          <span className="text-xs font-semibold">Home</span>
+          <DashboardIcon />
+          <span className="text-xs font-semibold">Dashboard</span>
         </NavLink>
 
         <NavLink
@@ -74,27 +74,27 @@ const BottomNav: FC = () => {
         </NavLink>
 
         <NavLink
-          to="/revisit"
+          to="/delayed"
           className={({ isActive }) => linkClass(isActive)}
         >
-          <RevisitIcon />
-          <span className="text-xs font-semibold">Revisit</span>
+          <DelayedIcon />
+          <span className="text-xs font-semibold">Delayed</span>
         </NavLink>
 
         <NavLink
-          to="/archive"
+          to="/done"
           className={({ isActive }) => linkClass(isActive)}
         >
-          <ResolvedIcon />
-          <span className="text-xs font-semibold">Resolved</span>
+          <DoneIcon />
+          <span className="text-xs font-semibold">Done</span>
         </NavLink>
 
         <NavLink
-          to="/settings"
+          to="/dials"
           className={({ isActive }) => linkClass(isActive)}
         >
-          <SettingsIcon />
-          <span className="text-xs font-semibold">Settings</span>
+          <DialsIcon />
+          <span className="text-xs font-semibold">Dials</span>
         </NavLink>
       </div>
     </nav>

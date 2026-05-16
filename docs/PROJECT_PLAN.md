@@ -114,7 +114,11 @@ No AI processing in V1.
 /src
   /components   reusable UI (LoopCard, ArchiveCard, BottomNav, ...)
   /pages        route components (Home, Doing, Revisit, Archive, Settings)
-                  Archive.tsx renders the "Resolved" page; route is /archive
+                  user-facing labels: Dashboard / Doing / Delayed / Done / Dials
+                  primary routes: /, /doing, /delayed, /done, /dials
+                  legacy redirects: /revisit → /delayed,
+                                    /archive → /done,
+                                    /settings → /dials
   /lib          shared logic — loops.ts owns the state model, migration, persistence
 ```
 
@@ -156,27 +160,38 @@ All AI-assisted development sessions should review /docs before making significa
 - Due Now labeling
 - Human-readable resurfacing labels
 
-## Doing
+## Dashboard (route /)
+- Capture input with Cmd/Ctrl + Enter shortcut
+- Overview chips: Do / Doing / Delayed counts
+- List of Do (open) loops
+- Autofocus on mount and on return navigation
+
+## Doing (route /doing)
 - Dedicated view for actively engaged loops
 - Seafoam-toned status pill for subtle visual distinction
 - "Started X" contextual timestamp
 - Transitions to Done, Delayed, or Dropped
 
-## Revisit
+## Delayed (route /delayed)
 - Delayed loops sorted by revisit time
 - Relative resurfacing states
 - Empty-state support
 
-## Resolved (route /archive)
+## Done (route /done)
 - Done and Dropped surfaced as named sections
 - Restore returns loops to Do
 - Permanent delete with confirmation
 - Empty-state support
 
-## Settings
-- Four-tile count grid: Do / Doing / Delayed / Resolved
+## Dials (route /dials)
+- Four-tile count grid: Do / Doing / Delayed / Done
 - Clear all data
 - Confirmation protection
+
+## Legacy route redirects
+- /revisit → /delayed
+- /archive → /done
+- /settings → /dials
 
 ## PWA
 - Installable app
@@ -295,11 +310,49 @@ Completed:
 - Surfaced Do / Doing / Delayed counts on Home for orientation
 - Restore now sends Done or Dropped loops back to Do (not directly to Doing)
 
+Hotfix during testing (BUG-01):
+- Restored autofocus on the Dashboard capture textarea using a ref +
+  useEffect, since the HTML autofocus attribute is unreliable under
+  React SPA hydration.
+
+---
+
+## Sprint 11 — Navigation Terminology
+Completed:
+- Renamed nav labels: Home → Dashboard, Revisit → Delayed,
+  Resolved → Done, Settings → Dials (Doing unchanged)
+- Updated H1s on all five pages to match new nav labels
+- Routes preserved (`/`, `/doing`, `/revisit`, `/archive`, `/settings`)
+  to avoid invalidating PWA service-worker caches and existing bookmarks
+- Empty-state copy on the Done page no longer uses the word "resolved"
+- Internal icon and count-tile names renamed to match new labels
+- Docs (README, LOOPR_CONTEXT, PROJECT_PLAN, QA_CHECKLIST, QA_NOTES,
+  QA_WORKFLOW) updated to use the new vocabulary
+
+No state-model, persistence, or workflow logic changed.
+
+---
+
+## Sprint 12 — Route Alignment
+Completed:
+- Renamed routes to match nav labels: /revisit → /delayed,
+  /archive → /done, /settings → /dials
+- Added in-app redirects so the old paths (`/revisit`, `/archive`,
+  `/settings`) navigate to their new homes — preserves bookmarks and
+  installed-PWA cache entries
+- Updated BottomNav `to` targets to point at the new paths
+- Bumped service worker cache to `loopr-shell-v5`
+- Added new routes (/doing, /delayed, /done, /dials) to the SW SHELL
+  precache list for first-load offline coverage
+- Updated docs to reflect the new routes and the legacy redirect map
+
+No state-model, persistence, or workflow logic changed.
+
 ---
 
 # Upcoming Priorities
 
-(Sprint 10 complete — next sprint to be planned.)
+(Sprint 12 complete — next sprint to be planned.)
 
 ---
 

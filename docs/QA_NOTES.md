@@ -13,28 +13,41 @@ These notes exist to:
 
 # Product Decisions
 
-## State Model (Sprint 10)
+## State Model (Sprint 10) + Nav Terminology (Sprint 11) + Routes (Sprint 12)
 
 Loops live in one of five states: Do, Doing, Delayed, Done, Dropped.
 
-* **Do** — captured/open loops awaiting triage. Lives on Home.
-* **Doing** — actively engaged loops. Lives on the Doing page.
-* **Delayed** — resurfacing loops scheduled for later. Lives on Revisit.
-* **Done** — completed loops. Lives on Resolved.
-* **Dropped** — consciously released loops. Lives on Resolved.
+* **Do** — captured/open loops awaiting triage. Lives on the Dashboard page (route `/`).
+* **Doing** — actively engaged loops. Lives on the Doing page (route `/doing`).
+* **Delayed** — resurfacing loops scheduled for later. Lives on the Delayed page (route `/delayed`).
+* **Done** — completed loops. Lives on the Done page (route `/done`), in the Done section.
+* **Dropped** — consciously released loops. Lives on the Done page, in the Dropped section.
 
 "Do" is engagement, not completion. Completion is only reachable from
 Doing → Done. This separation gives in-progress work its own visible
 state, which matters for neurodivergent users who need to see what they
 are currently holding.
 
-Restore from Done or Dropped returns the loop to Do (not directly to
+Restore from the Done page returns the loop to Do (not directly to
 Doing), so the user can decide what to do with it as if it were freshly
 captured.
 
-The page formerly known as Archive is labeled "Resolved" in the UI; the
-route remains /archive for compatibility with existing bookmarks and the
-service-worker cache.
+**Legacy routes.** The pre-Sprint-12 paths still resolve, via in-app
+redirects:
+
+* `/revisit` → `/delayed`
+* `/archive` → `/done`
+* `/settings` → `/dials`
+
+This keeps installed PWAs and existing bookmarks working. The service
+worker cache version was bumped to `loopr-shell-v5` when the new routes
+joined the precache SHELL, so old caches are cleared on next
+service-worker activation.
+
+**Renaming trail** (for archaeology): the Done page was originally
+called Archive, then Resolved (Sprint 10), then Done (Sprint 11). Its
+route was `/archive` through Sprint 11 and became `/done` in Sprint 12,
+with `/archive` redirecting.
 
 ---
 
@@ -44,7 +57,7 @@ Drop is intentionally reversible.
 
 Behavior:
 
-* Drop moves a loop into Resolved → Dropped
+* Drop moves a loop into the Done page → Dropped section
 * Dropped loops can be restored later (to Do)
 * Drop does NOT require confirmation
 
@@ -136,7 +149,7 @@ Preferred tone:
 
 ## Count Hierarchy (Sprint 9)
 
-Counts across Home, Revisit, Settings, and Resolved emphasize the number and
+Counts across Dashboard, Delayed, Dials, and Done emphasize the number and
 de-emphasize the label.
 
 * Number: tabular-nums, semibold, leading-none, tracking-tight

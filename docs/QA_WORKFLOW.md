@@ -108,11 +108,13 @@ Validate:
 
 ## Offline
 
-* Home works offline
-* Doing works offline
-* Revisit works offline
-* Resolved (/archive) works offline
-* Settings works offline
+* Dashboard (/) works offline
+* Doing (/doing) works offline
+* Delayed (/delayed) works offline
+* Done (/done) works offline
+* Dials (/dials) works offline
+* Legacy routes (/revisit, /archive, /settings) redirect to new homes,
+  online or offline
 
 ## Routing
 
@@ -122,7 +124,7 @@ Validate:
 ## Persistence
 
 * localStorage persists correctly
-* Resolved (Done + Dropped) persists correctly
+* Done page (Done + Dropped) persists correctly
 * delay scheduling persists
 * legacy data migrates on first load
 
@@ -170,12 +172,12 @@ npm run preview
 
 Run regression smoke test:
 
-* add loop (lands in Do)
+* add loop (lands in Do on Dashboard)
 * press Do — loop moves to Doing
-* press Done on a Doing loop — moves to Resolved → Done
-* delay a loop and verify it appears in Revisit
-* drop a loop and verify it appears in Resolved → Dropped
-* restore from Resolved — loop returns to Do
+* press Done on a Doing loop — moves to Done page (Done section)
+* delay a loop and verify it appears on Delayed
+* drop a loop and verify it appears in Done page (Dropped section)
+* restore from Done page — loop returns to Do on Dashboard
 * refresh every route
 * verify persistence
 
