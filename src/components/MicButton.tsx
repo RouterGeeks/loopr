@@ -48,7 +48,7 @@ const MicButton: FC<MicButtonProps> = ({ onText, label = 'Voice capture' }) => {
         className={`inline-flex items-center justify-center rounded-full p-2 ring-1 transition duration-200 ${
           listening
             ? 'bg-lavender-soft text-lavender-dark ring-lavender shadow-soft'
-            : 'bg-white/70 text-charcoal/85 ring-lavender-light/40 hover:bg-white hover:text-charcoal'
+            : 'bg-paper-light/70 text-charcoal/85 ring-charcoal/10 hover:bg-paper-light hover:text-charcoal'
         }`}
       >
         <MicIcon />

@@ -9,12 +9,15 @@ import Doing from './pages/Doing';
 import Revisit from './pages/Revisit';
 import Archive from './pages/Archive';
 import Settings from './pages/Settings';
+import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
+import CapturePlusButton from './components/CapturePlusButton';
 
 function App() {
   return (
     <Router>
-      <div className="bg-cream text-charcoal">
+      <div className="bg-paper-shell text-charcoal">
+        <AppHeader />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/doing" element={<Doing />} />
@@ -37,6 +40,7 @@ function App() {
             element={<Navigate to="/dials" replace />}
           />
         </Routes>
+        <CapturePlusButton />
         <BottomNav />
       </div>
     </Router>

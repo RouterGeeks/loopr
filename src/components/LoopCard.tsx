@@ -31,12 +31,12 @@ const statusLabel: Record<LoopStatus, string> = {
   dropped: 'Dropped',
 };
 
-const statusPillClass: Record<LoopStatus, string> = {
-  do: 'bg-lavender-soft/70 text-lavender-dark',
-  doing: 'bg-seafoam/40 text-charcoal/80',
-  delayed: 'bg-lavender-soft/70 text-lavender-dark',
-  done: 'bg-cream-light text-charcoal/65',
-  dropped: 'bg-cream-light text-charcoal/65',
+const statusDotClass: Record<LoopStatus, string> = {
+  do: 'bg-lavender-dark/70',
+  doing: 'bg-seafoam',
+  delayed: 'bg-lavender-dark/50',
+  done: 'bg-charcoal/30',
+  dropped: 'bg-charcoal/25',
 };
 
 const at9amLocal = (d: Date): Date => {
@@ -332,7 +332,7 @@ const LoopCard: FC<LoopCardProps> = ({
 
   if (mode === 'editing') {
     return (
-      <div className="rounded-[1.75rem] bg-cream-surface shadow-card p-5">
+      <div className="py-5">
         <label htmlFor={`loop-edit-${loop.id}`} className="sr-only">
           Edit loop
         </label>
@@ -343,14 +343,14 @@ const LoopCard: FC<LoopCardProps> = ({
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           rows={3}
-          className="mb-4 w-full rounded-2xl border border-lavender-soft/40 bg-white/90 p-4 text-base leading-7 text-charcoal shadow-soft focus:border-lavender focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
+          className="mb-4 w-full border-b border-rule bg-transparent p-0 font-serif text-lg leading-relaxed text-charcoal placeholder:text-charcoal/40 focus:border-charcoal/40 focus:outline-none"
         />
 
         <div className="flex flex-wrap items-center justify-end gap-2">
           <button
             type="button"
             onClick={cancelEdit}
-            className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-lavender-light/40 hover:bg-cream-light"
+            className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
           >
             Cancel
           </button>
@@ -359,10 +359,10 @@ const LoopCard: FC<LoopCardProps> = ({
             type="button"
             onClick={saveEdit}
             disabled={!canSaveEdit}
-            className={`rounded-full px-5 py-2 text-sm font-semibold transition duration-200 ${
+            className={`rounded-md px-5 py-2 text-sm font-semibold transition duration-200 ${
               canSaveEdit
-                ? 'bg-[#3A3347] text-[#F7EFE3] shadow-soft hover:bg-[#2E2938]'
-                : 'cursor-not-allowed bg-[#D8D0C4] text-[#8A8175] opacity-60'
+                ? 'bg-charcoal text-cream-light shadow-soft hover:bg-charcoal-soft'
+                : 'cursor-not-allowed bg-paper-edge text-charcoal/35'
             }`}
           >
             Save
@@ -374,15 +374,17 @@ const LoopCard: FC<LoopCardProps> = ({
 
   return (
     <div
-      className={`rounded-[1.75rem] bg-cream-surface shadow-card p-5 transition-all duration-200 ease-out motion-reduce:transition-none ${
+      className={`py-5 transition-all duration-200 ease-out motion-reduce:transition-none ${
         departing ? 'pointer-events-none -translate-y-1 opacity-0' : ''
       }`}
     >
       <div className="mb-4">
-        <p className="text-base leading-7 text-charcoal">{loop.text}</p>
+        <p className="font-serif text-lg leading-relaxed text-charcoal">
+          {loop.text}
+        </p>
 
         {hasNote && mode !== 'editing-note' && (
-          <p className="mt-1.5 truncate text-sm italic text-charcoal/55">
+          <p className="mt-1.5 truncate border-l-2 border-rule pl-3 font-serif text-sm italic text-charcoal/55">
             {notePreview}
           </p>
         )}
@@ -408,7 +410,7 @@ const LoopCard: FC<LoopCardProps> = ({
           onCancel={cancelNote}
         />
       ) : mode === 'choosing-delay' ? (
-        <div className="space-y-3 rounded-2xl bg-white/60 p-4">
+        <div className="space-y-3 rounded-md border border-rule bg-paper-light/60 p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/70">
             When should we revisit?
           </p>
@@ -417,7 +419,7 @@ const LoopCard: FC<LoopCardProps> = ({
             <button
               type="button"
               onClick={() => applyPreset('tomorrow')}
-              className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
+              className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               Tomorrow
             </button>
@@ -425,7 +427,7 @@ const LoopCard: FC<LoopCardProps> = ({
             <button
               type="button"
               onClick={() => applyPreset('weekend')}
-              className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
+              className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               This weekend
             </button>
@@ -433,7 +435,7 @@ const LoopCard: FC<LoopCardProps> = ({
             <button
               type="button"
               onClick={() => applyPreset('nextWeek')}
-              className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
+              className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               Next week
             </button>
@@ -452,7 +454,7 @@ const LoopCard: FC<LoopCardProps> = ({
               type="date"
               min={localTodayString()}
               onChange={(event) => applyCustomDate(event.target.value)}
-              className="rounded-full border border-lavender-soft/40 bg-white/90 px-3 py-1.5 text-sm text-charcoal shadow-soft focus:border-lavender focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
+              className="rounded-md border border-rule bg-paper-light/90 px-3 py-1.5 text-sm text-charcoal shadow-soft focus:border-lavender/60 focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
             />
           </div>
 
@@ -460,14 +462,14 @@ const LoopCard: FC<LoopCardProps> = ({
             <button
               type="button"
               onClick={cancelDelay}
-              className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-lavender-light/40 hover:bg-cream-light"
+              className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               Cancel
             </button>
           </div>
         </div>
       ) : mode === 'confirming-delete' ? (
-        <div className="rounded-2xl bg-white/60 p-4">
+        <div className="rounded-md border border-rule bg-paper-light/60 p-4">
           <p className="mb-3 text-sm leading-6 text-charcoal/80">
             Delete this loop? This can't be undone.
           </p>
@@ -476,7 +478,7 @@ const LoopCard: FC<LoopCardProps> = ({
             <button
               type="button"
               onClick={cancelDelete}
-              className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-lavender-light/40 hover:bg-cream-light"
+              className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               Cancel
             </button>
@@ -484,7 +486,7 @@ const LoopCard: FC<LoopCardProps> = ({
             <button
               type="button"
               onClick={confirmDelete}
-              className="rounded-full bg-charcoal px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-charcoal-soft"
+              className="rounded-md bg-charcoal px-4 py-2 text-sm font-semibold text-cream-light transition duration-200 hover:bg-charcoal-soft"
             >
               Delete
             </button>
@@ -493,9 +495,11 @@ const LoopCard: FC<LoopCardProps> = ({
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div
-              className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${statusPillClass[loop.status]}`}
-            >
+            <div className="inline-flex items-center gap-2 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/65">
+              <span
+                aria-hidden
+                className={`h-1.5 w-1.5 rounded-full ${statusDotClass[loop.status]}`}
+              />
               {statusLabel[loop.status]}
             </div>
 
@@ -504,7 +508,7 @@ const LoopCard: FC<LoopCardProps> = ({
                 type="button"
                 onClick={primaryAction.onClick}
                 aria-label={primaryAction.ariaLabel}
-                className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
+                className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
               >
                 {primaryAction.label}
               </button>
@@ -512,7 +516,7 @@ const LoopCard: FC<LoopCardProps> = ({
               <button
                 type="button"
                 onClick={startDelay}
-                className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
+                className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
               >
                 Delay
               </button>
@@ -520,14 +524,14 @@ const LoopCard: FC<LoopCardProps> = ({
               <button
                 type="button"
                 onClick={() => onTransition(loop.id, 'dropped')}
-                className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
+                className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
               >
                 Drop
               </button>
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-lavender-light/30 pt-3">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
             {footerLabel ? (
               <p className="text-[0.7rem] text-charcoal/45">{footerLabel}</p>
             ) : (
@@ -539,7 +543,7 @@ const LoopCard: FC<LoopCardProps> = ({
                 type="button"
                 onClick={startNote}
                 aria-label={hasNote ? 'Edit note' : 'Add note'}
-                className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-lavender-light/40 transition duration-200 hover:bg-white hover:text-charcoal"
+                className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
               >
                 <NoteIcon />
                 Note
@@ -555,7 +559,7 @@ const LoopCard: FC<LoopCardProps> = ({
                 type="button"
                 onClick={startEdit}
                 aria-label="Edit loop"
-                className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-lavender-light/40 transition duration-200 hover:bg-white hover:text-charcoal"
+                className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
               >
                 <svg
                   viewBox="0 0 16 16"
@@ -578,7 +582,7 @@ const LoopCard: FC<LoopCardProps> = ({
                 type="button"
                 onClick={startDelete}
                 aria-label="Delete loop"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-white/70 hover:text-charcoal"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-paper-light hover:text-charcoal"
               >
                 <TrashIcon />
               </button>

@@ -45,7 +45,7 @@ const NoteEditor: FC<NoteEditorProps> = ({
   const speechSupported = isSpeechCaptureSupported();
 
   return (
-    <div className="space-y-3 rounded-2xl bg-white/60 p-4">
+    <div className="space-y-3 rounded-md border border-rule bg-paper-light/60 p-4">
       <label
         htmlFor={`loop-note-${loopId}`}
         className="block text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/70"
@@ -61,7 +61,7 @@ const NoteEditor: FC<NoteEditorProps> = ({
         onKeyDown={handleKeyDown}
         rows={3}
         placeholder="A small breadcrumb for later..."
-        className="w-full rounded-2xl border border-lavender-soft/40 bg-white/90 p-3 text-sm leading-6 text-charcoal shadow-soft focus:border-lavender focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
+        className="w-full rounded-md border border-rule bg-paper-light/90 p-3 text-sm leading-6 text-charcoal shadow-soft focus:border-lavender/60 focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
       />
 
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -83,7 +83,7 @@ const NoteEditor: FC<NoteEditorProps> = ({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-lavender-light/40 hover:bg-cream-light"
+            className="rounded-md bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
           >
             Cancel
           </button>
@@ -91,7 +91,7 @@ const NoteEditor: FC<NoteEditorProps> = ({
           <button
             type="button"
             onClick={() => onSave(draft)}
-            className="rounded-full bg-[#3A3347] px-5 py-2 text-sm font-semibold text-[#F7EFE3] shadow-soft transition duration-200 hover:bg-[#2E2938]"
+            className="rounded-md bg-charcoal px-5 py-2 text-sm font-semibold text-cream-light shadow-soft transition duration-200 hover:bg-charcoal-soft"
           >
             Save
           </button>

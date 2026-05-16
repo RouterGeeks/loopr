@@ -1,20 +1,19 @@
 import { NavLink } from 'react-router-dom';
 import type { FC, ReactNode } from 'react';
+import HandUnderline from './HandUnderline';
 
 const linkClass = (isActive: boolean) =>
-  `flex min-w-0 flex-col items-center gap-1 rounded-2xl px-1 py-2.5 transition-all duration-200 ${
-    isActive
-      ? 'bg-lavender-soft text-lavender-dark shadow-soft'
-      : 'text-charcoal hover:bg-cream-light hover:text-lavender-dark/80'
+  `relative flex min-w-0 flex-col items-center gap-1 px-1 pt-3 pb-3 transition-colors duration-200 ${
+    isActive ? 'text-charcoal' : 'text-charcoal/55 hover:text-charcoal'
   }`;
 
 const iconProps = {
-  width: 22,
-  height: 22,
+  width: 20,
+  height: 20,
   viewBox: '0 0 24 24',
   fill: 'none',
   stroke: 'currentColor',
-  strokeWidth: 1.6,
+  strokeWidth: 1.5,
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
   'aria-hidden': true,
@@ -60,46 +59,49 @@ const DialsIcon = (): ReactNode => (
   </svg>
 );
 
+const ActiveMark: FC = () => (
+  <HandUnderline
+    className="absolute bottom-1.5 left-1/2 h-1.5 w-10 -translate-x-1/2"
+  />
+);
+
+interface NavItem {
+  to: string;
+  end?: boolean;
+  label: string;
+  Icon: FC;
+}
+
+const items: NavItem[] = [
+  { to: '/', end: true, label: 'Dashboard', Icon: DashboardIcon },
+  { to: '/doing', label: 'Doing', Icon: DoingIcon },
+  { to: '/delayed', label: 'Delayed', Icon: DelayedIcon },
+  { to: '/done', label: 'Done', Icon: DoneIcon },
+  { to: '/dials', label: 'Dials', Icon: DialsIcon },
+];
+
 const BottomNav: FC = () => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-cream shadow-nav border-t border-lavender-light/30 backdrop-blur-sm">
-      <div className="grid grid-cols-5 gap-1 px-2 py-3 pb-safe">
-        <NavLink to="/" className={({ isActive }) => linkClass(isActive)} end>
-          <DashboardIcon />
-          <span className="text-[11px] font-semibold sm:text-xs">Dashboard</span>
-        </NavLink>
-
-        <NavLink
-          to="/doing"
-          className={({ isActive }) => linkClass(isActive)}
-        >
-          <DoingIcon />
-          <span className="text-[11px] font-semibold sm:text-xs">Doing</span>
-        </NavLink>
-
-        <NavLink
-          to="/delayed"
-          className={({ isActive }) => linkClass(isActive)}
-        >
-          <DelayedIcon />
-          <span className="text-[11px] font-semibold sm:text-xs">Delayed</span>
-        </NavLink>
-
-        <NavLink
-          to="/done"
-          className={({ isActive }) => linkClass(isActive)}
-        >
-          <DoneIcon />
-          <span className="text-[11px] font-semibold sm:text-xs">Done</span>
-        </NavLink>
-
-        <NavLink
-          to="/dials"
-          className={({ isActive }) => linkClass(isActive)}
-        >
-          <DialsIcon />
-          <span className="text-[11px] font-semibold sm:text-xs">Dials</span>
-        </NavLink>
+    <nav className="fixed bottom-0 left-0 right-0 bg-paper-shell/95 backdrop-blur-md">
+      <div className="grid grid-cols-5 gap-1 px-2 pb-safe">
+        {items.map(({ to, end, label, Icon }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            className={({ isActive }) => linkClass(isActive)}
+          >
+            {({ isActive }) => (
+              <>
+                {isActive && <ActiveMark />}
+                <Icon />
+                <span className="text-[11px] font-medium tracking-tight sm:text-xs">
+                  {label}
+                </span>
+              </>
+            )}
+          </NavLink>
+        ))}
       </div>
     </nav>
   );

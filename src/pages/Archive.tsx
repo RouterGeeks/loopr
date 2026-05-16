@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
-import SectionCard from '../components/SectionCard';
 import ArchiveCard from '../components/ArchiveCard';
+import DateEyebrow from '../components/DateEyebrow';
+import HandUnderline from '../components/HandUnderline';
+import SketchPaperStack from '../components/SketchPaperStack';
 import { loadLoops, saveLoops } from '../lib/loops';
 import type { LoopItem } from '../lib/loops';
 
@@ -74,33 +76,37 @@ const Archive: FC = () => {
 
   return (
     <PageContainer>
-      <div className="mb-8">
-        <p className="mb-3 text-xs uppercase tracking-[0.3em] text-lavender-dark opacity-90">
-          Loopr
-        </p>
-
-        <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
+      <div className="relative mb-8">
+        <DateEyebrow />
+        <h1 className="mt-2 font-serif text-4xl font-semibold leading-tight tracking-tight text-charcoal sm:text-5xl">
           Done
         </h1>
-
-        <p className="max-w-xl text-base leading-7 text-charcoal/70">
+        <p className="mt-2 text-sm text-charcoal/65">
           Loops you've completed or consciously released. Restore one any time.
         </p>
+        <SketchPaperStack className="pointer-events-none absolute -top-1 right-0 h-20 w-16" />
       </div>
 
       {isEmpty ? (
-        <SectionCard className="space-y-2">
-          <p className="text-charcoal/75">Nothing here yet.</p>
-
-          <p className="text-sm text-charcoal/55">
-            Completed and released loops will appear here.
+        <div className="border-t border-rule py-6">
+          <div className="space-y-2">
+            <p className="relative inline-block pr-2 font-serif text-lg font-semibold text-charcoal">
+              Nothing here yet
+              <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" color="ink" />
+            </p>
+            <p className="font-mono text-xs text-charcoal/55">
+              Completed and released loops will appear here.
+            </p>
+          </div>
+          <p className="mt-6 text-right font-serif italic text-sm text-charcoal/55">
+            set down gently
           </p>
-        </SectionCard>
+        </div>
       ) : (
-        <div className="space-y-10">
+        <div className="space-y-8">
           {doneLoops.length > 0 && (
-            <div>
-              <div className="mb-3 flex items-baseline gap-2.5">
+            <section>
+              <div className="mb-2 flex items-baseline gap-2.5">
                 <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-charcoal/55">
                   Done
                 </h2>
@@ -109,7 +115,7 @@ const Archive: FC = () => {
                 </span>
               </div>
 
-              <div className="space-y-3">
+              <div className="divide-y divide-rule border-t border-rule">
                 {doneLoops.map((loop) => (
                   <ArchiveCard
                     key={loop.id}
@@ -120,12 +126,12 @@ const Archive: FC = () => {
                   />
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
           {droppedLoops.length > 0 && (
-            <div>
-              <div className="mb-3 flex items-baseline gap-2.5">
+            <section>
+              <div className="mb-2 flex items-baseline gap-2.5">
                 <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-charcoal/55">
                   Dropped
                 </h2>
@@ -134,7 +140,7 @@ const Archive: FC = () => {
                 </span>
               </div>
 
-              <div className="space-y-3">
+              <div className="divide-y divide-rule border-t border-rule">
                 {droppedLoops.map((loop) => (
                   <ArchiveCard
                     key={loop.id}
@@ -145,7 +151,7 @@ const Archive: FC = () => {
                   />
                 ))}
               </div>
-            </div>
+            </section>
           )}
         </div>
       )}

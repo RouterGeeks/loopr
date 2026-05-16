@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
-import SectionCard from '../components/SectionCard';
+import DateEyebrow from '../components/DateEyebrow';
+import HandUnderline from '../components/HandUnderline';
 import LoopCard from '../components/LoopCard';
+import SketchCoffee from '../components/SketchCoffee';
 import { loadLoops, saveLoops } from '../lib/loops';
 import type { LoopItem, LoopStatus } from '../lib/loops';
 
@@ -79,18 +81,15 @@ const Doing: FC = () => {
 
   return (
     <PageContainer>
-      <div className="mb-8">
-        <p className="mb-3 text-xs uppercase tracking-[0.3em] text-lavender-dark opacity-90">
-          Loopr
-        </p>
-
-        <h1 className="mb-3 text-3xl font-bold leading-tight text-charcoal sm:text-4xl">
+      <div className="relative mb-8">
+        <DateEyebrow />
+        <h1 className="mt-2 font-serif text-4xl font-semibold leading-tight tracking-tight text-charcoal sm:text-5xl">
           Doing
         </h1>
-
-        <p className="max-w-xl text-base leading-7 text-charcoal/70">
+        <p className="mt-2 text-sm text-charcoal/65">
           What you're actively engaging with right now.
         </p>
+        <SketchCoffee className="pointer-events-none absolute -top-1 right-0 h-20 w-14" />
       </div>
 
       {doingLoops.length > 0 && (
@@ -104,29 +103,38 @@ const Doing: FC = () => {
         </div>
       )}
 
-      {doingLoops.length === 0 ? (
-        <SectionCard className="space-y-2">
-          <p className="text-charcoal/75">Nothing in motion right now.</p>
-
-          <p className="text-sm text-charcoal/55">
-            Loops you start working on will appear here.
-          </p>
-        </SectionCard>
-      ) : (
-        <div className="space-y-4">
-          {doingLoops.map((loop) => (
-            <LoopCard
-              key={loop.id}
-              loop={loop}
-              onTransition={handleTransition}
-              onDelay={handleDelay}
-              onEdit={handleEdit}
-              onEditNote={handleEditNote}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
-      )}
+      <div className="border-t border-rule">
+        {doingLoops.length === 0 ? (
+          <div className="py-6">
+            <div className="space-y-2">
+              <p className="relative inline-block pr-2 font-serif text-lg font-semibold text-charcoal">
+                Nothing in motion
+                <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" color="seafoam" />
+              </p>
+              <p className="font-mono text-xs text-charcoal/55">
+                Loops you start working on will appear here.
+              </p>
+            </div>
+            <p className="mt-6 text-right font-serif italic text-sm text-charcoal/55">
+              in your hands
+            </p>
+          </div>
+        ) : (
+          <div className="divide-y divide-rule">
+            {doingLoops.map((loop) => (
+              <LoopCard
+                key={loop.id}
+                loop={loop}
+                onTransition={handleTransition}
+                onDelay={handleDelay}
+                onEdit={handleEdit}
+                onEditNote={handleEditNote}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </PageContainer>
   );
 };

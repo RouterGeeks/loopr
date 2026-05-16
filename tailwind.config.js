@@ -7,27 +7,46 @@ export default {
   theme: {
     extend: {
       colors: {
-        cream: '#F5EFE6',
-        'cream-light': '#FBF7F1',
-        'cream-surface': '#F9F3E9',
-        lavender: '#B89DD8',
-        'lavender-soft': '#D7CBED',
-        'lavender-light': '#E6DFF4',
-        'lavender-dark': '#8E70B0',
-        seafoam: '#A8DADC',
-        charcoal: '#2B2B2B',
-        'charcoal-soft': '#3A3A3A',
+        // Paper surfaces — warm kraft-cream notebook tones
+        cream: '#F1E9D6',
+        'cream-light': '#FAF4E6',
+        'cream-surface': '#FAF4E6',
+        paper: '#F1E9D6',
+        'paper-light': '#FAF4E6',
+        'paper-edge': '#E6DDC6',
+        'paper-shell': '#E8DDC4',
+        // Ink — warm near-black, like a pencil mark on paper
+        charcoal: '#1F1B16',
+        'charcoal-soft': '#3A352D',
+        ink: '#1F1B16',
+        'ink-soft': '#3A352D',
+        // Accents — muted, pencil-pigment feel
+        lavender: '#8A72B0',
+        'lavender-soft': '#D2C5E6',
+        'lavender-light': '#E7DEF0',
+        'lavender-dark': '#6B5891',
+        sage: '#8FA47B',
+        // Legacy alias — Doing state still references `seafoam` in places
+        seafoam: '#8FA47B',
+        // Notebook margin rule — muted brick red
+        'margin-rule': '#B3604F',
       },
       boxShadow: {
-        soft: '0 10px 28px rgba(43, 43, 43, 0.08)',
-        'card': '0 8px 24px rgba(43, 43, 43, 0.09)',
-        'nav': '0 -1px 18px rgba(43, 43, 43, 0.08)',
+        soft: '0 1px 2px rgba(31, 27, 22, 0.05)',
+        card: '0 1px 3px rgba(31, 27, 22, 0.06), 0 2px 8px rgba(31, 27, 22, 0.04)',
+        nav: '0 -1px 0 rgba(31, 27, 22, 0.08)',
+      },
+      borderColor: {
+        rule: 'rgba(31, 27, 22, 0.10)',
+        'rule-soft': 'rgba(31, 27, 22, 0.06)',
       },
       spacing: {
         'safe': 'max(1rem, env(safe-area-inset-bottom))',
       },
       fontFamily: {
-        sans: ['system-ui', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        serif: ['"New York"', '"Iowan Old Style"', 'Charter', 'Georgia', 'serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', '"Courier New"', 'monospace'],
       },
       fontSize: {
         'xs': '0.75rem',

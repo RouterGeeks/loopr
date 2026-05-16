@@ -117,11 +117,13 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
   };
 
   return (
-    <div className="rounded-3xl bg-cream-surface shadow-soft p-4">
-      <p className="text-base leading-7 text-charcoal/85">{loop.text}</p>
+    <div className="py-4">
+      <p className="font-serif text-base leading-relaxed text-charcoal/85">
+        {loop.text}
+      </p>
 
       {hasNote && mode !== 'editing-note' && (
-        <p className="mt-1.5 truncate text-sm italic text-charcoal/55">
+        <p className="mt-1.5 truncate border-l-2 border-rule pl-3 font-serif text-sm italic text-charcoal/55">
           {notePreview}
         </p>
       )}
@@ -142,7 +144,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
           />
         </div>
       ) : mode === 'confirming-delete' ? (
-        <div className="mt-3 rounded-2xl bg-white/60 p-3">
+        <div className="mt-3 rounded-md border border-rule bg-paper-light/60 p-3">
           <p className="mb-3 text-sm leading-6 text-charcoal/80">
             Permanently delete this loop?
           </p>
@@ -151,7 +153,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
             <button
               type="button"
               onClick={() => setMode('view')}
-              className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-lavender-light/40 hover:bg-cream-light"
+              className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               Cancel
             </button>
@@ -159,15 +161,16 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
             <button
               type="button"
               onClick={() => onDelete(loop.id)}
-              className="rounded-full bg-charcoal px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-charcoal-soft"
+              className="rounded-md bg-charcoal px-4 py-2 text-sm font-semibold text-cream-light transition duration-200 hover:bg-charcoal-soft"
             >
               Delete
             </button>
           </div>
         </div>
       ) : (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-lavender-light/30 pt-3">
-          <div className="rounded-full bg-cream-light px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-charcoal/65">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="inline-flex items-center gap-2 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/65">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-charcoal/25" />
             {statusLabel}
           </div>
 
@@ -176,7 +179,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
               type="button"
               onClick={() => setMode('editing-note')}
               aria-label={hasNote ? 'Edit note' : 'Add note'}
-              className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-lavender-light/40 transition duration-200 hover:bg-white hover:text-charcoal"
+              className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
             >
               <NoteIcon />
               Note
@@ -191,7 +194,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
             <button
               type="button"
               onClick={() => onRestore(loop.id)}
-              className="rounded-full bg-white/90 px-4 py-1.5 text-xs font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
+              className="rounded-full bg-paper-light/90 px-4 py-1.5 text-xs font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               Restore
             </button>
@@ -200,7 +203,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
               type="button"
               onClick={() => setMode('confirming-delete')}
               aria-label="Delete loop"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/65 transition duration-200 hover:bg-white/70 hover:text-charcoal"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/65 transition duration-200 hover:bg-paper-light/70 hover:text-charcoal"
             >
               <TrashIcon />
             </button>
