@@ -13,9 +13,14 @@ import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import CapturePlusButton from './components/CapturePlusButton';
 
+// import.meta.env.BASE_URL reflects the Vite `base` config — "/" by
+// default, "/loopr/" when built for GitHub Pages. Strip the trailing
+// slash for React Router's basename prop.
+const routerBase = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 function App() {
   return (
-    <Router>
+    <Router basename={routerBase || undefined}>
       <div className="bg-paper-shell text-charcoal">
         <AppHeader />
         <Routes>

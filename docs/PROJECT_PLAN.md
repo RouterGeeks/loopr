@@ -418,9 +418,97 @@ path.
 
 ---
 
+## Sprint 15 — UX Refinement and Mobile Fit
+
+Completed:
+- Inline note previews on LoopCard and ArchiveCard (italic
+  charcoal/55, single-line truncate, hidden in editor)
+- "Due now" → "Back today" on delayed labels; capture placeholder
+  "task" → "thought"; Delayed subtitle rewritten
+- BottomNav switched to `grid grid-cols-5` so all five labels fit at
+  iPhone SE width without overflow
+- Dashboard replaced its three vertical count tiles with a single
+  compact chip row; "New loop" label dropped, a11y kept via
+  aria-label on the textarea
+- LoopCard / ArchiveCard "Delete" text button replaced with a
+  recessive trash icon (charcoal, never red — aligned with the
+  "no warning states" guideline)
+- Subtle Do→Doing transition feedback: 180ms opacity fade on the
+  card before it leaves the list; respects prefers-reduced-motion;
+  optional 10ms haptic where supported
+
+---
+
+## Sprint 16 — Notebook Visual Identity
+
+Completed:
+- Retired the motel/keychain metaphor in favor of an editorial
+  notebook / lightweight sketchbook direction
+- Palette: paper-shell (cool stone) + paper-light (pale paper),
+  cool graphite ink, dusty lavender + muted sage accents (the
+  Doing state moved from seafoam to sage, with `seafoam` kept as
+  a token alias)
+- Typography: italic serif "loopr" wordmark; serif body for loop
+  text and notes; sans for UI chrome; mono for date eyebrow,
+  capture label, and the keyboard hint
+- Structure: AppHeader (wordmark + tagline) sits above the page
+  card; PageContainer wraps content in a hairline-bordered paper
+  card on the darker shell
+- DateEyebrow replaces the "LOOPR · FIELD NOTES" eyebrow with
+  the current date in mono caps
+- BottomNav goes transparent over the shell, active item gets a
+  small HandUnderline pencil mark beneath its label
+- Loop entries lost their card shell — entries are now divided
+  list items with hairline rules between, no border/bg/shadow on
+  the entry root
+- Status pill replaced with a leading-dot annotation + tracked
+  uppercase label
+- Capture textarea embedded directly on the page (no SectionCard
+  wrapper). Inline lavender "+" Add Loop button; mono ⌘ Enter hint
+- CapturePlusButton FAB on every non-Dashboard page (lavender, jumps
+  to Dashboard for capture)
+- Sketch language: HandUnderline SVG; per-section pencil-line sketch
+  doodles (mountain on Dashboard, coffee on Doing, moon on Delayed,
+  paper stack on Done, dial knob on Dials); SketchFlowers +
+  handwritten "clear mind, open space" italic annotation in
+  Dashboard empty state; "in your hands" / "back when ready" /
+  "set down gently" italic captions for Doing / Delayed / Done
+  empty states
+- "RECENTLY CAPTURED" section heading above the Dashboard loop list
+
+---
+
+## Sprint 17 — Identity Cleanup and Mobile UX Refinement
+
+Completed:
+- Replaced the motel-keychain PNG icons (icon-192, icon-512,
+  apple-touch-icon, favicon) with a notebook-inspired mark:
+  paper-light card surface + hand-drawn loop arc + small lavender
+  pencil stroke
+- Manifest theme_color and HTML meta theme-color realigned with the
+  current cool-stone palette
+- /docs sections retitled: motel/keychain references replaced with
+  editorial notebook direction; remaining mentions are historical
+  "retired in Sprint 16" footnotes
+- Capture textarea: dropped the internal repeating-linear-gradient
+  ruling that was reading as stacked form rows. Now a clean open
+  writing area with the hairline-bordered container framing it
+- `⌘ Enter to add` hint gets `whitespace-nowrap` so it stops
+  breaking onto two lines at narrow widths
+- New 'menu' mode on LoopCard. Default footer row shows Note +
+  a single More (⋯) icon. Tap More to expand inline into NOTE
+  / EDIT / trash / ✕ — six simultaneous actions dropped to three
+  by default; the secondary three are one tap away
+- PageContainer card now has a hairline `border-rule` (cleaner
+  separation from the shell)
+- Footer label opacity bumped (`text-charcoal/45` → `/55`) so
+  "Added today" / "Started today" reads cleanly without going dark
+
+---
+
 # Upcoming Priorities
 
-(Sprint 14 complete — next sprint to be planned.)
+(Sprint 17 complete — next sprint to be planned.)
 
 ---
 

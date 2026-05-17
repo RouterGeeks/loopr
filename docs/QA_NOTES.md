@@ -297,19 +297,38 @@ Avoid:
 
 ---
 
-## Edit Visibility (Sprint 9)
+## Card Action Hierarchy (Sprint 9 → 17)
 
-Edit on LoopCard sits in the utility row at the bottom of the card, beneath
-the primary action row. It carries a subtle background and ring so it reads
-as a button, but it should never compete with the primary actions.
+Hierarchy on LoopCard's utility row evolved with the visual identity:
 
-Delete remains intentionally more recessive — text-only, no default background.
+1. Primary row — Do / Delay / Drop on Do/Delayed cards; Done / Delay
+   / Drop on Doing cards.
+2. Always-visible secondary — Note button (lavender dot indicates a
+   note exists).
+3. Hidden behind a More (⋯) overflow button — Edit, Delete (trash
+   icon), and a Close (✕) action.
 
-Hierarchy:
+The Sprint 17 change reduced default-visible actions per card from
+six to three: tap More to reveal Edit + trash inline. Delete still
+requires the existing confirmation step, so the destructive action
+is never one tap from default. Trash is recessive charcoal — never
+red, per the "no warning states" rule.
 
-1. Primary row — Do / Delay / Drop on Do and Delayed cards; Done / Delay / Drop on Doing cards
-2. Edit (utility, subtle button)
-3. Delete (utility, recessive)
+---
+
+## Capture Textarea (Sprint 16 → 17)
+
+The capture textarea is embedded directly on the page, inside a
+hairline-bordered paper container. No background ruling: the
+Sprint 16 attempt to draw repeating notebook lines inside the input
+was read as stacked form rows and pulled in Sprint 17. The container
+itself + the monospace label and placeholder carry the notebook
+feel.
+
+The keyboard hint "⌘ Enter to add" is `whitespace-nowrap` so it
+never breaks across two lines. It's still hidden on coarse-pointer
+devices via `matchMedia('(pointer: fine)')`, so phones don't see
+it at all.
 
 ---
 

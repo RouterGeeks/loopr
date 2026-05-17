@@ -49,12 +49,15 @@
 
 # Capture Flow
 
-* [ ] Add Loop disabled when empty
-* [ ] Valid text enables Add Loop
-* [ ] Add Loop creates loop
+* [ ] "+" Add Loop button disabled (lavender at reduced opacity) when empty
+* [ ] Valid text enables the "+" button at full lavender
+* [ ] "+" creates loop
 * [ ] Textarea clears after add
+* [ ] Capture textarea has no visible internal ruled rows when empty
+* [ ] Capture container has a hairline border but no card-shadow weight
 * [ ] Multiple loops stack correctly
 * [ ] Autofocus works
+* [ ] FAB (lavender +) visible on every non-Dashboard page; tap navigates to /
 
 ---
 
@@ -64,7 +67,8 @@
 * [ ] Ctrl+Enter works
 * [ ] Enter creates newline only
 * [ ] Keyboard capture persists after refresh
-* [ ] "Cmd or Ctrl + Enter to capture." hint visible on desktop (fine pointer)
+* [ ] "⌘ Enter to add" hint visible on desktop (fine pointer)
+* [ ] Hint stays on one line at narrow widths (whitespace-nowrap)
 * [ ] Hint hidden on phones/tablets (coarse pointer)
 * [ ] Hint hidden when running inside a Capacitor wrapper
 
@@ -104,7 +108,16 @@
 * [ ] Restore from Done page sends loop back to Do
 * [ ] Delete confirmation appears
 * [ ] No double borders/cards
-* [ ] Doing pill is visually distinct (seafoam tone) but calm
+* [ ] Doing dot is visually distinct (sage tone) but calm
+
+# Card Action Overflow Menu (Sprint 17)
+
+* [ ] Default LoopCard footer shows only Note + More (⋯)
+* [ ] Tapping More reveals Edit + trash + Close (✕) inline
+* [ ] Tapping Close returns to default footer state
+* [ ] Edit from the overflow menu enters edit mode normally
+* [ ] Delete from the overflow menu still shows the confirmation step
+* [ ] Trash icon is recessive charcoal — never red
 
 ---
 

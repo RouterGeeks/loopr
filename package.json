@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/rewrite-static-paths.mjs",
+    "build:pages": "VITE_BASE_PATH=/loopr/ npm run build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
