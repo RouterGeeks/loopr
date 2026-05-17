@@ -134,10 +134,10 @@ const Home: FC = () => {
     <PageContainer>
       <div className="relative mb-6">
         <DateEyebrow />
-        <h1 className="mt-2 font-serif text-4xl font-semibold leading-tight tracking-tight text-charcoal sm:text-5xl">
+        <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
           Dashboard
         </h1>
-        <SketchMountain className="pointer-events-none absolute -top-2 right-0 h-20 w-40 sm:w-48" />
+        <SketchMountain className="pointer-events-none absolute -top-1 right-0 h-14 w-28 sm:h-16 sm:w-32" />
       </div>
 
       {hasAnyOpenWork && (
@@ -181,11 +181,14 @@ const Home: FC = () => {
             rows={4}
             aria-label="New loop"
             placeholder="What's on your mind?"
-            className="block w-full resize-none bg-transparent px-4 pt-4 pb-2 font-mono text-sm text-charcoal placeholder:text-charcoal/40 focus:outline-none"
+            className="block w-full resize-none bg-transparent px-4 font-mono text-sm text-charcoal placeholder:text-charcoal/40 focus:outline-none"
             style={{
               lineHeight: '28px',
+              paddingTop: '6px',
+              paddingBottom: '6px',
               backgroundImage:
                 'repeating-linear-gradient(to bottom, transparent 0, transparent 27px, rgba(31, 27, 22, 0.18) 27px, rgba(31, 27, 22, 0.18) 28px)',
+              backgroundPosition: '0 6px',
             }}
           />
 

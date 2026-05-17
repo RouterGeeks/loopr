@@ -41,7 +41,7 @@ const Settings: FC = () => {
     <PageContainer>
       <div className="relative mb-8">
         <DateEyebrow />
-        <h1 className="mt-2 font-serif text-4xl font-semibold leading-tight tracking-tight text-charcoal sm:text-5xl">
+        <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
           Dials
         </h1>
         <p className="mt-2 text-sm text-charcoal/65">
