@@ -181,15 +181,7 @@ const Home: FC = () => {
             rows={4}
             aria-label="New loop"
             placeholder="What's on your mind?"
-            className="block w-full resize-none bg-transparent px-4 font-mono text-sm text-charcoal placeholder:text-charcoal/40 focus:outline-none"
-            style={{
-              lineHeight: '28px',
-              paddingTop: '6px',
-              paddingBottom: '6px',
-              backgroundImage:
-                'repeating-linear-gradient(to bottom, transparent 0, transparent 27px, rgba(31, 27, 22, 0.18) 27px, rgba(31, 27, 22, 0.18) 28px)',
-              backgroundPosition: '0 6px',
-            }}
+            className="block w-full resize-none bg-transparent px-4 py-3 font-mono text-sm leading-relaxed text-charcoal placeholder:text-charcoal/40 focus:outline-none"
           />
 
           <div className="flex items-center justify-between gap-2 px-3 pb-2 pt-1">
@@ -204,7 +196,7 @@ const Home: FC = () => {
 
             <div className="flex items-center gap-2">
               {showKeyboardHint && (
-                <span className="font-mono text-xs text-charcoal/55">
+                <span className="whitespace-nowrap font-mono text-xs text-charcoal/55">
                   ⌘ Enter to add
                 </span>
               )}

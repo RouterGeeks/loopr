@@ -19,7 +19,8 @@ type CardMode =
   | 'editing'
   | 'editing-note'
   | 'choosing-delay'
-  | 'confirming-delete';
+  | 'confirming-delete'
+  | 'menu';
 
 type DelayPreset = 'tomorrow' | 'weekend' | 'nextWeek';
 
@@ -175,6 +176,36 @@ const TrashIcon: FC = () => (
     <path d="M4.75 4.5l.55 8.3a1 1 0 0 0 1 .95h3.4a1 1 0 0 0 1-.95l.55-8.3" />
     <path d="M7 7v4" />
     <path d="M9 7v4" />
+  </svg>
+);
+
+const MoreIcon: FC = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="14"
+    height="14"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <circle cx="3.5" cy="8" r="1.2" />
+    <circle cx="8" cy="8" r="1.2" />
+    <circle cx="12.5" cy="8" r="1.2" />
+  </svg>
+);
+
+const CloseIcon: FC = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="13"
+    height="13"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    aria-hidden="true"
+  >
+    <line x1="4" y1="4" x2="12" y2="12" />
+    <line x1="12" y1="4" x2="4" y2="12" />
   </svg>
 );
 
@@ -533,7 +564,7 @@ const LoopCard: FC<LoopCardProps> = ({
 
           <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
             {footerLabel ? (
-              <p className="text-[0.7rem] text-charcoal/45">{footerLabel}</p>
+              <p className="text-[0.7rem] text-charcoal/55">{footerLabel}</p>
             ) : (
               <span aria-hidden />
             )}
@@ -555,37 +586,59 @@ const LoopCard: FC<LoopCardProps> = ({
                 )}
               </button>
 
-              <button
-                type="button"
-                onClick={startEdit}
-                aria-label="Edit loop"
-                className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
-              >
-                <svg
-                  viewBox="0 0 16 16"
-                  width="12"
-                  height="12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M10.5 2.5l3 3L5 14H2v-3z" />
-                  <path d="M9.5 3.5l3 3" />
-                </svg>
-                Edit
-              </button>
+              {mode === 'menu' ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={startEdit}
+                    aria-label="Edit loop"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
+                  >
+                    <svg
+                      viewBox="0 0 16 16"
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M10.5 2.5l3 3L5 14H2v-3z" />
+                      <path d="M9.5 3.5l3 3" />
+                    </svg>
+                    Edit
+                  </button>
 
-              <button
-                type="button"
-                onClick={startDelete}
-                aria-label="Delete loop"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-paper-light hover:text-charcoal"
-              >
-                <TrashIcon />
-              </button>
+                  <button
+                    type="button"
+                    onClick={startDelete}
+                    aria-label="Delete loop"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-paper-light hover:text-charcoal"
+                  >
+                    <TrashIcon />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMode('view')}
+                    aria-label="Close actions"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-paper-light hover:text-charcoal"
+                  >
+                    <CloseIcon />
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setMode('menu')}
+                  aria-label="More actions"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-paper-light hover:text-charcoal"
+                >
+                  <MoreIcon />
+                </button>
+              )}
             </div>
           </div>
         </>

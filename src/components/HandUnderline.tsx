@@ -9,7 +9,7 @@ const stroke: Record<NonNullable<HandUnderlineProps['color']>, string> = {
   lavender: '#6B5891',
   seafoam: '#7B8F66',
   red: '#B3604F',
-  ink: '#1F1B16',
+  ink: '#232220',
 };
 
 const HandUnderline: FC<HandUnderlineProps> = ({

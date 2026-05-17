@@ -461,15 +461,18 @@ Avoid:
 # Design Direction
 
 ## Visual Identity
-- Retro motel keychain aesthetic
-- Muted lavender
-- Seafoam
-- Cream
-- Charcoal
+- Editorial notebook / lightweight sketchbook (retired the earlier
+  motel/keychain direction in Sprint 16)
+- Cool stone paper surfaces
+- Cool graphite ink
+- Dusty lavender accents
+- Muted sage (the Doing accent — replaces the older seafoam token)
+- Hand-drawn pencil sketch motifs (HandUnderline, per-page sketch
+  doodles for Dashboard / Doing / Delayed / Done / Dials)
 
 ## Interaction Style
 - Soft transitions
-- Rounded tactile surfaces
+- Hairline borders + paper surfaces (no heavy SaaS cards)
 - Calm spacing
 - Minimal visual noise
 - Recognition-first UX
@@ -480,7 +483,7 @@ The app should feel:
 - calm
 - mature
 - tactile
-- atmospheric
+- lightly editorial
 - emotionally intelligent
 
 Avoid:
@@ -489,5 +492,4 @@ Avoid:
 - productivity hype
 - overly cute UX writing
 - excessive metaphor usage
-
-The motel metaphor should remain subtle and atmospheric, not gimmicky.
+- sepia vintage / scrapbook decoration

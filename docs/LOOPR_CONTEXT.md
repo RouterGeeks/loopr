@@ -156,30 +156,45 @@ The goal is reducing cognitive friction.
 
 ---
 
-# Motel / Keychain Design Philosophy
+# Editorial Notebook Direction
 
-The retro motel keychain theme is atmospheric, tactile, and emotionally grounding.
+Loopr's visual identity is a calm editorial notebook / lightweight
+sketchbook. The earlier motel/keychain metaphor has been retired —
+references to it in older sections of this doc set are historical, not
+prescriptive.
 
-It should feel:
+The current direction should feel:
 - analog
 - warm
-- slightly nostalgic
+- lightly editorial
 - breathable
 - tactile
 - calm
+- modern
 
-The motel metaphor should remain subtle.
-
-It is flavor and emotional texture — not roleplay.
+The notebook feel is carried by:
+- cool stone / pale paper surfaces (no kraft beige)
+- cool graphite ink
+- restrained dusty lavender + muted sage accents
+- italic serif "loopr" wordmark
+- serif body type for loop content, sans for UI chrome, mono for date
+  eyebrow and small labels
+- hand-drawn pencil underlines (`HandUnderline` SVG) under H1s, empty
+  state titles, and the active bottom-nav tab
+- per-page sketch doodles in pencil-line SVG (mountain on Dashboard,
+  coffee on Doing, moon on Delayed, paper stack on Done, dial on Dials)
+- a small lavender "+" button (inline on Dashboard, FAB elsewhere)
 
 Avoid:
-- excessive themed copy
-- overexplaining the metaphor
-- turning the app into a gimmick
+- sepia vintage
+- scrapbook decoration
+- fake stationery effects
+- beige themed-productivity energy
+- bright SaaS dashboard colors
 
 The best implementations feel:
 - quiet
-- natural
+- intentional
 - lightly poetic
 - emotionally resonant
 
@@ -297,11 +312,11 @@ No AI processing in V1.
 # Design System
 
 Visual style:
-- Retro motel keychain aesthetic
-- Muted lavender
-- Seafoam
-- Cream
-- Charcoal
+- Editorial notebook / lightweight sketchbook
+- Cool stone paper surfaces
+- Cool graphite ink
+- Dusty lavender accents
+- Muted sage (the Doing accent — replaces the older seafoam token)
 
 Interaction style:
 - Soft transitions

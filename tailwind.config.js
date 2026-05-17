@@ -7,38 +7,38 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Paper surfaces — warm kraft-cream notebook tones
-        cream: '#F1E9D6',
-        'cream-light': '#FAF4E6',
-        'cream-surface': '#FAF4E6',
-        paper: '#F1E9D6',
-        'paper-light': '#FAF4E6',
-        'paper-edge': '#E6DDC6',
-        'paper-shell': '#E8DDC4',
-        // Ink — warm near-black, like a pencil mark on paper
-        charcoal: '#1F1B16',
-        'charcoal-soft': '#3A352D',
-        ink: '#1F1B16',
-        'ink-soft': '#3A352D',
-        // Accents — muted, pencil-pigment feel
-        lavender: '#8A72B0',
-        'lavender-soft': '#D2C5E6',
-        'lavender-light': '#E7DEF0',
-        'lavender-dark': '#6B5891',
-        sage: '#8FA47B',
+        // Paper surfaces — cooler stone paper, modern editorial notebook
+        cream: '#E5E1D8',
+        'cream-light': '#F7F5F0',
+        'cream-surface': '#F7F5F0',
+        paper: '#E5E1D8',
+        'paper-light': '#F7F5F0',
+        'paper-edge': '#DCD7CB',
+        'paper-shell': '#E5E1D8',
+        // Ink — cool graphite tone, deeper and slightly cooler
+        charcoal: '#232220',
+        'charcoal-soft': '#3E3B37',
+        ink: '#232220',
+        'ink-soft': '#3E3B37',
+        // Accents — restrained, dusty
+        lavender: '#7E69A6',
+        'lavender-soft': '#C9BEDC',
+        'lavender-light': '#E1DAE9',
+        'lavender-dark': '#5F4F84',
+        sage: '#8B9F77',
         // Legacy alias — Doing state still references `seafoam` in places
-        seafoam: '#8FA47B',
-        // Notebook margin rule — muted brick red
+        seafoam: '#8B9F77',
+        // Notebook margin rule — muted brick red (kept for legacy)
         'margin-rule': '#B3604F',
       },
       boxShadow: {
-        soft: '0 1px 2px rgba(31, 27, 22, 0.05)',
-        card: '0 1px 3px rgba(31, 27, 22, 0.06), 0 2px 8px rgba(31, 27, 22, 0.04)',
-        nav: '0 -1px 0 rgba(31, 27, 22, 0.08)',
+        soft: '0 1px 2px rgba(35, 34, 32, 0.05)',
+        card: '0 1px 3px rgba(35, 34, 32, 0.07), 0 2px 8px rgba(35, 34, 32, 0.04)',
+        nav: '0 -1px 0 rgba(35, 34, 32, 0.08)',
       },
       borderColor: {
-        rule: 'rgba(31, 27, 22, 0.10)',
-        'rule-soft': 'rgba(31, 27, 22, 0.06)',
+        rule: 'rgba(35, 34, 32, 0.12)',
+        'rule-soft': 'rgba(35, 34, 32, 0.06)',
       },
       spacing: {
         'safe': 'max(1rem, env(safe-area-inset-bottom))',

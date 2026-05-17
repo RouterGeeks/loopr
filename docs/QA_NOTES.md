@@ -238,21 +238,25 @@ Delay actions should schedule future resurfacing rather than same-day deferral.
 
 ---
 
-## Motel / Keychain Theme
+## Editorial Notebook Theme
 
-The motel metaphor is atmospheric, not literal.
+The motel/keychain metaphor was retired in Sprint 16. Loopr's current
+identity is a calm editorial notebook / lightweight sketchbook (cool
+stone paper, cool graphite ink, dusty lavender + muted sage accents,
+hand-drawn pencil sketch motifs).
 
 The theme should:
 
 * remain subtle
 * never reduce usability clarity
-* avoid gimmicky roleplay behavior
+* avoid scrapbook decoration or sepia vintage cosplay
 
 The app should still feel:
 
 * mature
 * calm
 * recognition-first
+* lightly editorial — not themed-productivity beige
 
 ---
 

@@ -13,7 +13,7 @@ const SketchPaperStack: FC<SketchPaperStackProps> = ({ className = '' }) => (
     aria-hidden="true"
   >
     <g
-      stroke="#1F1B16"
+      stroke="#232220"
       strokeWidth="1.1"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -29,7 +29,7 @@ const SketchPaperStack: FC<SketchPaperStackProps> = ({ className = '' }) => (
 
       {/* front sheet, slightly rotated right with check mark */}
       <g transform="rotate(3 30 32)">
-        <path d="M 14 18 L 46 18 L 46 56 L 14 56 Z" fill="#FAF4E6" />
+        <path d="M 14 18 L 46 18 L 46 56 L 14 56 Z" fill="#F7F5F0" />
         <path d="M 14 18 L 46 18 L 46 56 L 14 56 Z" />
         <path
           d="M 22 38 L 28 44 L 40 30"
