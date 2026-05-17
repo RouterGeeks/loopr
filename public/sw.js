@@ -1,7 +1,11 @@
-const CACHE = 'loopr-shell-v4';
+const CACHE = 'loopr-shell-v5';
 
 const SHELL = [
   '/',
+  '/doing',
+  '/delayed',
+  '/done',
+  '/dials',
   '/index.html',
   '/manifest.webmanifest',
   '/favicon.png',

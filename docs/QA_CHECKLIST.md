@@ -27,25 +27,37 @@
 
 # Routing & Navigation
 
-* [ ] Home loads
-* [ ] Revisit loads
-* [ ] Archive loads
-* [ ] Settings loads
+* [ ] Dashboard loads (route /)
+* [ ] Doing loads (route /doing)
+* [ ] Delayed loads (route /delayed)
+* [ ] Done loads (route /done)
+* [ ] Dials loads (route /dials)
 * [ ] Refresh works on all routes
 * [ ] No 404s
 * [ ] Active nav state works
 * [ ] Icons display correctly
+* [ ] Nav labels read: Dashboard / Doing / Delayed / Done / Dials
+
+# Legacy Route Redirects
+
+* [ ] /revisit redirects to /delayed
+* [ ] /archive redirects to /done
+* [ ] /settings redirects to /dials
+* [ ] URL bar updates to the new path (replace, not push)
 
 ---
 
 # Capture Flow
 
-* [ ] Add Loop disabled when empty
-* [ ] Valid text enables Add Loop
-* [ ] Add Loop creates loop
+* [ ] "+" Add Loop button disabled (lavender at reduced opacity) when empty
+* [ ] Valid text enables the "+" button at full lavender
+* [ ] "+" creates loop
 * [ ] Textarea clears after add
+* [ ] Capture textarea has no visible internal ruled rows when empty
+* [ ] Capture container has a hairline border but no card-shadow weight
 * [ ] Multiple loops stack correctly
 * [ ] Autofocus works
+* [ ] FAB (lavender +) visible on every non-Dashboard page; tap navigates to /
 
 ---
 
@@ -55,19 +67,75 @@
 * [ ] Ctrl+Enter works
 * [ ] Enter creates newline only
 * [ ] Keyboard capture persists after refresh
+* [ ] "⌘ Enter to add" hint visible on desktop (fine pointer)
+* [ ] Hint stays on one line at narrow widths (whitespace-nowrap)
+* [ ] Hint hidden on phones/tablets (coarse pointer)
+* [ ] Hint hidden when running inside a Capacitor wrapper
+
+---
+
+# Voice Capture
+
+* [ ] Mic button visible on Dashboard capture row (supported browsers)
+* [ ] Mic button visible inside NoteEditor (supported browsers)
+* [ ] First mic tap requests microphone permission (real browser)
+* [ ] Listening… indicator appears while recording
+* [ ] Spoken text fills the loop textarea
+* [ ] Spoken text appends to a non-empty textarea with a space separator
+* [ ] Transcript is editable before Save / Add Loop
+* [ ] Spoken text in a note appends to the existing note value
+* [ ] Permission denied shows "Microphone permission was denied."
+* [ ] Silence shows "Didn't catch that."
+* [ ] No microphone shows "No microphone found."
+* [ ] In an unsupported browser (Firefox desktop, iOS PWA mode), the
+      mic is hidden and "Voice capture isn't built into this browser.
+      Try your keyboard's mic instead." appears
+* [ ] No audio data appears in localStorage — only the transcribed text
+* [ ] Safari/iPhone: works after a user-gesture tap
+* [ ] Safari/iPhone: layout doesn't break when mic is rendered
 
 ---
 
 # Loop Actions
 
-* [ ] Do works
-* [ ] Delay works
-* [ ] Drop works
-* [ ] Edit works
-* [ ] Delete works
-* [ ] Restore works
+* [ ] Do moves loop from Do → Doing
+* [ ] Done moves loop from Doing → Done (Done section)
+* [ ] Delay moves loop from any state → Delayed
+* [ ] Do on a Delayed loop moves it to Doing
+* [ ] Drop moves loop from Do / Doing / Delayed → Done (Dropped section)
+* [ ] Edit works in Do, Doing, and Delayed states
+* [ ] Delete works in every state
+* [ ] Restore from Done page sends loop back to Do
 * [ ] Delete confirmation appears
 * [ ] No double borders/cards
+* [ ] Doing dot is visually distinct (sage tone) but calm
+
+# Card Action Overflow Menu (Sprint 17)
+
+* [ ] Default LoopCard footer shows only Note + More (⋯)
+* [ ] Tapping More reveals Edit + trash + Close (✕) inline
+* [ ] Tapping Close returns to default footer state
+* [ ] Edit from the overflow menu enters edit mode normally
+* [ ] Delete from the overflow menu still shows the confirmation step
+* [ ] Trash icon is recessive charcoal — never red
+
+---
+
+# Notes
+
+* [ ] Note button visible on every card (Do, Doing, Delayed, Done, Dropped)
+* [ ] Notes are collapsed by default (no expanded editor on first render)
+* [ ] Clicking Note opens an inline editor with a focused textarea
+* [ ] Save persists the note to localStorage
+* [ ] Edit replaces the previous value
+* [ ] Empty Save clears the note (no empty-string artifact in storage)
+* [ ] Cancel discards the draft without changing the stored value
+* [ ] Esc cancels the editor; Cmd/Ctrl+Enter saves
+* [ ] Small dot indicator appears on the Note button when a note exists
+* [ ] Note carries through state transitions (Do → Doing → Done)
+* [ ] Note carries through Restore (Done/Dropped → Do)
+* [ ] Notes persist after a full page refresh
+* [ ] Cards do not feel crowded with the new Note affordance
 
 ---
 
@@ -83,44 +151,53 @@
 
 ---
 
-# Revisit
+# Delayed (route /delayed)
 
+* [ ] Page heading reads "Delayed"
 * [ ] Only delayed loops appear
 * [ ] Delayed loops editable
 * [ ] Delayed loops deletable
-* [ ] Do from Revisit moves to Archive → Done
-* [ ] Drop from Revisit moves to Archive → Dropped
+* [ ] Do from Delayed moves loop to Doing
+* [ ] Drop from Delayed moves loop to Done page (Dropped section)
+* [ ] Delay from Delayed re-schedules the loop
 * [ ] Empty state displays correctly
 
 ---
 
-# Archive
+# Done (route /done)
 
+* [ ] Page heading reads "Done"
 * [ ] Done section works
 * [ ] Dropped section works
-* [ ] Restore works
+* [ ] Restore sends loops back to Do
 * [ ] Permanent delete works
 * [ ] Empty state displays correctly
-* [ ] Archive feels calm and uncluttered
+* [ ] Page feels calm and uncluttered
 
 ---
 
-# Settings
+# Dials (route /dials)
 
-* [ ] Counts are correct
-* [ ] Counts update live
+* [ ] Page heading reads "Dials"
+* [ ] Do / Doing / Delayed / Done counts are correct
+* [ ] Counts update live after Clear All
+* [ ] Counts reload when the confirmation modal closes
 * [ ] Clear All confirmation works
 * [ ] Clear All resets app correctly
 
 ---
 
-# Persistence
+## Persistence
 
 * [ ] localStorage persists correctly
 * [ ] Refresh preserves state
 * [ ] Route changes preserve state
-* [ ] Archive persists
+* [ ] Done page (Done + Dropped) persists
 * [ ] Delay timestamps persist
+* [ ] `startedAt` persists for Doing loops
+* [ ] `note` field persists for any state
+* [ ] Legacy data (`active` / `pending` / `delay` / `drop` / legacy `do`) migrates on first load
+* [ ] Legacy loops without a `note` field render and function normally
 
 ---
 
@@ -129,10 +206,11 @@
 * [ ] Manifest loads
 * [ ] Service worker registers
 * [ ] Offline shell works
-* [ ] Home works offline
-* [ ] Revisit works offline
-* [ ] Archive works offline
-* [ ] Settings works offline
+* [ ] Dashboard works offline
+* [ ] Doing works offline
+* [ ] Delayed works offline
+* [ ] Done works offline
+* [ ] Dials works offline
 * [ ] Install prompt works
 * [ ] Icons display correctly
 
@@ -162,18 +240,17 @@
 
 # Regression Smoke Test
 
-* [ ] Add loop
-* [ ] Delay loop
-* [ ] Verify Revisit
-* [ ] Mark Do
-* [ ] Verify Archive → Done
-* [ ] Add another loop
-* [ ] Drop loop
-* [ ] Verify Archive → Dropped
-* [ ] Restore archived loop
-* [ ] Verify Home
-* [ ] Refresh all routes
-* [ ] Verify persistence
+* [ ] Add loop (lands in Do on Dashboard)
+* [ ] Add a note to that loop; verify dot indicator appears
+* [ ] Press Do — loop moves to Doing page; note persists
+* [ ] Press Done on Doing card — loop moves to Done page (Done section); note persists
+* [ ] Add another loop, press Delay → schedule
+* [ ] Verify Delayed page shows it
+* [ ] Press Do on a Delayed card → moves to Doing
+* [ ] Add another loop, press Drop → Done page (Dropped section)
+* [ ] Restore from Done page → reappears in Do on Dashboard
+* [ ] Refresh every route, verify persistence
+* [ ] Verify offline shell still loads each route
 
 ---
 

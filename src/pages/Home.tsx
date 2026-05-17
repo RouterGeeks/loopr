@@ -1,69 +1,36 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { FC, KeyboardEvent } from 'react';
 import PageContainer from '../components/PageContainer';
-import SectionCard from '../components/SectionCard';
 import LoopCard from '../components/LoopCard';
+import MicButton from '../components/MicButton';
+import { loadLoops, saveLoops } from '../lib/loops';
+import type { LoopItem, LoopStatus } from '../lib/loops';
+import DateEyebrow from '../components/DateEyebrow';
+import HandUnderline from '../components/HandUnderline';
+import SketchFlowers from '../components/SketchFlowers';
+import SketchMountain from '../components/SketchMountain';
+import { isSpeechCaptureSupported } from '../lib/useSpeechCapture';
 
-interface LoopItem {
-  id: number;
-  text: string;
-  status: 'active' | 'delayed' | 'done' | 'dropped';
-  revisitAt?: string;
-  createdAt?: string;
-  doneAt?: string;
-  droppedAt?: string;
-}
-
-const STORAGE_KEY = 'loopr.loops';
+type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 const Home: FC = () => {
   const [draft, setDraft] = useState('');
-  const [loops, setLoops] = useState<LoopItem[]>(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-
-    if (!saved) return [];
-
-    try {
-      const parsed = JSON.parse(saved) as any[];
-
-      if (Array.isArray(parsed)) {
-        return parsed.map((item) => ({
-          ...item,
-          createdAt:
-            item.createdAt ??
-            (typeof item.id === 'number'
-              ? new Date(item.id).toISOString()
-              : new Date().toISOString()),
-          status:
-            item.status === 'pending'
-              ? 'active'
-              : item.status === 'do'
-              ? 'done'
-              : item.status === 'delay'
-              ? 'delayed'
-              : item.status === 'drop'
-              ? 'dropped'
-              : (item.status as
-                  | 'active'
-                  | 'delayed'
-                  | 'done'
-                  | 'dropped'),
-        }));
-      }
-    } catch {
-      // Ignore invalid stored data
-    }
-
-    return [];
-  });
+  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
+  const captureRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(loops));
+    saveLoops(loops);
   }, [loops]);
+
+  // Focus the capture field on mount and when navigating back to Home.
+  // useEffect is more reliable than the HTML autofocus attribute under
+  // React hydration in an SPA.
+  useEffect(() => {
+    captureRef.current?.focus({ preventScroll: true });
+  }, []);
 
   const addLoop = () => {
     const trimmed = draft.trim();
-
     if (!trimmed) return;
 
     const now = new Date();
@@ -72,7 +39,7 @@ const Home: FC = () => {
       {
         id: now.getTime(),
         text: trimmed,
-        status: 'active',
+        status: 'do',
         createdAt: now.toISOString(),
       },
       ...current,
@@ -81,20 +48,16 @@ const Home: FC = () => {
     setDraft('');
   };
 
-  const handleAction = (
-    id: number,
-    action: 'done' | 'dropped'
-  ) => {
+  const handleTransition = (id: number, status: TransitionStatus) => {
     setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const now = new Date().toISOString();
-        return {
-          ...loop,
-          status: action,
-          ...(action === 'done' ? { doneAt: now } : {}),
-          ...(action === 'dropped' ? { droppedAt: now } : {}),
-        };
+        const next: LoopItem = { ...loop, status };
+        if (status === 'doing') next.startedAt = now;
+        if (status === 'done') next.doneAt = now;
+        if (status === 'dropped') next.droppedAt = now;
+        return next;
       })
     );
   };
@@ -117,126 +80,229 @@ const Home: FC = () => {
     );
   };
 
+  const handleEditNote = (id: number, note: string) => {
+    setLoops((current) =>
+      current.map((loop) => {
+        if (loop.id !== id) return loop;
+        const trimmed = note.trim();
+        const next: LoopItem = { ...loop };
+        if (trimmed) next.note = trimmed;
+        else delete next.note;
+        return next;
+      })
+    );
+  };
+
   const handleDelete = (id: number) => {
     setLoops((current) => current.filter((loop) => loop.id !== id));
   };
 
-  const handleDraftKeyDown = (
-    event: KeyboardEvent<HTMLTextAreaElement>
-  ) => {
+  const handleDraftKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
       event.preventDefault();
       addLoop();
     }
   };
 
+  const appendVoiceTextToDraft = useCallback((text: string) => {
+    setDraft((prev) => (prev ? `${prev.trimEnd()} ${text}` : text));
+    captureRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  const speechSupported = isSpeechCaptureSupported();
+
+  // The Cmd/Ctrl+Enter hint is only useful with a physical keyboard.
+  // Hide it on coarse-pointer devices (phones/tablets) and inside a
+  // Capacitor native wrapper, where it's noise.
+  const showKeyboardHint = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    if ((window as { Capacitor?: unknown }).Capacitor) return false;
+    return window.matchMedia?.('(pointer: fine)').matches ?? false;
+  }, []);
+
   const canAddLoop = draft.trim().length > 0;
 
-  const activeLoops = loops.filter(
-    (loop) => loop.status === 'active'
-  );
+  const doLoops = loops.filter((loop) => loop.status === 'do');
 
-  const activeCount = activeLoops.length;
+  const doCount = doLoops.length;
+  const doingCount = loops.filter((l) => l.status === 'doing').length;
   const delayedCount = loops.filter((l) => l.status === 'delayed').length;
+
+  const hasAnyOpenWork = doCount + doingCount + delayedCount > 0;
 
   return (
     <PageContainer>
-      <div className="mb-8">
-        <p className="mb-3 text-xs uppercase tracking-[0.3em] text-lavender-dark opacity-90">
-          Loopr
-        </p>
-
-        <h1 className="mb-3 text-4xl font-bold leading-tight text-charcoal">
-          Capture your open loops
+      <div className="relative mb-6">
+        <DateEyebrow />
+        <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
+          Dashboard
         </h1>
-
-        <p className="max-w-xl text-base leading-7 text-charcoal/70">
-          Quickly add a thought, then choose what to do next.
-          This space stays calm and focused as your loop list grows.
-        </p>
+        <SketchMountain className="pointer-events-none absolute -top-1 right-0 h-14 w-28 sm:h-16 sm:w-32" />
       </div>
 
-      {/* Loop Counts */}
-      {loops.length > 0 && (
-        <div className="mb-8 flex gap-3">
-          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/40 px-4 py-3">
-            <p className="text-2xl font-bold leading-none text-charcoal">
-              {activeCount}
-            </p>
-            <p className="mt-1.5 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-charcoal/55">
-              Active
-            </p>
-          </div>
-
-          <div className="min-w-[5.5rem] rounded-2xl bg-lavender-soft/40 px-4 py-3">
-            <p className="text-2xl font-bold leading-none text-charcoal">
+      {hasAnyOpenWork && (
+        <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
+              {doCount}
+            </span>
+            Do
+          </span>
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
+              {doingCount}
+            </span>
+            Doing
+          </span>
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
               {delayedCount}
-            </p>
-            <p className="mt-1.5 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-charcoal/55">
-              Delayed
-            </p>
-          </div>
+            </span>
+            Delayed
+          </span>
         </div>
       )}
 
-      <SectionCard className="space-y-6">
-        <div className="space-y-4">
-          <div className="space-y-3">
-            <label
-              htmlFor="loop-input"
-              className="block text-sm font-semibold text-charcoal/80"
-            >
-              New loop
-            </label>
+      <div className="space-y-2">
+        <label
+          htmlFor="loop-input"
+          className="block font-mono text-sm text-charcoal/75"
+        >
+          Capture a thought...
+        </label>
 
-            <textarea
-              id="loop-input"
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyDown={handleDraftKeyDown}
-              rows={4}
-              placeholder="Capture a task, idea, or note..."
-              className="w-full rounded-3xl border border-lavender-soft/40 bg-white/90 p-4 text-base leading-7 text-charcoal shadow-soft focus:border-lavender focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
-            />
-          </div>
+        <div className="rounded-sm border border-charcoal/25 bg-paper-light/40">
+          <textarea
+            id="loop-input"
+            ref={captureRef}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={handleDraftKeyDown}
+            rows={4}
+            aria-label="New loop"
+            placeholder="What's on your mind?"
+            className="block w-full resize-none bg-transparent px-4 py-3 font-mono text-sm leading-relaxed text-charcoal placeholder:text-charcoal/40 focus:outline-none"
+          />
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-charcoal/70">
-              Add a loop to begin building your list.
-            </p>
+          <div className="flex items-center justify-between gap-2 px-3 pb-2 pt-1">
+            <div className="flex items-center">
+              {speechSupported && (
+                <MicButton
+                  onText={appendVoiceTextToDraft}
+                  label="Voice capture for new loop"
+                />
+              )}
+            </div>
 
-            <button
-              type="button"
-              onClick={addLoop}
-              disabled={!canAddLoop}
-              className={`inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition duration-200 ${
-                canAddLoop
-                  ? 'bg-[#3A3347] text-[#F7EFE3] shadow-soft hover:bg-[#2E2938]'
-                  : 'cursor-not-allowed bg-[#D8D0C4] text-[#8A8175] opacity-60'
-              }`}
-            >
-              Add Loop
-            </button>
+            <div className="flex items-center gap-2">
+              {showKeyboardHint && (
+                <span className="whitespace-nowrap font-mono text-xs text-charcoal/55">
+                  ⌘ Enter to add
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={addLoop}
+                disabled={!canAddLoop}
+                aria-label="Add loop"
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-sm bg-lavender-soft text-lavender-dark shadow-card ring-1 ring-charcoal/10 transition duration-200 active:scale-95 ${
+                  canAddLoop
+                    ? 'hover:bg-lavender-soft/80'
+                    : 'cursor-not-allowed opacity-55'
+                }`}
+              >
+                <svg
+                  viewBox="0 0 16 16"
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
+                  <line x1="8" y1="3" x2="8" y2="13" />
+                  <line x1="3" y1="8" x2="13" y2="8" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
-      </SectionCard>
 
-      <div className="mt-8 space-y-4">
-        {activeLoops.length === 0 ? (
-          <SectionCard>
-            <p className="text-charcoal/70">Quiet for now.</p>
-          </SectionCard>
+        {!speechSupported && (
+          <p className="font-mono text-xs italic text-charcoal/45">
+            Voice capture isn't built into this browser. Try your
+            keyboard's mic instead.
+          </p>
+        )}
+      </div>
+
+      <div className="mt-8">
+        {doLoops.length === 0 ? (
+          <div className="border-t border-rule pt-6">
+            <div className="space-y-2">
+              <p className="relative inline-block pr-2 font-serif text-lg font-semibold text-charcoal">
+                Quiet for now
+                <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
+              </p>
+              <p className="font-mono text-xs text-charcoal/55">
+                Captured loops will appear here.
+              </p>
+            </div>
+
+            <div className="mt-5 flex items-end justify-end gap-2">
+              <div className="relative pr-2 text-right">
+                <p className="font-serif italic text-sm leading-snug text-charcoal/70">
+                  clear mind,
+                  <br />
+                  open space
+                </p>
+                {/* hand-drawn arrow */}
+                <svg
+                  className="absolute -bottom-3 -right-6 h-8 w-8 text-charcoal/55"
+                  viewBox="0 0 30 30"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M 4 6 C 14 8, 22 14, 26 24"
+                    stroke="currentColor"
+                    strokeWidth="1.1"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                  <path
+                    d="M 26 24 L 21 22 M 26 24 L 24 19"
+                    stroke="currentColor"
+                    strokeWidth="1.1"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                </svg>
+              </div>
+              <SketchFlowers className="h-24 w-24 shrink-0" />
+            </div>
+          </div>
         ) : (
-          activeLoops.map((loop) => (
-            <LoopCard
-              key={loop.id}
-              loop={loop}
-              onAction={handleAction}
-              onDelay={handleDelay}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))
+          <>
+            <h2 className="relative mb-1 inline-block pr-1 font-mono text-[0.7rem] tracking-[0.2em] text-charcoal/70">
+              RECENTLY CAPTURED
+              <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
+            </h2>
+            <div className="divide-y divide-rule border-t border-rule">
+              {doLoops.map((loop) => (
+                <LoopCard
+                  key={loop.id}
+                  loop={loop}
+                  onTransition={handleTransition}
+                  onDelay={handleDelay}
+                  onEdit={handleEdit}
+                  onEditNote={handleEditNote}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </PageContainer>

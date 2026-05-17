@@ -1,68 +1,48 @@
 import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
-import SectionCard from '../components/SectionCard';
 import ArchiveCard from '../components/ArchiveCard';
-
-interface LoopItem {
-  id: number;
-  text: string;
-  status: 'active' | 'delayed' | 'done' | 'dropped';
-  revisitAt?: string;
-  createdAt?: string;
-  doneAt?: string;
-  droppedAt?: string;
-}
-
-const STORAGE_KEY = 'loopr.loops';
+import DateEyebrow from '../components/DateEyebrow';
+import HandUnderline from '../components/HandUnderline';
+import SketchPaperStack from '../components/SketchPaperStack';
+import { loadLoops, saveLoops } from '../lib/loops';
+import type { LoopItem } from '../lib/loops';
 
 const Archive: FC = () => {
-  const [loops, setLoops] = useState<LoopItem[]>(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (!saved) return [];
-
-    try {
-      const parsed = JSON.parse(saved) as any[];
-      if (Array.isArray(parsed)) {
-        return parsed.map((item) => ({
-          ...item,
-          createdAt:
-            item.createdAt ??
-            (typeof item.id === 'number'
-              ? new Date(item.id).toISOString()
-              : new Date().toISOString()),
-          status:
-            item.status === 'pending'
-              ? 'active'
-              : item.status === 'do'
-              ? 'done'
-              : item.status === 'delay'
-              ? 'delayed'
-              : item.status === 'drop'
-              ? 'dropped'
-              : (item.status as
-                  | 'active'
-                  | 'delayed'
-                  | 'done'
-                  | 'dropped'),
-        }));
-      }
-    } catch {
-      // Ignore invalid stored data
-    }
-
-    return [];
-  });
+  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(loops));
+    saveLoops(loops);
   }, [loops]);
 
   const handleRestore = (id: number) => {
     setLoops((current) =>
-      current.map((loop) =>
-        loop.id === id ? { ...loop, status: 'active' } : loop
-      )
+      current.map((loop) => {
+        if (loop.id !== id) return loop;
+        const restored: LoopItem = {
+          id: loop.id,
+          text: loop.text,
+          status: 'do',
+          createdAt: loop.createdAt,
+        };
+        if (loop.revisitAt) restored.revisitAt = loop.revisitAt;
+        if (loop.startedAt) restored.startedAt = loop.startedAt;
+        if (loop.note) restored.note = loop.note;
+        return restored;
+      })
+    );
+  };
+
+  const handleEditNote = (id: number, note: string) => {
+    setLoops((current) =>
+      current.map((loop) => {
+        if (loop.id !== id) return loop;
+        const trimmed = note.trim();
+        const next: LoopItem = { ...loop };
+        if (trimmed) next.note = trimmed;
+        else delete next.note;
+        return next;
+      })
     );
   };
 
@@ -96,67 +76,82 @@ const Archive: FC = () => {
 
   return (
     <PageContainer>
-      <div className="mb-8">
-        <p className="mb-3 text-xs uppercase tracking-[0.3em] text-lavender-dark opacity-90">
-          Loopr
-        </p>
-
-        <h1 className="mb-3 text-4xl font-bold leading-tight text-charcoal">
-          Archive
+      <div className="relative mb-8">
+        <DateEyebrow />
+        <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
+          Done
         </h1>
-
-        <p className="max-w-xl text-base leading-7 text-charcoal/70">
-          Resolved and released loops live here, in case you want to find
-          them again.
+        <p className="mt-2 text-sm text-charcoal/65">
+          Loops you've completed or consciously released. Restore one any time.
         </p>
+        <SketchPaperStack className="pointer-events-none absolute -top-1 right-0 h-20 w-16" />
       </div>
 
       {isEmpty ? (
-        <SectionCard className="space-y-2">
-          <p className="text-charcoal/75">Nothing archived right now.</p>
-
-          <p className="text-sm text-charcoal/55">
-            Resolved and released loops will appear here.
+        <div className="border-t border-rule py-6">
+          <div className="space-y-2">
+            <p className="relative inline-block pr-2 font-serif text-lg font-semibold text-charcoal">
+              Nothing here yet
+              <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" color="ink" />
+            </p>
+            <p className="font-mono text-xs text-charcoal/55">
+              Completed and released loops will appear here.
+            </p>
+          </div>
+          <p className="mt-6 text-right font-serif italic text-sm text-charcoal/55">
+            set down gently
           </p>
-        </SectionCard>
+        </div>
       ) : (
-        <div className="space-y-10">
+        <div className="space-y-8">
           {doneLoops.length > 0 && (
-            <div>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/55">
-                Done
-              </h2>
+            <section>
+              <div className="mb-2 flex items-baseline gap-2.5">
+                <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-charcoal/55">
+                  Done
+                </h2>
+                <span className="text-sm font-semibold leading-none text-charcoal/65 tabular-nums">
+                  {doneLoops.length}
+                </span>
+              </div>
 
-              <div className="space-y-3">
+              <div className="divide-y divide-rule border-t border-rule">
                 {doneLoops.map((loop) => (
                   <ArchiveCard
                     key={loop.id}
                     loop={loop}
                     onRestore={handleRestore}
+                    onEditNote={handleEditNote}
                     onDelete={handlePermanentDelete}
                   />
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
           {droppedLoops.length > 0 && (
-            <div>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/55">
-                Dropped
-              </h2>
+            <section>
+              <div className="mb-2 flex items-baseline gap-2.5">
+                <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-charcoal/55">
+                  Dropped
+                </h2>
+                <span className="text-sm font-semibold leading-none text-charcoal/65 tabular-nums">
+                  {droppedLoops.length}
+                </span>
+              </div>
 
-              <div className="space-y-3">
+              <div className="divide-y divide-rule border-t border-rule">
                 {droppedLoops.map((loop) => (
                   <ArchiveCard
                     key={loop.id}
                     loop={loop}
                     onRestore={handleRestore}
+                    onEditNote={handleEditNote}
                     onDelete={handlePermanentDelete}
                   />
                 ))}
               </div>
-            </div>
+            </section>
           )}
         </div>
       )}

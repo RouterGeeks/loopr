@@ -3,7 +3,7 @@
 Loopr is a mobile-first PWA for capturing open loops and deciding what to do with them.
 
 Core flow:
-Capture → Do / Delay / Drop → Revisit
+Capture → Do → Doing → Done / Dropped / Delayed → Revisit
 
 Loopr is evolving from a lightweight productivity app into a calm cognitive-support tool focused on reducing executive-function friction and helping thoughts resurface safely.
 
@@ -59,21 +59,48 @@ The app should gently support reflection without judgment.
 
 ---
 
+# Loop State Model
+
+Loops move between five distinct states. Each state names a cognitive
+posture rather than a task-management bucket.
+
+| State | Meaning |
+|---|---|
+| Do | captured / open loops awaiting triage |
+| Doing | loops you are actively engaging with |
+| Delayed | resurfacing loops scheduled for later |
+| Done | completed loops |
+| Dropped | consciously released loops |
+
+Transitions are intentional and few:
+
+- Do → Doing (engage), Delayed (push back), Dropped (release)
+- Doing → Done (complete), Delayed (pause), Dropped (release)
+- Delayed → Doing (engage now), Delayed (re-schedule), Dropped (release)
+- Done / Dropped → Do (restore)
+
+"Do" is engagement, not completion. Completion lives only in Done.
+
+---
+
 # Action Language
 
-Do / Delay / Drop are core identity elements and should remain simple and immediately understandable.
+Do / Doing / Delay / Drop / Done are core identity elements and should
+remain simple and immediately understandable.
 
 Definitions:
-- Do → act on it now
+- Do → engage with this loop now (moves it into Doing)
+- Done → mark a Doing loop as complete
 - Delay → revisit later
 - Drop → consciously release it
 
-“Resurface” is supporting emotional language and system framing, not a replacement for clarity.
+"Resurface" is supporting emotional language and system framing, not a
+replacement for clarity.
 
 Examples:
-- delayed loops can “resurface”
-- revisit areas may reference “waiting at the front desk”
-- loops may “resurface today”
+- delayed loops can "resurface"
+- revisit areas may reference "waiting at the front desk"
+- loops may "resurface today"
 
 But users should never need to decode metaphors to use the app.
 
@@ -129,30 +156,45 @@ The goal is reducing cognitive friction.
 
 ---
 
-# Motel / Keychain Design Philosophy
+# Editorial Notebook Direction
 
-The retro motel keychain theme is atmospheric, tactile, and emotionally grounding.
+Loopr's visual identity is a calm editorial notebook / lightweight
+sketchbook. The earlier motel/keychain metaphor has been retired —
+references to it in older sections of this doc set are historical, not
+prescriptive.
 
-It should feel:
+The current direction should feel:
 - analog
 - warm
-- slightly nostalgic
+- lightly editorial
 - breathable
 - tactile
 - calm
+- modern
 
-The motel metaphor should remain subtle.
-
-It is flavor and emotional texture — not roleplay.
+The notebook feel is carried by:
+- cool stone / pale paper surfaces (no kraft beige)
+- cool graphite ink
+- restrained dusty lavender + muted sage accents
+- italic serif "loopr" wordmark
+- serif body type for loop content, sans for UI chrome, mono for date
+  eyebrow and small labels
+- hand-drawn pencil underlines (`HandUnderline` SVG) under H1s, empty
+  state titles, and the active bottom-nav tab
+- per-page sketch doodles in pencil-line SVG (mountain on Dashboard,
+  coffee on Doing, moon on Delayed, paper stack on Done, dial on Dials)
+- a small lavender "+" button (inline on Dashboard, FAB elsewhere)
 
 Avoid:
-- excessive themed copy
-- overexplaining the metaphor
-- turning the app into a gimmick
+- sepia vintage
+- scrapbook decoration
+- fake stationery effects
+- beige themed-productivity energy
+- bright SaaS dashboard colors
 
 The best implementations feel:
 - quiet
-- natural
+- intentional
 - lightly poetic
 - emotionally resonant
 
@@ -197,19 +239,28 @@ Not:
 Current / near-term features:
 - Quick text capture
 - Cmd/Ctrl + Enter capture
-- Do / Delay / Drop workflow
+- Do / Doing / Delayed / Done / Dropped state model
+- Dashboard (capture + overview of open work) at `/`
+- Dedicated Doing view at `/doing`
 - Delay scheduling
-- Revisit view
+- Delayed view at `/delayed`
+- Done view (completed + released loops, with restore) at `/done`
+- Dials (settings / control panel) at `/dials`
+- Legacy redirects: `/revisit` → `/delayed`, `/archive` → `/done`,
+  `/settings` → `/dials`
 - Relative resurfacing labels
 - Edit and delete loops
-- Local storage persistence
+- Optional per-loop notes (collapsed by default — context breadcrumbs,
+  not project management; available in every state including Done and
+  Dropped)
+- Voice-to-text capture using the browser's Web Speech API: append-only,
+  transcripts always editable, no audio ever stored
+- Local storage persistence with backward-compatible migration
 - PWA install support
 - Offline shell support
-- Contextual timestamps
-- Simple settings
+- Contextual timestamps (Added / Started / Completed / Dropped)
 
 Future considerations:
-- Voice capture
 - Gentle notifications
 - Resurface insights
 - Smaller-step suggestions
@@ -261,11 +312,11 @@ No AI processing in V1.
 # Design System
 
 Visual style:
-- Retro motel keychain aesthetic
-- Muted lavender
-- Seafoam
-- Cream
-- Charcoal
+- Editorial notebook / lightweight sketchbook
+- Cool stone paper surfaces
+- Cool graphite ink
+- Dusty lavender accents
+- Muted sage (the Doing accent — replaces the older seafoam token)
 
 Interaction style:
 - Soft transitions

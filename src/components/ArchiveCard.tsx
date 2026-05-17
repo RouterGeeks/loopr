@@ -1,23 +1,16 @@
 import { useState } from 'react';
 import type { FC } from 'react';
-
-type LoopStatus = 'active' | 'delayed' | 'done' | 'dropped';
-
-interface LoopItem {
-  id: number;
-  text: string;
-  status: LoopStatus;
-  revisitAt?: string;
-  createdAt?: string;
-  doneAt?: string;
-  droppedAt?: string;
-}
+import type { LoopItem } from '../lib/loops';
+import NoteEditor from './NoteEditor';
 
 interface ArchiveCardProps {
   loop: LoopItem;
   onRestore: (id: number) => void;
+  onEditNote: (id: number, note: string) => void;
   onDelete: (id: number) => void;
 }
+
+type CardMode = 'view' | 'editing-note' | 'confirming-delete';
 
 const startOfDay = (d: Date): Date =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -43,8 +36,51 @@ const relativeAgoLabel = (iso: string, now: Date): string | null => {
   });
 };
 
-const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
+const NoteIcon: FC = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="11"
+    height="11"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <line x1="3" y1="5" x2="13" y2="5" />
+    <line x1="3" y1="8" x2="10" y2="8" />
+    <line x1="3" y1="11" x2="13" y2="11" />
+  </svg>
+);
+
+const TrashIcon: FC = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="13"
+    height="13"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M3 4.5h10" />
+    <path d="M6.5 4.5V3.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 .75.75V4.5" />
+    <path d="M4.75 4.5l.55 8.3a1 1 0 0 0 1 .95h3.4a1 1 0 0 0 1-.95l.55-8.3" />
+    <path d="M7 7v4" />
+    <path d="M9 7v4" />
+  </svg>
+);
+
+const ArchiveCard: FC<ArchiveCardProps> = ({
+  loop,
+  onRestore,
+  onEditNote,
+  onDelete,
+}) => {
+  const [mode, setMode] = useState<CardMode>('view');
 
   const now = new Date();
 
@@ -72,10 +108,25 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
   ].filter((part): part is string => Boolean(part));
 
   const statusLabel = loop.status === 'done' ? 'Done' : 'Dropped';
+  const hasNote = Boolean(loop.note && loop.note.trim());
+  const notePreview = hasNote ? loop.note!.split('\n')[0].trim() : '';
+
+  const saveNote = (value: string) => {
+    onEditNote(loop.id, value);
+    setMode('view');
+  };
 
   return (
-    <div className="rounded-3xl bg-cream-surface shadow-soft p-4">
-      <p className="text-base leading-7 text-charcoal/85">{loop.text}</p>
+    <div className="py-4">
+      <p className="font-serif text-base leading-relaxed text-charcoal/85">
+        {loop.text}
+      </p>
+
+      {hasNote && mode !== 'editing-note' && (
+        <p className="mt-1.5 truncate border-l-2 border-rule pl-3 font-serif text-sm italic text-charcoal/55">
+          {notePreview}
+        </p>
+      )}
 
       {metaParts.length > 0 && (
         <p className="mt-2 text-[0.7rem] text-charcoal/50">
@@ -83,8 +134,17 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
         </p>
       )}
 
-      {confirmingDelete ? (
-        <div className="mt-3 rounded-2xl bg-white/60 p-3">
+      {mode === 'editing-note' ? (
+        <div className="mt-3">
+          <NoteEditor
+            loopId={loop.id}
+            initialValue={loop.note ?? ''}
+            onSave={saveNote}
+            onCancel={() => setMode('view')}
+          />
+        </div>
+      ) : mode === 'confirming-delete' ? (
+        <div className="mt-3 rounded-md border border-rule bg-paper-light/60 p-3">
           <p className="mb-3 text-sm leading-6 text-charcoal/80">
             Permanently delete this loop?
           </p>
@@ -92,8 +152,8 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
           <div className="flex flex-wrap items-center justify-end gap-2">
             <button
               type="button"
-              onClick={() => setConfirmingDelete(false)}
-              className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-lavender-light/40 hover:bg-cream-light"
+              onClick={() => setMode('view')}
+              className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               Cancel
             </button>
@@ -101,33 +161,51 @@ const ArchiveCard: FC<ArchiveCardProps> = ({ loop, onRestore, onDelete }) => {
             <button
               type="button"
               onClick={() => onDelete(loop.id)}
-              className="rounded-full bg-charcoal px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-charcoal-soft"
+              className="rounded-md bg-charcoal px-4 py-2 text-sm font-semibold text-cream-light transition duration-200 hover:bg-charcoal-soft"
             >
               Delete
             </button>
           </div>
         </div>
       ) : (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-lavender-light/30 pt-3">
-          <div className="rounded-full bg-lavender-soft/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-lavender-dark">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="inline-flex items-center gap-2 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/65">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-charcoal/25" />
             {statusLabel}
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
+              onClick={() => setMode('editing-note')}
+              aria-label={hasNote ? 'Edit note' : 'Add note'}
+              className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
+            >
+              <NoteIcon />
+              Note
+              {hasNote && (
+                <span
+                  aria-hidden
+                  className="ml-0.5 h-1.5 w-1.5 rounded-full bg-lavender-dark/70"
+                />
+              )}
+            </button>
+
+            <button
+              type="button"
               onClick={() => onRestore(loop.id)}
-              className="rounded-full bg-white/90 px-4 py-1.5 text-xs font-semibold text-charcoal shadow-soft ring-1 ring-lavender-light/40 hover:bg-cream-light"
+              className="rounded-full bg-paper-light/90 px-4 py-1.5 text-xs font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               Restore
             </button>
 
             <button
               type="button"
-              onClick={() => setConfirmingDelete(true)}
-              className="rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/65 transition duration-200 hover:bg-white/70 hover:text-charcoal"
+              onClick={() => setMode('confirming-delete')}
+              aria-label="Delete loop"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/65 transition duration-200 hover:bg-paper-light/70 hover:text-charcoal"
             >
-              Delete
+              <TrashIcon />
             </button>
           </div>
         </div>

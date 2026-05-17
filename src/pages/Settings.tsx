@@ -1,122 +1,78 @@
 import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
+import DateEyebrow from '../components/DateEyebrow';
 import SectionCard from '../components/SectionCard';
-
-interface LoopItem {
-  id: number;
-  text: string;
-  status: 'active' | 'delayed' | 'done' | 'dropped';
-  revisitAt?: string;
-  createdAt?: string;
-  doneAt?: string;
-  droppedAt?: string;
-}
-
-const STORAGE_KEY = 'loopr.loops';
+import SketchKnob from '../components/SketchKnob';
+import { clearLoops, loadLoops } from '../lib/loops';
+import type { LoopItem } from '../lib/loops';
 
 const Settings: FC = () => {
   const [loops, setLoops] = useState<LoopItem[]>([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  // Load loops from localStorage on mount and whenever modal closes
   useEffect(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (!saved) {
-      setLoops([]);
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(saved) as any[];
-      if (Array.isArray(parsed)) {
-        const mapped = parsed.map((item) => ({
-          ...item,
-          createdAt:
-            item.createdAt ??
-            (typeof item.id === 'number'
-              ? new Date(item.id).toISOString()
-              : new Date().toISOString()),
-          status:
-            item.status === 'pending'
-              ? 'active'
-              : item.status === 'do'
-              ? 'done'
-              : item.status === 'delay'
-              ? 'delayed'
-              : item.status === 'drop'
-              ? 'dropped'
-              : (item.status as
-                  | 'active'
-                  | 'delayed'
-                  | 'done'
-                  | 'dropped'),
-        }));
-        setLoops(mapped);
-      }
-    } catch {
-      setLoops([]);
-    }
+    setLoops(loadLoops());
   }, [showConfirmation]);
 
-  const activeCount = loops.filter((loop) => loop.status === 'active')
-    .length;
-  const delayedCount = loops.filter((loop) => loop.status === 'delayed')
-    .length;
+  const doCount = loops.filter((loop) => loop.status === 'do').length;
+  const doingCount = loops.filter((loop) => loop.status === 'doing').length;
+  const delayedCount = loops.filter(
+    (loop) => loop.status === 'delayed'
+  ).length;
+  const doneCount = loops.filter(
+    (loop) => loop.status === 'done' || loop.status === 'dropped'
+  ).length;
+
+  const countTiles: Array<{ label: string; value: number }> = [
+    { label: 'Do', value: doCount },
+    { label: 'Doing', value: doingCount },
+    { label: 'Delayed', value: delayedCount },
+    { label: 'Done', value: doneCount },
+  ];
 
   const handleClearData = () => {
-    window.localStorage.removeItem(STORAGE_KEY);
+    clearLoops();
     setLoops([]);
     setShowConfirmation(false);
   };
 
   return (
     <PageContainer>
-      <div className="mb-8">
-        <p className="mb-3 text-xs uppercase tracking-[0.3em] text-lavender-dark opacity-90">
-          Loopr
-        </p>
-
-        <h1 className="mb-3 text-4xl font-bold leading-tight text-charcoal">
-          Settings
+      <div className="relative mb-8">
+        <DateEyebrow />
+        <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
+          Dials
         </h1>
-
-        <p className="max-w-xl text-base leading-7 text-charcoal/70">
-          A gentle space to adjust the app at your pace — simple, warm,
-          and clean.
+        <p className="mt-2 text-sm text-charcoal/65">
+          A quiet place to adjust the basics.
         </p>
+        <SketchKnob className="pointer-events-none absolute -top-1 right-0 h-16 w-16" />
       </div>
 
       <SectionCard className="space-y-6">
-        {/* Loop Counts */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-charcoal">Your Loops</h2>
+          <h2 className="text-lg font-semibold text-charcoal">Your loops</h2>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <div className="flex-1 rounded-2xl bg-white/60 p-4">
-              <p className="text-3xl font-bold leading-none text-charcoal">
-                {activeCount}
-              </p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+            {countTiles.map((tile) => (
+              <div
+                key={tile.label}
+                className="flex items-baseline gap-1.5 rounded-md border border-rule bg-paper-light/60 px-3 py-2.5"
+              >
+                <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
+                  {tile.value}
+                </span>
 
-              <p className="mt-2 text-xs font-medium uppercase tracking-[0.2em] text-charcoal/55">
-                Active loops
-              </p>
-            </div>
-
-            <div className="flex-1 rounded-2xl bg-white/60 p-4">
-              <p className="text-3xl font-bold leading-none text-charcoal">
-                {delayedCount}
-              </p>
-
-              <p className="mt-2 text-xs font-medium uppercase tracking-[0.2em] text-charcoal/55">
-                Delayed loops
-              </p>
-            </div>
+                <span className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
+                  {tile.label}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Clear Data Section */}
-        <div className="space-y-3 border-t border-lavender-light/30 pt-6">
+        <div className="space-y-3 border-t border-rule pt-6">
           <h2 className="text-lg font-semibold text-charcoal">Data</h2>
 
           <p className="text-sm text-charcoal/70">
@@ -127,31 +83,30 @@ const Settings: FC = () => {
           <button
             type="button"
             onClick={() => setShowConfirmation(true)}
-            className="inline-block rounded-full bg-white/80 px-5 py-3 text-sm font-semibold text-charcoal ring-1 ring-lavender-light/50 transition duration-200 hover:bg-white/90 hover:ring-lavender-light/70"
+            className="inline-block rounded-md bg-paper-light/80 px-5 py-3 text-sm font-semibold text-charcoal ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:ring-charcoal/20"
           >
             Clear All Data
           </button>
         </div>
       </SectionCard>
 
-      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm">
-          <div className="max-w-sm rounded-3xl bg-cream-surface p-6 shadow-card sm:p-8">
+          <div className="max-w-sm rounded-lg border border-rule bg-cream-surface p-6 shadow-card sm:p-8">
             <h3 className="mb-2 text-lg font-semibold text-charcoal">
               Clear all data?
             </h3>
 
             <p className="mb-6 text-charcoal/70">
-              This will delete all your active, delayed, done, and dropped
-              loops. This action cannot be undone.
+              This will delete every loop on this device, across Do, Doing,
+              Delayed, Done, and Dropped. This action cannot be undone.
             </p>
 
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => setShowConfirmation(false)}
-                className="flex-1 rounded-full bg-lavender-soft/50 px-4 py-3 text-sm font-semibold text-charcoal transition duration-200 hover:bg-lavender-soft/70"
+                className="flex-1 rounded-md bg-paper-light/80 px-4 py-3 text-sm font-semibold text-charcoal ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light"
               >
                 Cancel
               </button>
@@ -159,7 +114,7 @@ const Settings: FC = () => {
               <button
                 type="button"
                 onClick={handleClearData}
-                className="flex-1 rounded-full bg-charcoal px-4 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-charcoal-soft"
+                className="flex-1 rounded-md bg-charcoal px-4 py-3 text-sm font-semibold text-cream-light transition duration-200 hover:bg-charcoal-soft"
               >
                 Clear
               </button>

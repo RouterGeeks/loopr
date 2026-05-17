@@ -4,13 +4,13 @@ import PageContainer from '../components/PageContainer';
 import DateEyebrow from '../components/DateEyebrow';
 import HandUnderline from '../components/HandUnderline';
 import LoopCard from '../components/LoopCard';
-import SketchMoon from '../components/SketchMoon';
+import SketchCoffee from '../components/SketchCoffee';
 import { loadLoops, saveLoops } from '../lib/loops';
 import type { LoopItem, LoopStatus } from '../lib/loops';
 
 type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
-const Revisit: FC = () => {
+const Doing: FC = () => {
   const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
 
   useEffect(() => {
@@ -34,7 +34,9 @@ const Revisit: FC = () => {
   const handleDelay = (id: number, revisitAt: string) => {
     setLoops((current) =>
       current.map((loop) =>
-        loop.id === id ? { ...loop, status: 'delayed', revisitAt } : loop
+        loop.id === id
+          ? { ...loop, status: 'delayed', revisitAt }
+          : loop
       )
     );
   };
@@ -64,13 +66,17 @@ const Revisit: FC = () => {
     setLoops((current) => current.filter((loop) => loop.id !== id));
   };
 
-  const delayedLoops = loops
-    .filter((loop) => loop.status === 'delayed')
+  const doingLoops = loops
+    .filter((loop) => loop.status === 'doing')
     .slice()
     .sort((a, b) => {
-      const aTime = a.revisitAt ? new Date(a.revisitAt).getTime() : Infinity;
-      const bTime = b.revisitAt ? new Date(b.revisitAt).getTime() : Infinity;
-      return aTime - bTime;
+      const aTime = a.startedAt
+        ? new Date(a.startedAt).getTime()
+        : a.id;
+      const bTime = b.startedAt
+        ? new Date(b.startedAt).getTime()
+        : b.id;
+      return bTime - aTime;
     });
 
   return (
@@ -78,44 +84,44 @@ const Revisit: FC = () => {
       <div className="relative mb-8">
         <DateEyebrow />
         <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
-          Delayed
+          Doing
         </h1>
         <p className="mt-2 text-sm text-charcoal/65">
-          Loops set aside to resurface later.
+          What you're actively engaging with right now.
         </p>
-        <SketchMoon className="pointer-events-none absolute -top-1 right-0 h-16 w-16" />
+        <SketchCoffee className="pointer-events-none absolute -top-1 right-0 h-20 w-14" />
       </div>
 
-      {delayedLoops.length > 0 && (
+      {doingLoops.length > 0 && (
         <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
           <span className="inline-flex items-baseline gap-1.5">
             <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
-              {delayedLoops.length}
+              {doingLoops.length}
             </span>
-            Delayed
+            Doing
           </span>
         </div>
       )}
 
       <div className="border-t border-rule">
-        {delayedLoops.length === 0 ? (
+        {doingLoops.length === 0 ? (
           <div className="py-6">
             <div className="space-y-2">
               <p className="relative inline-block pr-2 font-serif text-lg font-semibold text-charcoal">
-                Nothing waiting
-                <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
+                Nothing in motion
+                <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" color="seafoam" />
               </p>
               <p className="font-mono text-xs text-charcoal/55">
-                Delayed loops will resurface here.
+                Loops you start working on will appear here.
               </p>
             </div>
             <p className="mt-6 text-right font-serif italic text-sm text-charcoal/55">
-              back when ready
+              in your hands
             </p>
           </div>
         ) : (
           <div className="divide-y divide-rule">
-            {delayedLoops.map((loop) => (
+            {doingLoops.map((loop) => (
               <LoopCard
                 key={loop.id}
                 loop={loop}
@@ -133,4 +139,4 @@ const Revisit: FC = () => {
   );
 };
 
-export default Revisit;
+export default Doing;
