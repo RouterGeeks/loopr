@@ -1,4 +1,4 @@
-const CACHE = 'loopr-shell-v5';
+const CACHE = 'loopr-shell-v6';
 
 const SHELL = [
   '/',
