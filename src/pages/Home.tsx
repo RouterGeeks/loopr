@@ -137,6 +137,9 @@ const Home: FC = () => {
         <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
           Dashboard
         </h1>
+        <p className="mt-3 max-w-[18rem] font-serif italic text-sm leading-relaxed text-charcoal/70 sm:max-w-md sm:text-base">
+          For thoughts that keep coming back. Capture now — decide later.
+        </p>
         <SketchMountain className="pointer-events-none absolute -top-1 right-0 h-14 w-28 sm:h-16 sm:w-32" />
       </div>
 
