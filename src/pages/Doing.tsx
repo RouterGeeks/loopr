@@ -92,17 +92,6 @@ const Doing: FC = () => {
         <SketchCoffee className="pointer-events-none absolute -top-1 right-0 h-20 w-14" />
       </div>
 
-      {doingLoops.length > 0 && (
-        <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
-          <span className="inline-flex items-baseline gap-1.5">
-            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
-              {doingLoops.length}
-            </span>
-            Doing
-          </span>
-        </div>
-      )}
-
       <div className="border-t border-rule">
         {doingLoops.length === 0 ? (
           <div className="py-6">

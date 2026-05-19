@@ -124,12 +124,6 @@ const Home: FC = () => {
 
   const doLoops = loops.filter((loop) => loop.status === 'do');
 
-  const doCount = doLoops.length;
-  const doingCount = loops.filter((l) => l.status === 'doing').length;
-  const delayedCount = loops.filter((l) => l.status === 'delayed').length;
-
-  const hasAnyOpenWork = doCount + doingCount + delayedCount > 0;
-
   return (
     <PageContainer>
       <div className="relative mb-6">
@@ -138,41 +132,13 @@ const Home: FC = () => {
           Dashboard
         </h1>
         <p className="mt-3 max-w-[18rem] font-serif italic text-sm leading-relaxed text-charcoal/70 sm:max-w-md sm:text-base">
-          For thoughts that keep coming back. Capture now — decide later.
+          For thoughts that keep coming back — your open loops. Capture
+          now, decide later.
         </p>
         <SketchMountain className="pointer-events-none absolute -top-1 right-0 h-14 w-28 sm:h-16 sm:w-32" />
       </div>
 
-      {hasAnyOpenWork && (
-        <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
-          <span className="inline-flex items-baseline gap-1.5">
-            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
-              {doCount}
-            </span>
-            Do
-          </span>
-          <span className="inline-flex items-baseline gap-1.5">
-            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
-              {doingCount}
-            </span>
-            Doing
-          </span>
-          <span className="inline-flex items-baseline gap-1.5">
-            <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
-              {delayedCount}
-            </span>
-            Delayed
-          </span>
-        </div>
-      )}
-
       <div className="space-y-2">
-        <label
-          htmlFor="loop-input"
-          className="block font-mono text-sm text-charcoal/75"
-        >
-          Capture a thought...
-        </label>
 
         <div className="rounded-sm border border-charcoal/25 bg-paper-light/40">
           <textarea
@@ -240,7 +206,13 @@ const Home: FC = () => {
         )}
       </div>
 
-      <div className="mt-8">
+      <p className="mt-8 max-w-md font-serif italic text-sm leading-relaxed text-charcoal/70 sm:text-base">
+        <span className="font-semibold text-charcoal/90">Do</span> it now.{' '}
+        <span className="font-semibold text-charcoal/90">Delay</span> it for later.{' '}
+        <span className="font-semibold text-charcoal/90">Drop</span> it to let it go.
+      </p>
+
+      <div className="mt-6">
         {doLoops.length === 0 ? (
           <div className="border-t border-rule pt-6">
             <div className="space-y-2">
@@ -289,7 +261,7 @@ const Home: FC = () => {
         ) : (
           <>
             <h2 className="relative mb-1 inline-block pr-1 font-mono text-[0.7rem] tracking-[0.2em] text-charcoal/70">
-              RECENTLY CAPTURED
+              OPEN LOOPS
               <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
             </h2>
             <div className="divide-y divide-rule border-t border-rule">
