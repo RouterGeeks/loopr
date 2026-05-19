@@ -10,6 +10,7 @@ import type { LoopItem } from '../lib/loops';
 const Settings: FC = () => {
   const [loops, setLoops] = useState<LoopItem[]>([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
 
   useEffect(() => {
     setLoops(loadLoops());
@@ -51,7 +52,45 @@ const Settings: FC = () => {
       </div>
 
       <SectionCard className="space-y-6">
-        <div className="space-y-4">
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={() => setShowAbout((v) => !v)}
+            aria-expanded={showAbout}
+            className="flex w-full items-baseline justify-between gap-3 text-left"
+          >
+            <h2 className="text-lg font-semibold text-charcoal">About Loopr</h2>
+            <span className="font-mono text-xs text-charcoal/55">
+              {showAbout ? '— hide' : '+ read'}
+            </span>
+          </button>
+
+          {showAbout && (
+            <div className="space-y-3 font-serif text-[0.95rem] leading-relaxed text-charcoal/80">
+              <p>
+                Loopr is for open loops — thoughts that keep coming back,
+                ideas you haven't decided about, half-finished things you
+                don't want to forget.
+              </p>
+              <p>
+                Capture a loop, then choose:{' '}
+                <span className="font-semibold text-charcoal">Do</span> it
+                now,{' '}
+                <span className="font-semibold text-charcoal">Delay</span>{' '}
+                it, or{' '}
+                <span className="font-semibold text-charcoal">Drop</span>{' '}
+                it. Delayed loops resurface when you've asked them to.
+                Dropped ones can be restored.
+              </p>
+              <p>
+                The goal is cognitive clarity, not productivity. No streaks,
+                no overdue red, no pressure.
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-4 border-t border-rule pt-6">
           <h2 className="text-lg font-semibold text-charcoal">Your loops</h2>
 
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
