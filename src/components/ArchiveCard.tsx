@@ -107,7 +107,6 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
     stateRelative,
   ].filter((part): part is string => Boolean(part));
 
-  const statusLabel = loop.status === 'done' ? 'Done' : 'Dropped';
   const hasNote = Boolean(loop.note && loop.note.trim());
   const notePreview = hasNote ? loop.note!.split('\n')[0].trim() : '';
 
@@ -168,12 +167,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
           </div>
         </div>
       ) : (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="inline-flex items-center gap-2 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/65">
-            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-charcoal/25" />
-            {statusLabel}
-          </div>
-
+        <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"

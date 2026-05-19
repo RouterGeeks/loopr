@@ -24,22 +24,6 @@ type CardMode =
 
 type DelayPreset = 'tomorrow' | 'weekend' | 'nextWeek';
 
-const statusLabel: Record<LoopStatus, string> = {
-  do: 'Do',
-  doing: 'Doing',
-  delayed: 'Delayed',
-  done: 'Done',
-  dropped: 'Dropped',
-};
-
-const statusDotClass: Record<LoopStatus, string> = {
-  do: 'bg-lavender-dark/70',
-  doing: 'bg-seafoam',
-  delayed: 'bg-lavender-dark/50',
-  done: 'bg-charcoal/30',
-  dropped: 'bg-charcoal/25',
-};
-
 const at9amLocal = (d: Date): Date => {
   d.setHours(9, 0, 0, 0);
   return d;
@@ -525,15 +509,7 @@ const LoopCard: FC<LoopCardProps> = ({
         </div>
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="inline-flex items-center gap-2 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/65">
-              <span
-                aria-hidden
-                className={`h-1.5 w-1.5 rounded-full ${statusDotClass[loop.status]}`}
-              />
-              {statusLabel[loop.status]}
-            </div>
-
+          <div className="flex flex-wrap items-center justify-end gap-3">
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
