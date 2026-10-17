@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { revisitGroup, revisitTime } from '../lib/resurfacing';
+import { useRevisitClock } from '../lib/useRevisitClock';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import DateEyebrow from '../components/DateEyebrow';
@@ -12,6 +14,7 @@ type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 const Revisit: FC = () => {
   const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
+  const now = useRevisitClock(loops);
 
   useEffect(() => {
     saveLoops(loops);
@@ -67,11 +70,13 @@ const Revisit: FC = () => {
   const delayedLoops = loops
     .filter((loop) => loop.status === 'delayed')
     .slice()
-    .sort((a, b) => {
-      const aTime = a.revisitAt ? new Date(a.revisitAt).getTime() : Infinity;
-      const bTime = b.revisitAt ? new Date(b.revisitAt).getTime() : Infinity;
-      return aTime - bTime;
-    });
+    .sort((a, b) => (revisitTime(a) ?? Infinity) - (revisitTime(b) ?? Infinity));
+  const groups = [
+    { key: 'ready', title: 'Ready to revisit' },
+    { key: 'later', title: 'Later' },
+    { key: 'undated', title: 'Choose a date' },
+  ] as const;
+
 
   return (
     <PageContainer>
@@ -104,17 +109,20 @@ const Revisit: FC = () => {
           </div>
         ) : (
           <div className="divide-y divide-rule">
-            {delayedLoops.map((loop) => (
-              <LoopCard
-                key={loop.id}
-                loop={loop}
-                onTransition={handleTransition}
-                onDelay={handleDelay}
-                onEdit={handleEdit}
-                onEditNote={handleEditNote}
-                onDelete={handleDelete}
-              />
-            ))}
+            {groups.flatMap(group => {
+              const items = delayedLoops.filter(loop => revisitGroup(loop, now) === group.key);
+              if (items.length === 0) return [];
+              // Keep cards as stable siblings when the clock changes their group:
+              // moving between nested sections would remount an open editor.
+              return [
+                <h2 key={`heading-${group.key}`} className="pt-6 pb-3 font-serif text-lg font-semibold text-charcoal">{group.title}</h2>,
+                ...items.map(loop => (
+                  <LoopCard key={loop.id} loop={loop} nowTime={now}
+                    onTransition={handleTransition} onDelay={handleDelay}
+                    onEdit={handleEdit} onEditNote={handleEditNote} onDelete={handleDelete} />
+                )),
+              ];
+            })}
           </div>
         )}
       </div>

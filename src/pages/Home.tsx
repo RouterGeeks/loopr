@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { revisitGroup } from '../lib/resurfacing';
+import { useRevisitClock } from '../lib/useRevisitClock';
 import type { FC, KeyboardEvent } from 'react';
 import PageContainer from '../components/PageContainer';
 import LoopCard from '../components/LoopCard';
@@ -16,6 +19,8 @@ type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 const Home: FC = () => {
   const [draft, setDraft] = useState('');
   const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
+  const now = useRevisitClock(loops);
+  const readyCount = loops.filter(loop => loop.status === 'delayed' && revisitGroup(loop, now) === 'ready').length;
   const captureRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
@@ -206,6 +211,14 @@ const Home: FC = () => {
         )}
       </div>
 
+      {readyCount > 0 && (
+        <p className="mt-5 text-sm text-charcoal/70">
+          <Link to="/delayed" className="inline-flex min-h-11 items-center underline decoration-lavender underline-offset-4">
+            {readyCount} {readyCount === 1 ? 'thought is' : 'thoughts are'} ready to revisit
+          </Link>
+        </p>
+      )}
+
       <p className="mt-8 max-w-md font-serif italic text-sm leading-relaxed text-charcoal/70 sm:text-base">
         <span className="font-semibold text-charcoal/90">Do</span> it now.{' '}
         <span className="font-semibold text-charcoal/90">Delay</span> it for later.{' '}
@@ -217,7 +230,7 @@ const Home: FC = () => {
           <div className="border-t border-rule pt-6">
             <div className="space-y-2">
               <p className="relative inline-block pr-2 font-serif text-lg font-semibold text-charcoal">
-                Quiet for now
+                {readyCount > 0 ? 'Nothing new here' : 'Quiet for now'}
                 <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
               </p>
               <p className="font-mono text-xs text-charcoal/70">

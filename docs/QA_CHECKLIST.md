@@ -145,7 +145,7 @@
 * [ ] This Weekend works
 * [ ] Next Week works
 * [ ] Pick Date works
-* [ ] Due Now appears correctly
+* [ ] Ready to revisit appears only once the scheduled time has arrived
 * [ ] Relative labels display correctly
 * [ ] Sorting is chronological
 
@@ -161,6 +161,19 @@
 * [ ] Drop from Delayed moves loop to Done page (Dropped section)
 * [ ] Delay from Delayed re-schedules the loop
 * [ ] Empty state displays correctly
+
+## Resurfacing clarity
+
+* [ ] Dashboard cue appears only for ready delayed thoughts, with correct singular/plural text and a link to Delayed
+* [ ] Cue count matches Ready to revisit; no "Quiet for now" message when ready thoughts exist
+* [ ] Ready to revisit / Later / Choose a date headings appear only for nonempty groups
+* [ ] Ready and future groups are chronological; missing/invalid dates stay visible under Choose a date
+* [ ] Ready cards preserve original scheduled date/time; future labels distinguish Today at [time], Tomorrow, and later dates
+* [ ] Due-time and midnight updates occur while open; tab/app return refreshes stale labels
+* [ ] Time-driven changes preserve capture text, open note/edit drafts, focus, and loop state
+* [ ] Rescheduling updates group/count; Do moves to Doing and Drop moves to Done as before
+* [ ] Check daylight-saving transitions, local timezone changes, and overnight background return
+* [ ] On iPhone, review cue discoverability, VoiceOver headings/link text, and background/foreground behavior
 
 ---
 

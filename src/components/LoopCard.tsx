@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
 import type { LoopItem, LoopStatus } from '../lib/loops';
 import NoteEditor from './NoteEditor';
+import { revisitLabel, revisitGroup, scheduledContext } from '../lib/resurfacing';
 import { useCardFocus } from '../lib/useCardFocus';
 
 type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 interface LoopCardProps {
   loop: LoopItem;
+  nowTime?: number;
   onTransition: (id: number, status: TransitionStatus) => void;
   onDelay: (id: number, revisitAt: string) => void;
   onEdit: (id: number, newText: string) => void;
@@ -62,16 +64,6 @@ const localTodayString = (): string => {
   return `${y}-${m}-${day}`;
 };
 
-const formatScheduledDate = (iso: string): string => {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString(undefined, {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-};
-
 const startOfDay = (d: Date): Date =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
@@ -94,36 +86,6 @@ const relativeDaysAgoPhrase = (iso: string, now: Date): string | null => {
     month: 'short',
     day: 'numeric',
   });
-};
-
-const relativeRevisitLabel = (iso: string, now: Date): string | null => {
-  const target = new Date(iso);
-  if (Number.isNaN(target.getTime())) return null;
-  if (target.getTime() <= now.getTime()) return 'Back today';
-
-  const daysDiff = Math.round(
-    (startOfDay(target).getTime() - startOfDay(now).getTime()) / 86400000
-  );
-  if (daysDiff === 1) return 'Tomorrow';
-
-  const todayDow = now.getDay();
-  const targetDow = target.getDay();
-
-  const isThisWeekend = (() => {
-    if (todayDow === 0) return daysDiff === 6 && targetDow === 6;
-    if (todayDow === 6) return false;
-    return (
-      (daysDiff === 6 - todayDow && targetDow === 6) ||
-      (daysDiff === 7 - todayDow && targetDow === 0)
-    );
-  })();
-  if (isThisWeekend) return 'This weekend';
-
-  const daysToNextMonday =
-    todayDow === 1 ? 7 : (8 - todayDow) % 7 || 7;
-  if (daysDiff === daysToNextMonday && targetDow === 1) return 'Next week';
-
-  return `Scheduled for ${formatScheduledDate(iso)}`;
 };
 
 const NoteIcon: FC = () => (
@@ -196,6 +158,7 @@ const CloseIcon: FC = () => (
 
 const LoopCard: FC<LoopCardProps> = ({
   loop,
+  nowTime,
   onTransition,
   onDelay,
   onEdit,
@@ -308,17 +271,12 @@ const LoopCard: FC<LoopCardProps> = ({
   const hasNote = Boolean(loop.note && loop.note.trim());
   const notePreview = hasNote ? loop.note!.split('\n')[0].trim() : '';
 
-  const now = new Date();
+  const now = nowTime === undefined ? new Date() : new Date(nowTime);
 
-  const revisitSublabel = (() => {
-    if (loop.status !== 'delayed' || !loop.revisitAt) return null;
-    const text = relativeRevisitLabel(loop.revisitAt, now);
-    if (!text) return null;
-    return {
-      text,
-      tone: text === 'Back today' ? ('due' as const) : ('scheduled' as const),
-    };
-  })();
+  const revisitSublabel = loop.status === 'delayed' ? {
+    text: revisitLabel(loop, now.getTime()),
+    ready: revisitGroup(loop, now.getTime()) === 'ready',
+  } : null;
 
   const footerLabel = (() => {
     if (loop.status === 'doing' && loop.startedAt) {
@@ -411,7 +369,7 @@ const LoopCard: FC<LoopCardProps> = ({
         {revisitSublabel && (
           <p
             className={`mt-2 text-xs font-semibold uppercase tracking-[0.2em] ${
-              revisitSublabel.tone === 'due'
+              revisitSublabel.ready
                 ? 'text-lavender-dark'
                 : 'text-charcoal/70'
             }`}
@@ -420,6 +378,10 @@ const LoopCard: FC<LoopCardProps> = ({
           </p>
         )}
       </div>
+
+      {revisitSublabel?.ready && (
+        <p className="mb-3 text-xs text-charcoal/70">{scheduledContext(loop)}</p>
+      )}
 
       {mode === 'editing-note' ? (
         <NoteEditor

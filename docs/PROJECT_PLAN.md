@@ -162,11 +162,12 @@ All AI-assisted development sessions should review /docs before making significa
 - This Weekend
 - Next Week
 - Pick Date
-- Due Now labeling
+- Ready to revisit labeling with original scheduled-date context
 - Human-readable resurfacing labels
 
 ## Dashboard (route /)
 - Capture input with Cmd/Ctrl + Enter shortcut
+- Conditional link below capture showing how many delayed thoughts are ready
 - Workflow legend: Do / Delay / Drop
 - List of Do (open) loops
 - Autofocus on mount and on return navigation
@@ -178,7 +179,7 @@ All AI-assisted development sessions should review /docs before making significa
 - Transitions to Done, Delayed, or Dropped
 
 ## Delayed (route /delayed)
-- Delayed loops sorted by revisit time
+- Ready to revisit / Later / Choose a date groups, sorted by revisit time
 - Relative resurfacing states
 - Empty-state support
 
@@ -523,6 +524,38 @@ handlers to resolve the lint error (`e4dd5bb`).
 ---
 
 # Upcoming Priorities
+
+## Resurfacing clarity — locally approved, publication pending
+
+- Dashboard shows a quiet count/link below capture only when delayed
+  thoughts are ready. Its empty open-loop list says "Nothing new here"
+  when ready thoughts exist elsewhere, instead of "Quiet for now".
+- Delayed separates Ready to revisit, Later, and Choose a date. Missing or
+  invalid dates remain visible in Choose a date. No automatic state changes.
+- Due thoughts say "Ready to revisit" and retain the scheduled date/time
+  as context. Future thoughts use Today at [time], Tomorrow, or a dated
+  schedule. Dates are displayed in the device's current local timezone.
+- A shared readiness helper keeps the Dashboard count and Delayed labels
+  consistent. Refresh occurs at the next due time/local midnight and on
+  focus, pageshow, or returning to a visible tab, without writing storage.
+- Cards remain stable across time-driven group changes so an open editor,
+  unsaved draft, and its focus survive. Capture remains above the cue.
+- Existing Do / Delay / Drop, persistence, routes, and local backup format
+  remain unchanged. No notifications, urgency badges, or new dependencies.
+
+Local validation (2026-10-17): production build, lint, and diff checks
+passed. `node --test scripts/resurfacing.test.mjs` covers exact boundaries,
+past/future/missing/invalid dates, calendar labels, next refresh timing,
+and 23/25-hour local days around US daylight-saving transitions. Isolated
+Chromium controlled-clock checks passed for cue/count agreement, due-time
+updates without capture draft/focus loss, an open note surviving a day and
+group change, rescheduling, Do, return-to-app focus refresh, invalid dates,
+and 320/375/390px layouts. Delayed was visually reviewed at mobile width.
+
+The user approved the resurfacing changes after local review on 2026-10-17
+and authorized committing the implementation, documentation, and tests to
+dev. Publication remains pending. Actual iPhone background/foreground and
+VoiceOver behavior remain device checks.
 
 ## Mobile accessibility — locally approved, publication pending
 
