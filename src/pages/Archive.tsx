@@ -1,22 +1,19 @@
-import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import ArchiveCard from '../components/ArchiveCard';
 import DateEyebrow from '../components/DateEyebrow';
 import HandUnderline from '../components/HandUnderline';
 import SketchPaperStack from '../components/SketchPaperStack';
-import { loadLoops, saveLoops } from '../lib/loops';
+import { useLoopData } from '../lib/useLoopData';
+import StorageNotice from '../components/StorageNotice';
 import type { LoopItem } from '../lib/loops';
 
 const Archive: FC = () => {
-  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
+  const { loops, setLoops, error, saving, reload } = useLoopData();
 
-  useEffect(() => {
-    saveLoops(loops);
-  }, [loops]);
 
   const handleRestore = (id: number) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const restored: LoopItem = {
@@ -34,7 +31,7 @@ const Archive: FC = () => {
   };
 
   const handleEditNote = (id: number, note: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const trimmed = note.trim();
@@ -47,7 +44,7 @@ const Archive: FC = () => {
   };
 
   const handlePermanentDelete = (id: number) => {
-    setLoops((current) => current.filter((loop) => loop.id !== id));
+    return setLoops((current) => current.filter((loop) => loop.id !== id));
   };
 
   const sortKey = (loop: LoopItem): number => {
@@ -76,6 +73,7 @@ const Archive: FC = () => {
 
   return (
     <PageContainer>
+      <StorageNotice error={error} saving={saving} onReload={reload} />
       <div className="relative mb-8">
         <DateEyebrow />
         <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
@@ -117,7 +115,7 @@ const Archive: FC = () => {
 
               <div className="divide-y divide-rule border-t border-rule">
                 {doneLoops.map((loop) => (
-                  <ArchiveCard
+                  <ArchiveCard saving={saving}
                     key={loop.id}
                     loop={loop}
                     onRestore={handleRestore}
@@ -142,7 +140,7 @@ const Archive: FC = () => {
 
               <div className="divide-y divide-rule border-t border-rule">
                 {droppedLoops.map((loop) => (
-                  <ArchiveCard
+                  <ArchiveCard saving={saving}
                     key={loop.id}
                     loop={loop}
                     onRestore={handleRestore}

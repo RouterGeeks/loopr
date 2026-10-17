@@ -6,7 +6,8 @@ import type { FC, KeyboardEvent } from 'react';
 import PageContainer from '../components/PageContainer';
 import LoopCard from '../components/LoopCard';
 import MicButton from '../components/MicButton';
-import { loadLoops, saveLoops } from '../lib/loops';
+import { useLoopData } from '../lib/useLoopData';
+import StorageNotice from '../components/StorageNotice';
 import type { LoopItem, LoopStatus } from '../lib/loops';
 import DateEyebrow from '../components/DateEyebrow';
 import HandUnderline from '../components/HandUnderline';
@@ -18,14 +19,11 @@ type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 const Home: FC = () => {
   const [draft, setDraft] = useState('');
-  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
+  const { loops, setLoops, error, saving, reload } = useLoopData();
   const now = useRevisitClock(loops);
   const readyCount = loops.filter(loop => loop.status === 'delayed' && revisitGroup(loop, now) === 'ready').length;
   const captureRef = useRef<HTMLTextAreaElement | null>(null);
 
-  useEffect(() => {
-    saveLoops(loops);
-  }, [loops]);
 
   // Focus the capture field on mount and when navigating back to Home.
   // useEffect is more reliable than the HTML autofocus attribute under
@@ -34,15 +32,15 @@ const Home: FC = () => {
     captureRef.current?.focus({ preventScroll: true });
   }, []);
 
-  const addLoop = () => {
+  const addLoop = async () => {
     const trimmed = draft.trim();
     if (!trimmed) return;
 
     const now = new Date();
 
-    setLoops((current) => [
+    const saved = await setLoops((current) => [
       {
-        id: now.getTime(),
+        id: current.reduce((id, loop) => Math.max(id, loop.id + 1), now.getTime()),
         text: trimmed,
         status: 'do',
         createdAt: now.toISOString(),
@@ -50,11 +48,11 @@ const Home: FC = () => {
       ...current,
     ]);
 
-    setDraft('');
+    if (saved) setDraft(current => current === draft ? '' : current);
   };
 
   const handleTransition = (id: number, status: TransitionStatus) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const now = new Date().toISOString();
@@ -68,7 +66,7 @@ const Home: FC = () => {
   };
 
   const handleDelay = (id: number, revisitAt: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) =>
         loop.id === id
           ? { ...loop, status: 'delayed', revisitAt }
@@ -78,7 +76,7 @@ const Home: FC = () => {
   };
 
   const handleEdit = (id: number, newText: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) =>
         loop.id === id ? { ...loop, text: newText } : loop
       )
@@ -86,7 +84,7 @@ const Home: FC = () => {
   };
 
   const handleEditNote = (id: number, note: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const trimmed = note.trim();
@@ -99,7 +97,7 @@ const Home: FC = () => {
   };
 
   const handleDelete = (id: number) => {
-    setLoops((current) => current.filter((loop) => loop.id !== id));
+    return setLoops((current) => current.filter((loop) => loop.id !== id));
   };
 
   const handleDraftKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -131,6 +129,7 @@ const Home: FC = () => {
 
   return (
     <PageContainer>
+      <StorageNotice error={error} saving={saving} onReload={reload} />
       <div className="relative mb-6">
         <DateEyebrow />
         <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
@@ -279,7 +278,7 @@ const Home: FC = () => {
             </h2>
             <div className="divide-y divide-rule border-t border-rule">
               {doLoops.map((loop) => (
-                <LoopCard
+                <LoopCard saving={saving}
                   key={loop.id}
                   loop={loop}
                   onTransition={handleTransition}

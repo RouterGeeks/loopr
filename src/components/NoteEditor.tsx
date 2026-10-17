@@ -5,6 +5,7 @@ import { isSpeechCaptureSupported } from '../lib/useSpeechCapture';
 
 interface NoteEditorProps {
   loopId: number;
+  saving?: boolean;
   initialValue: string;
   onSave: (value: string) => void;
   onCancel: () => void;
@@ -12,6 +13,7 @@ interface NoteEditorProps {
 
 const NoteEditor: FC<NoteEditorProps> = ({
   loopId,
+  saving = false,
   initialValue,
   onSave,
   onCancel,
@@ -56,6 +58,7 @@ const NoteEditor: FC<NoteEditorProps> = ({
       <textarea
         id={`loop-note-${loopId}`}
         ref={textareaRef}
+        readOnly={saving}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         onKeyDown={handleKeyDown}

@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { createBackup, MAX_BACKUP_BYTES, parseBackup } from '../lib/backup';
-import { loadLoops, saveLoops, STORAGE_KEY } from '../lib/loops';
+import { loadLoops, writeLoops, STORAGE_KEY } from '../lib/loops';
 import type { LoopItem } from '../lib/loops';
 
 const buttonClass = 'rounded-md bg-paper-light/80 px-4 py-3 text-sm font-semibold text-charcoal ring-1 ring-charcoal/20 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50';
 
-export default function BackupControls({ onRestore }: { onRestore: (loops: LoopItem[]) => void }) {
+export default function BackupControls({ onRestore, needsRecovery = false }: { needsRecovery?: boolean; onRestore: (loops: LoopItem[]) => void }) {
   const [pending, setPending] = useState<{ loops: LoopItem[]; previous: string | null } | null>(null);
   const [reading, setReading] = useState(false);
   const [message, setMessage] = useState('');
@@ -51,7 +51,7 @@ export default function BackupControls({ onRestore }: { onRestore: (loops: LoopI
     }
   };
 
-  const restoreBackup = () => {
+  const restoreBackup = async () => {
     if (!pending) return;
     setError('');
     try {
@@ -61,7 +61,7 @@ export default function BackupControls({ onRestore }: { onRestore: (loops: LoopI
         return;
       }
       // A single localStorage write is atomic: on failure, existing data remains.
-      saveLoops(pending.loops);
+      await writeLoops(pending.loops, pending.previous);
       onRestore(pending.loops);
       setMessage(`Restored ${pending.loops.length} loops from your backup.`);
       setPending(null);
@@ -75,6 +75,20 @@ export default function BackupControls({ onRestore }: { onRestore: (loops: LoopI
     <div className="space-y-3">
       <p className="text-sm text-charcoal/70">Save a backup of your thoughts, notes, and dates. Backup files contain your text, so keep them somewhere private.</p>
       <button type="button" className={buttonClass} onClick={exportBackup}>Export backup</button>
+      {needsRecovery && <>
+      <button type="button" className={buttonClass} onClick={() => {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw === null) { setError('There is no stored data to download.'); return; }
+          const url = URL.createObjectURL(new Blob([raw], { type: 'text/plain' }));
+          const link = document.createElement('a'); link.href = url;
+          link.download = 'loopr-original-data.txt'; document.body.append(link); link.click(); link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 60000);
+          setMessage('Original data download requested. Keep this recovery copy before replacing unreadable data.');
+        } catch { setError('Could not read the original data. Browser storage may be unavailable.'); }
+      }}>Download original data</button>
+      <p className="text-sm text-charcoal/70">If saved thoughts cannot be read, keep an original-data copy before restoring a valid backup. This recovery file is not a restorable Loopr backup.</p>
+      </>}
       <div className="space-y-2">
         <label htmlFor="restore-backup" className="block text-sm font-semibold text-charcoal">Restore backup</label>
         <p id="backup-help" className="text-sm text-charcoal/70">Choose a Loopr JSON backup (up to 5 MB). You’ll review it before replacing any loops.</p>

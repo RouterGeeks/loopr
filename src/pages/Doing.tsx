@@ -1,24 +1,21 @@
-import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import DateEyebrow from '../components/DateEyebrow';
 import HandUnderline from '../components/HandUnderline';
 import LoopCard from '../components/LoopCard';
 import SketchCoffee from '../components/SketchCoffee';
-import { loadLoops, saveLoops } from '../lib/loops';
+import { useLoopData } from '../lib/useLoopData';
+import StorageNotice from '../components/StorageNotice';
 import type { LoopItem, LoopStatus } from '../lib/loops';
 
 type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 const Doing: FC = () => {
-  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
+  const { loops, setLoops, error, saving, reload } = useLoopData();
 
-  useEffect(() => {
-    saveLoops(loops);
-  }, [loops]);
 
   const handleTransition = (id: number, status: TransitionStatus) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const now = new Date().toISOString();
@@ -32,7 +29,7 @@ const Doing: FC = () => {
   };
 
   const handleDelay = (id: number, revisitAt: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) =>
         loop.id === id
           ? { ...loop, status: 'delayed', revisitAt }
@@ -42,7 +39,7 @@ const Doing: FC = () => {
   };
 
   const handleEdit = (id: number, newText: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) =>
         loop.id === id ? { ...loop, text: newText } : loop
       )
@@ -50,7 +47,7 @@ const Doing: FC = () => {
   };
 
   const handleEditNote = (id: number, note: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const trimmed = note.trim();
@@ -63,7 +60,7 @@ const Doing: FC = () => {
   };
 
   const handleDelete = (id: number) => {
-    setLoops((current) => current.filter((loop) => loop.id !== id));
+    return setLoops((current) => current.filter((loop) => loop.id !== id));
   };
 
   const doingLoops = loops
@@ -81,6 +78,7 @@ const Doing: FC = () => {
 
   return (
     <PageContainer>
+      <StorageNotice error={error} saving={saving} onReload={reload} />
       <div className="relative mb-8">
         <DateEyebrow />
         <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
@@ -111,7 +109,7 @@ const Doing: FC = () => {
         ) : (
           <div className="divide-y divide-rule">
             {doingLoops.map((loop) => (
-              <LoopCard
+              <LoopCard saving={saving}
                 key={loop.id}
                 loop={loop}
                 onTransition={handleTransition}

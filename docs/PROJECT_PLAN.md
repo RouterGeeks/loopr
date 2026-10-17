@@ -191,7 +191,7 @@ All AI-assisted development sessions should review /docs before making significa
 
 ## Dials (route /dials)
 - Four-tile count grid: Do / Doing / Delayed / Done
-- Export and restore versioned JSON backups (locally approved; publication pending)
+- Export and restore versioned JSON backups (live)
 - Clear all data
 - Confirmation protection
 
@@ -525,7 +525,48 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Upcoming Priorities
 
-## Resurfacing clarity — locally approved, publication pending
+## Data reliability — locally approved, publication pending
+
+- Capture, editing, notes, transitions, deletion, and restore now persist
+  before updating the displayed data or closing the editor. Failed saves
+  retain drafts; a calm message explains retry/review options. Drafts are
+  in memory: keep the page open or copy them before navigating/reloading.
+- Loading and legacy migration no longer write to storage. Invalid JSON,
+  malformed records, and duplicate IDs are rejected without replacing the
+  original bytes. Known legacy statuses and numeric string IDs still load.
+- Dials offers Download original data when storage is unreadable. This is
+  an exact recovery copy, not a normal backup. Valid backup replacement
+  and Clear All remain explicit, confirmed actions.
+- Every writer compares the exact stored version the user reviewed.
+  Another-tab changes surface a review message instead of overwriting
+  newer data; reviewing can retain a draft on a surviving card. Copy a draft
+  first if its card was deleted elsewhere. No automatic conflict merging.
+- On supported secure origins, Web Locks serializes simultaneous app
+  writes. Where Web Locks is unavailable (including some local HTTP
+  previews), version checks still reject stale snapshots but cannot make
+  simultaneous cross-tab writes transactional. Old deployed clients or
+  external scripts do not participate in this lock protocol.
+- GitHub validation runs lint, `npm test`, and the Pages build for dev
+  pushes and PRs. Main deployments now run lint and tests before building
+  and uploading. These workflow changes await a push; local results do
+  not establish that a GitHub run has passed.
+
+Local validation: both production builds, lint, diff checks, and all nine
+unit tests pass. Tests cover unreadable bytes, read-only legacy
+migration, quota/clear failures, stale and simultaneous writers, and
+explicit recovery. Isolated browser tests verify failed capture/edit/note
+draft retention and retry, two-tab conflicts and reviewed retry, corrupt
+data preservation across routes, exact original-data download, and valid
+backup recovery. Blocked-storage access retains the capture draft without
+page errors, and the mobile error layout fits at 375px. Backup and
+resurfacing regression checks pass.
+
+Local review approved on 2026-10-17; commit and push to dev authorized,
+including documentation, tests, and GitHub validation. Publication to main
+remains pending. Installed-iPhone/offline testing remains a subsequent
+priority; the current work does not migrate storage or introduce sync.
+
+## Resurfacing clarity — live (`d64dbe5`)
 
 - Dashboard shows a quiet count/link below capture only when delayed
   thoughts are ready. Its empty open-loop list says "Nothing new here"
@@ -554,10 +595,10 @@ and 320/375/390px layouts. Delayed was visually reviewed at mobile width.
 
 The user approved the resurfacing changes after local review on 2026-10-17
 and authorized committing the implementation, documentation, and tests to
-dev. Publication remains pending. Actual iPhone background/foreground and
+dev. Published to GitHub Pages on 2026-10-17; live verification passed. Actual iPhone background/foreground and
 VoiceOver behavior remain device checks.
 
-## Mobile accessibility — locally approved, publication pending
+## Mobile accessibility — live (`a9cdde8`)
 
 - Added shared high-contrast focus outlines for keyboard controls and
   editable fields, plus scroll margins above fixed navigation.
@@ -597,13 +638,13 @@ checks also cover downloads, full restoration, validation, and failures.
 
 The user approved the revised capture and editor focus borders and
 authorized committing the accessibility improvements and documentation
-to dev on 2026-10-17. Publication remains pending. Actual iPhone
+to dev on 2026-10-17. Published to GitHub Pages on 2026-10-17; live verification passed. Actual iPhone
 Safari/VoiceOver announcements, reading order, touch comfort, enlarged
 text, and dialog dismissal have not all been explicitly confirmed.
 Browser accessibility-tree and keyboard checks do not establish VoiceOver
 behavior. The keyboard-retention experiment remains reverted.
 
-## Export and restore — locally approved, publication pending
+## Export and restore — live (`4417739`)
 
 Dials → Data now offers a dated JSON backup download and a labeled file
 picker for restoration. Backups contain all five loop states, text, notes,
@@ -633,13 +674,12 @@ failure; data changed during review; and empty-backup confirmation. The
 browser page errors occurred during these checks.
 
 The user approved export and restore after local review on 2026-10-17
-and authorized committing the feature and documentation to dev. Publication
-remains pending. iPhone Safari download/file-picker behavior and
+and authorized committing the feature and documentation to dev. Published to GitHub Pages on 2026-10-17; live verification passed. iPhone Safari download/file-picker behavior and
 assistive-technology review have not been explicitly confirmed; local
 browser checks do not establish those device behaviors.
 
-Voice capture is already implemented (Sprint 14). Next priorities after
-backup review remain mobile accessibility and resurfacing clarity.
+Voice capture, backup, accessibility, and resurfacing improvements are live.
+The next focus is data reliability, followed by installed-iPhone/offline QA.
 
 ## iPhone Safari capture investigation — reverted after device test
 
@@ -676,7 +716,7 @@ Possible future directions:
 - Resurface history
 - Smaller-step suggestions
 - Emotional-context support
-- Optional sync (manual export/restore implemented locally above)
+- Optional sync (manual export/restore is already live)
 
 These are exploratory and secondary to maintaining clarity and low friction.
 

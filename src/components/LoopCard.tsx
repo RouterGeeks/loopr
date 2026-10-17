@@ -9,12 +9,13 @@ type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 interface LoopCardProps {
   loop: LoopItem;
+  saving?: boolean;
   nowTime?: number;
-  onTransition: (id: number, status: TransitionStatus) => void;
-  onDelay: (id: number, revisitAt: string) => void;
-  onEdit: (id: number, newText: string) => void;
-  onEditNote: (id: number, note: string) => void;
-  onDelete: (id: number) => void;
+  onTransition: (id: number, status: TransitionStatus) => Promise<boolean>;
+  onDelay: (id: number, revisitAt: string) => Promise<boolean>;
+  onEdit: (id: number, newText: string) => Promise<boolean>;
+  onEditNote: (id: number, note: string) => Promise<boolean>;
+  onDelete: (id: number) => Promise<boolean>;
 }
 
 type CardMode =
@@ -158,6 +159,7 @@ const CloseIcon: FC = () => (
 
 const LoopCard: FC<LoopCardProps> = ({
   loop,
+  saving = false,
   nowTime,
   onTransition,
   onDelay,
@@ -213,9 +215,9 @@ const LoopCard: FC<LoopCardProps> = ({
     }
 
     setDeparting(true);
-    departTimerRef.current = window.setTimeout(() => {
+    departTimerRef.current = window.setTimeout(async () => {
       departTimerRef.current = null;
-      onTransition(loop.id, 'doing');
+      if (!await onTransition(loop.id, 'doing')) setDeparting(false);
     }, 180);
   };
 
@@ -229,37 +231,37 @@ const LoopCard: FC<LoopCardProps> = ({
     setMode('view');
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     const trimmed = draft.trim();
     if (!trimmed || trimmed === loop.text) {
       setMode('view');
       return;
     }
-    onEdit(loop.id, trimmed);
+    if (!await onEdit(loop.id, trimmed)) return;
     setMode('view');
   };
 
   const startNote = () => setMode('editing-note');
   const cancelNote = () => setMode('view');
-  const saveNote = (value: string) => {
-    onEditNote(loop.id, value);
+  const saveNote = async (value: string) => {
+    if (!await onEditNote(loop.id, value)) return;
     setMode('view');
   };
 
   const startDelay = () => setMode('choosing-delay');
   const cancelDelay = () => setMode('view');
 
-  const applyPreset = (preset: DelayPreset) => {
-    onDelay(loop.id, computePresetDate(preset).toISOString());
+  const applyPreset = async (preset: DelayPreset) => {
+    if (!await onDelay(loop.id, computePresetDate(preset).toISOString())) return;
     setMode('view');
   };
 
-  const applyCustomDate = (yyyymmdd: string) => {
+  const applyCustomDate = async (yyyymmdd: string) => {
     if (!yyyymmdd) return;
     const [y, m, d] = yyyymmdd.split('-').map(Number);
     if (!y || !m || !d) return;
     const date = new Date(y, m - 1, d, 9, 0, 0, 0);
-    onDelay(loop.id, date.toISOString());
+    if (!await onDelay(loop.id, date.toISOString())) return;
     setMode('view');
   };
 
@@ -317,6 +319,7 @@ const LoopCard: FC<LoopCardProps> = ({
         <textarea
           id={`loop-edit-${loop.id}`}
           ref={textareaRef}
+          readOnly={saving}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           rows={3}
@@ -385,6 +388,7 @@ const LoopCard: FC<LoopCardProps> = ({
 
       {mode === 'editing-note' ? (
         <NoteEditor
+          saving={saving}
           loopId={loop.id}
           initialValue={loop.note ?? ''}
           onSave={saveNote}

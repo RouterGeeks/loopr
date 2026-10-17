@@ -26,6 +26,8 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npm run lint
+      - run: npm test
 
       - name: Build for GitHub Pages
         run: npm run build:pages

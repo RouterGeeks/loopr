@@ -63,20 +63,25 @@ const ensureCreatedAt = (item: { id?: unknown; createdAt?: unknown }): string =>
   return new Date().toISOString();
 };
 
-export const loadLoops = (): LoopItem[] => {
-  if (typeof window === 'undefined') return [];
-
-  const saved = window.localStorage.getItem(STORAGE_KEY);
-  if (!saved) return [];
-
+export function decodeLoops(saved: string | null): LoopItem[] {
+  if (saved === null) return [];
   let parsed: unknown;
-  try {
-    parsed = JSON.parse(saved);
-  } catch {
-    return [];
+  try { parsed = JSON.parse(saved); } catch {
+    throw new Error('Saved thoughts could not be read. The original data has been kept.');
   }
-
-  if (!Array.isArray(parsed)) return [];
+  if (!Array.isArray(parsed)) throw new Error('Saved thoughts have an unexpected format. The original data has been kept.');
+  const ids = new Set<number>();
+  for (const item of parsed) {
+    const id = typeof item?.id === 'string' && item.id.trim() ? Number(item.id) : item?.id;
+    if (!item || typeof item !== 'object' || Array.isArray(item) ||
+        !Number.isSafeInteger(id) || id < 0 || id > 8640000000000000 ||
+        ids.has(id) || typeof item.text !== 'string' ||
+        !['do', 'doing', 'delayed', 'done', 'dropped', 'active', 'pending', 'delay', 'drop'].includes(item.status) ||
+        ['createdAt', 'revisitAt', 'startedAt', 'doneAt', 'droppedAt', 'note'].some(key => item[key] !== undefined && typeof item[key] !== 'string')) {
+      throw new Error('Some saved thoughts could not be read. The original data has been kept.');
+    }
+    ids.add(id);
+  }
 
   const legacy = isLegacyStatusPresent(parsed);
 
@@ -94,7 +99,7 @@ export const loadLoops = (): LoopItem[] => {
         id,
         text,
         status,
-        createdAt: ensureCreatedAt(item),
+        createdAt: ensureCreatedAt({ ...item, id }),
       };
 
       if (typeof item.revisitAt === 'string') loop.revisitAt = item.revisitAt;
@@ -109,12 +114,22 @@ export const loadLoops = (): LoopItem[] => {
     });
 };
 
-export const saveLoops = (loops: LoopItem[]): void => {
-  if (typeof window === 'undefined') return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(loops));
-};
+export const loadLoops = (): LoopItem[] => decodeLoops(window.localStorage.getItem(STORAGE_KEY));
 
-export const clearLoops = (): void => {
-  if (typeof window === 'undefined') return;
-  window.localStorage.removeItem(STORAGE_KEY);
-};
+// Every application writer uses the same lock and compares the exact version
+// the user reviewed before committing. No writes occur during loading/migration.
+export async function writeLoops(loops: LoopItem[] | null, expected: string | null): Promise<string | null> {
+  const commit = () => {
+    if (window.localStorage.getItem(STORAGE_KEY) !== expected) {
+      throw new Error('Thoughts changed in another tab. Review the latest saved thoughts before trying again. Your draft is still here.');
+    }
+    const next = loops === null ? null : JSON.stringify(loops);
+    if (next === null) window.localStorage.removeItem(STORAGE_KEY);
+    else window.localStorage.setItem(STORAGE_KEY, next);
+    return next;
+  };
+  // Web Locks serializes simultaneous writers on supported secure origins.
+  // The fallback still rejects stale snapshots, but is not a cross-tab transaction.
+  if (navigator.locks) return navigator.locks.request('loopr-write', commit);
+  return commit();
+}

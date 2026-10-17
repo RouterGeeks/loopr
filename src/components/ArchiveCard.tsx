@@ -6,9 +6,10 @@ import { useCardFocus } from '../lib/useCardFocus';
 
 interface ArchiveCardProps {
   loop: LoopItem;
-  onRestore: (id: number) => void;
-  onEditNote: (id: number, note: string) => void;
-  onDelete: (id: number) => void;
+  saving?: boolean;
+  onRestore: (id: number) => Promise<boolean>;
+  onEditNote: (id: number, note: string) => Promise<boolean>;
+  onDelete: (id: number) => Promise<boolean>;
 }
 
 type CardMode = 'view' | 'editing-note' | 'confirming-delete';
@@ -77,6 +78,7 @@ const TrashIcon: FC = () => (
 
 const ArchiveCard: FC<ArchiveCardProps> = ({
   loop,
+  saving = false,
   onRestore,
   onEditNote,
   onDelete,
@@ -113,8 +115,8 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
   const hasNote = Boolean(loop.note && loop.note.trim());
   const notePreview = hasNote ? loop.note!.split('\n')[0].trim() : '';
 
-  const saveNote = (value: string) => {
-    onEditNote(loop.id, value);
+  const saveNote = async (value: string) => {
+    if (!await onEditNote(loop.id, value)) return;
     setMode('view');
   };
 
@@ -139,6 +141,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
       {mode === 'editing-note' ? (
         <div className="mt-3">
           <NoteEditor
+          saving={saving}
             loopId={loop.id}
             initialValue={loop.note ?? ''}
             onSave={saveNote}

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { revisitGroup, revisitTime } from '../lib/resurfacing';
 import { useRevisitClock } from '../lib/useRevisitClock';
 import type { FC } from 'react';
@@ -7,21 +6,19 @@ import DateEyebrow from '../components/DateEyebrow';
 import HandUnderline from '../components/HandUnderline';
 import LoopCard from '../components/LoopCard';
 import SketchMoon from '../components/SketchMoon';
-import { loadLoops, saveLoops } from '../lib/loops';
+import { useLoopData } from '../lib/useLoopData';
+import StorageNotice from '../components/StorageNotice';
 import type { LoopItem, LoopStatus } from '../lib/loops';
 
 type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 const Revisit: FC = () => {
-  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
+  const { loops, setLoops, error, saving, reload } = useLoopData();
   const now = useRevisitClock(loops);
 
-  useEffect(() => {
-    saveLoops(loops);
-  }, [loops]);
 
   const handleTransition = (id: number, status: TransitionStatus) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const now = new Date().toISOString();
@@ -35,7 +32,7 @@ const Revisit: FC = () => {
   };
 
   const handleDelay = (id: number, revisitAt: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) =>
         loop.id === id ? { ...loop, status: 'delayed', revisitAt } : loop
       )
@@ -43,7 +40,7 @@ const Revisit: FC = () => {
   };
 
   const handleEdit = (id: number, newText: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) =>
         loop.id === id ? { ...loop, text: newText } : loop
       )
@@ -51,7 +48,7 @@ const Revisit: FC = () => {
   };
 
   const handleEditNote = (id: number, note: string) => {
-    setLoops((current) =>
+    return setLoops((current) =>
       current.map((loop) => {
         if (loop.id !== id) return loop;
         const trimmed = note.trim();
@@ -64,7 +61,7 @@ const Revisit: FC = () => {
   };
 
   const handleDelete = (id: number) => {
-    setLoops((current) => current.filter((loop) => loop.id !== id));
+    return setLoops((current) => current.filter((loop) => loop.id !== id));
   };
 
   const delayedLoops = loops
@@ -80,6 +77,7 @@ const Revisit: FC = () => {
 
   return (
     <PageContainer>
+      <StorageNotice error={error} saving={saving} onReload={reload} />
       <div className="relative mb-8">
         <DateEyebrow />
         <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
@@ -117,7 +115,7 @@ const Revisit: FC = () => {
               return [
                 <h2 key={`heading-${group.key}`} className="pt-6 pb-3 font-serif text-lg font-semibold text-charcoal">{group.title}</h2>,
                 ...items.map(loop => (
-                  <LoopCard key={loop.id} loop={loop} nowTime={now}
+                  <LoopCard saving={saving} key={loop.id} loop={loop} nowTime={now}
                     onTransition={handleTransition} onDelay={handleDelay}
                     onEdit={handleEdit} onEditNote={handleEditNote} onDelete={handleDelete} />
                 )),

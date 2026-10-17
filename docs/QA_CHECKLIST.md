@@ -216,6 +216,16 @@
 
 ## Persistence
 
+* [ ] Failed capture/edit/note saves retain the draft and existing saved data; retry succeeds after storage recovers
+* [ ] Failed state changes, delete, Clear All, and backup replacement preserve existing data
+* [ ] Unreadable JSON and malformed records survive route changes/reload byte for byte; no mount-time writes
+* [ ] Dials can download exact original data before explicit valid-backup recovery
+* [ ] Blocked storage access shows a recoverable message instead of a blank/crashed app
+* [ ] A stale tab cannot overwrite a newer tab; review latest then retry preserves both intended changes
+* [ ] Simultaneous writes serialize under Web Locks; verify the documented fallback limitation on unsupported origins
+* [ ] Legacy status and numeric-string-ID migration remains read-only until an explicit successful save
+* [ ] Run `npm test`, lint, and Pages build; verify GitHub checks after pushing
+
 * [ ] localStorage persists correctly
 * [ ] Refresh preserves state
 * [ ] Route changes preserve state

@@ -6,16 +6,18 @@ import SectionCard from '../components/SectionCard';
 import SketchKnob from '../components/SketchKnob';
 import ClearDataDialog from '../components/ClearDataDialog';
 import BackupControls from '../components/BackupControls';
-import { clearLoops, loadLoops } from '../lib/loops';
-import type { LoopItem } from '../lib/loops';
+import { writeLoops } from '../lib/loops';
+import { useLoopData } from '../lib/useLoopData';
+import StorageNotice from '../components/StorageNotice';
 
 const Settings: FC = () => {
-  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
+  const { loops, raw, readable, error, saving, reload } = useLoopData();
+  const [clearError, setClearError] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
 
   const handleConfirmationChange = (isOpen: boolean) => {
-    setLoops(loadLoops());
+    setClearError('');
     setShowConfirmation(isOpen);
   };
 
@@ -35,14 +37,21 @@ const Settings: FC = () => {
     { label: 'Done', value: doneCount },
   ];
 
-  const handleClearData = () => {
-    clearLoops();
-    setLoops([]);
-    setShowConfirmation(false);
+  const handleClearData = async () => {
+    try {
+      await writeLoops(null, raw);
+      reload();
+      setShowConfirmation(false);
+      setClearError('');
+    } catch {
+      setShowConfirmation(false);
+      setClearError('Could not clear data. Saved thoughts are unchanged. Review the latest saved thoughts and try again.');
+    }
   };
 
   return (
     <PageContainer>
+      <StorageNotice error={clearError || error} saving={saving} onReload={reload} />
       <div className="relative mb-8">
         <DateEyebrow />
         <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
@@ -122,7 +131,7 @@ const Settings: FC = () => {
             everything at any time.
           </p>
 
-          <BackupControls onRestore={setLoops} />
+          <BackupControls onRestore={reload} needsRecovery={!readable} />
 
           <button
             type="button"
