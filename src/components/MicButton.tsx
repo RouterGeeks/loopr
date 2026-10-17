@@ -57,7 +57,7 @@ const MicButton: FC<MicButtonProps> = ({ onText, label = 'Voice capture' }) => {
       {listening && (
         <span
           aria-live="polite"
-          className="text-xs text-charcoal/55"
+          className="text-xs text-charcoal/70"
         >
           Listening…
         </span>
@@ -66,7 +66,7 @@ const MicButton: FC<MicButtonProps> = ({ onText, label = 'Voice capture' }) => {
       {!listening && errorMessage && (
         <span
           aria-live="polite"
-          className="text-xs text-charcoal/55"
+          className="text-xs text-charcoal/70"
         >
           {errorMessage}
         </span>

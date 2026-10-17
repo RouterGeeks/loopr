@@ -4,7 +4,7 @@ import HandUnderline from './HandUnderline';
 
 const linkClass = (isActive: boolean) =>
   `relative flex min-w-0 flex-col items-center gap-1 px-1 pt-3 pb-3 transition-colors duration-200 ${
-    isActive ? 'text-charcoal' : 'text-charcoal/55 hover:text-charcoal'
+    isActive ? 'text-charcoal' : 'text-charcoal/70 hover:text-charcoal'
   }`;
 
 const iconProps = {
@@ -82,7 +82,7 @@ const items: NavItem[] = [
 
 const BottomNav: FC = () => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-paper-shell/95 backdrop-blur-md">
+    <nav aria-label="Main navigation" className="fixed bottom-0 left-0 right-0 bg-paper-shell/95 backdrop-blur-md">
       <div className="grid grid-cols-5 gap-1 px-2 pb-safe">
         {items.map(({ to, end, label, Icon }) => (
           <NavLink
@@ -95,7 +95,7 @@ const BottomNav: FC = () => {
               <>
                 {isActive && <ActiveMark />}
                 <Icon />
-                <span className="text-[11px] font-medium tracking-tight sm:text-xs">
+                <span className="text-xs font-medium tracking-tight break-words">
                   {label}
                 </span>
               </>

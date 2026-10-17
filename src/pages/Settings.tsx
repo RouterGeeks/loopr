@@ -4,6 +4,7 @@ import PageContainer from '../components/PageContainer';
 import DateEyebrow from '../components/DateEyebrow';
 import SectionCard from '../components/SectionCard';
 import SketchKnob from '../components/SketchKnob';
+import ClearDataDialog from '../components/ClearDataDialog';
 import BackupControls from '../components/BackupControls';
 import { clearLoops, loadLoops } from '../lib/loops';
 import type { LoopItem } from '../lib/loops';
@@ -62,7 +63,7 @@ const Settings: FC = () => {
             className="flex w-full items-baseline justify-between gap-3 text-left"
           >
             <h2 className="text-lg font-semibold text-charcoal">About Loopr</h2>
-            <span className="font-mono text-xs text-charcoal/55">
+            <span className="font-mono text-xs text-charcoal/70">
               {showAbout ? '— hide' : '+ read'}
             </span>
           </button>
@@ -105,7 +106,7 @@ const Settings: FC = () => {
                   {tile.value}
                 </span>
 
-                <span className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-charcoal/50">
+                <span className="text-xs font-medium uppercase tracking-[0.25em] text-charcoal/70">
                   {tile.label}
                 </span>
               </div>
@@ -134,36 +135,7 @@ const Settings: FC = () => {
       </SectionCard>
 
       {showConfirmation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm">
-          <div className="max-w-sm rounded-lg border border-rule bg-cream-surface p-6 shadow-card sm:p-8">
-            <h3 className="mb-2 text-lg font-semibold text-charcoal">
-              Clear all data?
-            </h3>
-
-            <p className="mb-6 text-charcoal/70">
-              This will delete every loop on this device, across Do, Doing,
-              Delayed, Done, and Dropped. This action cannot be undone.
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => handleConfirmationChange(false)}
-                className="flex-1 rounded-md bg-paper-light/80 px-4 py-3 text-sm font-semibold text-charcoal ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="button"
-                onClick={handleClearData}
-                className="flex-1 rounded-md bg-charcoal px-4 py-3 text-sm font-semibold text-cream-light transition duration-200 hover:bg-charcoal-soft"
-              >
-                Clear
-              </button>
-            </div>
-          </div>
-        </div>
+        <ClearDataDialog onCancel={() => handleConfirmationChange(false)} onConfirm={handleClearData} />
       )}
     </PageContainer>
   );

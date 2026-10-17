@@ -94,11 +94,11 @@ const Archive: FC = () => {
               Nothing here yet
               <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" color="ink" />
             </p>
-            <p className="font-mono text-xs text-charcoal/55">
+            <p className="font-mono text-xs text-charcoal/70">
               Completed and released loops will appear here.
             </p>
           </div>
-          <p className="mt-6 text-right font-serif italic text-sm text-charcoal/55">
+          <p className="mt-6 text-right font-serif italic text-sm text-charcoal/70">
             set down gently
           </p>
         </div>
@@ -107,7 +107,7 @@ const Archive: FC = () => {
           {doneLoops.length > 0 && (
             <section>
               <div className="mb-2 flex items-baseline gap-2.5">
-                <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-charcoal/55">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.25em] text-charcoal/70">
                   Done
                 </h2>
                 <span className="text-sm font-semibold leading-none text-charcoal/65 tabular-nums">
@@ -132,7 +132,7 @@ const Archive: FC = () => {
           {droppedLoops.length > 0 && (
             <section>
               <div className="mb-2 flex items-baseline gap-2.5">
-                <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-charcoal/55">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.25em] text-charcoal/70">
                   Dropped
                 </h2>
                 <span className="text-sm font-semibold leading-none text-charcoal/65 tabular-nums">

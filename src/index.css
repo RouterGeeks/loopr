@@ -25,3 +25,36 @@ textarea,
 select {
   font: inherit;
 }
+
+/* Shared interaction affordances; keep icon artwork small inside generous targets. */
+button, input, select, nav a {
+  min-height: 44px;
+  min-width: 44px;
+}
+button, input, textarea, select, a {
+  scroll-margin-block: 1rem 10rem;
+}
+:where(button, input, textarea, select, a):focus-visible {
+  outline: 3px solid #5F4F84;
+  outline-offset: 3px;
+}
+textarea:focus, input:focus, select:focus {
+  outline: 3px solid #5F4F84;
+  outline-offset: 3px;
+}
+/* Capture shares one boundary with its controls; never draw through that row. */
+.capture-surface:has(#loop-input:focus) {
+  border-color: #7E69A6;
+  box-shadow: 0 0 0 1px #7E69A6;
+}
+#loop-input:focus {
+  outline: none;
+}
+.edit-field:focus {
+  border-color: #7E69A6;
+  outline: none;
+  box-shadow: inset 0 0 0 1px #7E69A6;
+}
+textarea, input { max-width: 100%; }
+p { overflow-wrap: anywhere; }
+dialog::backdrop { background: rgb(0 0 0 / 30%); backdrop-filter: blur(4px); }

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
 import type { LoopItem, LoopStatus } from '../lib/loops';
 import NoteEditor from './NoteEditor';
+import { useCardFocus } from '../lib/useCardFocus';
 
 type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
@@ -202,6 +203,8 @@ const LoopCard: FC<LoopCardProps> = ({
   onDelete,
 }) => {
   const [mode, setMode] = useState<CardMode>('view');
+  const cardRef = useCardFocus(mode);
+  const contextId = `loop-context-${loop.id}`;
   const [draft, setDraft] = useState(loop.text);
   const [departing, setDeparting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -347,7 +350,8 @@ const LoopCard: FC<LoopCardProps> = ({
 
   if (mode === 'editing') {
     return (
-      <div className="py-5">
+      <div ref={cardRef} className="py-5">
+        <span id={contextId} className="sr-only">{loop.text}</span>
         <label htmlFor={`loop-edit-${loop.id}`} className="sr-only">
           Edit loop
         </label>
@@ -358,11 +362,11 @@ const LoopCard: FC<LoopCardProps> = ({
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           rows={3}
-          className="mb-4 w-full border-b border-rule bg-transparent p-0 font-serif text-lg leading-relaxed text-charcoal placeholder:text-charcoal/40 focus:border-charcoal/40 focus:outline-none"
+          className="edit-field mb-4 block w-full rounded-md border border-rule bg-transparent p-3 font-serif text-lg leading-relaxed text-charcoal placeholder:text-charcoal/70"
         />
 
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <button
+          <button aria-describedby={contextId}
             type="button"
             onClick={cancelEdit}
             className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
@@ -370,7 +374,7 @@ const LoopCard: FC<LoopCardProps> = ({
             Cancel
           </button>
 
-          <button
+          <button aria-describedby={contextId}
             type="button"
             onClick={saveEdit}
             disabled={!canSaveEdit}
@@ -388,18 +392,18 @@ const LoopCard: FC<LoopCardProps> = ({
   }
 
   return (
-    <div
+    <div ref={cardRef} role="group" aria-labelledby={contextId}
       className={`py-5 transition-all duration-200 ease-out motion-reduce:transition-none ${
         departing ? 'pointer-events-none -translate-y-1 opacity-0' : ''
       }`}
     >
       <div className="mb-4">
-        <p className="font-serif text-lg leading-relaxed text-charcoal">
+        <p id={contextId} className="font-serif text-lg leading-relaxed text-charcoal">
           {loop.text}
         </p>
 
         {hasNote && mode !== 'editing-note' && (
-          <p className="mt-1.5 truncate border-l-2 border-rule pl-3 font-serif text-sm italic text-charcoal/55">
+          <p className="mt-1.5 truncate border-l-2 border-rule pl-3 font-serif text-sm italic text-charcoal/70">
             {notePreview}
           </p>
         )}
@@ -409,7 +413,7 @@ const LoopCard: FC<LoopCardProps> = ({
             className={`mt-2 text-xs font-semibold uppercase tracking-[0.2em] ${
               revisitSublabel.tone === 'due'
                 ? 'text-lavender-dark'
-                : 'text-charcoal/60'
+                : 'text-charcoal/70'
             }`}
           >
             {revisitSublabel.text}
@@ -425,13 +429,13 @@ const LoopCard: FC<LoopCardProps> = ({
           onCancel={cancelNote}
         />
       ) : mode === 'choosing-delay' ? (
-        <div className="space-y-3 rounded-md border border-rule bg-paper-light/60 p-4">
+        <div data-panel className="space-y-3 rounded-md border border-rule bg-paper-light/60 p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/70">
             When should we revisit?
           </p>
 
           <div className="flex flex-wrap gap-2">
-            <button
+            <button aria-describedby={contextId}
               type="button"
               onClick={() => applyPreset('tomorrow')}
               className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
@@ -439,7 +443,7 @@ const LoopCard: FC<LoopCardProps> = ({
               Tomorrow
             </button>
 
-            <button
+            <button aria-describedby={contextId}
               type="button"
               onClick={() => applyPreset('weekend')}
               className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
@@ -447,7 +451,7 @@ const LoopCard: FC<LoopCardProps> = ({
               This weekend
             </button>
 
-            <button
+            <button aria-describedby={contextId}
               type="button"
               onClick={() => applyPreset('nextWeek')}
               className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
@@ -474,7 +478,7 @@ const LoopCard: FC<LoopCardProps> = ({
           </div>
 
           <div className="flex justify-end pt-1">
-            <button
+            <button aria-describedby={contextId}
               type="button"
               onClick={cancelDelay}
               className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
@@ -484,13 +488,13 @@ const LoopCard: FC<LoopCardProps> = ({
           </div>
         </div>
       ) : mode === 'confirming-delete' ? (
-        <div className="rounded-md border border-rule bg-paper-light/60 p-4">
+        <div data-panel className="rounded-md border border-rule bg-paper-light/60 p-4">
           <p className="mb-3 text-sm leading-6 text-charcoal/80">
             Delete this loop? This can't be undone.
           </p>
 
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <button
+            <button aria-describedby={contextId}
               type="button"
               onClick={cancelDelete}
               className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
@@ -498,7 +502,7 @@ const LoopCard: FC<LoopCardProps> = ({
               Cancel
             </button>
 
-            <button
+            <button aria-describedby={contextId}
               type="button"
               onClick={confirmDelete}
               className="rounded-md bg-charcoal px-4 py-2 text-sm font-semibold text-cream-light transition duration-200 hover:bg-charcoal-soft"
@@ -511,7 +515,7 @@ const LoopCard: FC<LoopCardProps> = ({
         <>
           <div className="flex flex-wrap items-center justify-end gap-3">
             <div className="flex flex-wrap gap-2">
-              <button
+              <button aria-describedby={contextId}
                 type="button"
                 onClick={primaryAction.onClick}
                 aria-label={primaryAction.ariaLabel}
@@ -520,15 +524,15 @@ const LoopCard: FC<LoopCardProps> = ({
                 {primaryAction.label}
               </button>
 
-              <button
+              <button aria-describedby={contextId}
                 type="button"
-                onClick={startDelay}
+                data-focus="delay" onClick={startDelay}
                 className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
               >
                 Delay
               </button>
 
-              <button
+              <button aria-describedby={contextId}
                 type="button"
                 onClick={() => onTransition(loop.id, 'dropped')}
                 className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
@@ -540,17 +544,18 @@ const LoopCard: FC<LoopCardProps> = ({
 
           <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
             {footerLabel ? (
-              <p className="text-[0.7rem] text-charcoal/55">{footerLabel}</p>
+              <p className="text-xs text-charcoal/70">{footerLabel}</p>
             ) : (
               <span aria-hidden />
             )}
 
-            <div className="flex items-center gap-1.5">
-              <button
+            <div className="flex flex-wrap items-center gap-1.5">
+              <button aria-describedby={contextId}
                 type="button"
                 onClick={startNote}
+                data-focus="note"
                 aria-label={hasNote ? 'Edit note' : 'Add note'}
-                className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
+                className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
               >
                 <NoteIcon />
                 Note
@@ -563,12 +568,12 @@ const LoopCard: FC<LoopCardProps> = ({
               </button>
 
               {mode === 'menu' ? (
-                <>
-                  <button
+                <div id={`loop-actions-${loop.id}`} className="contents">
+                  <button aria-describedby={contextId}
                     type="button"
                     onClick={startEdit}
                     aria-label="Edit loop"
-                    className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
                   >
                     <svg
                       viewBox="0 0 16 16"
@@ -587,34 +592,28 @@ const LoopCard: FC<LoopCardProps> = ({
                     Edit
                   </button>
 
-                  <button
+                  <button aria-describedby={contextId}
                     type="button"
                     onClick={startDelete}
                     aria-label="Delete loop"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-paper-light hover:text-charcoal"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/70 transition duration-200 hover:bg-paper-light hover:text-charcoal"
                   >
                     <TrashIcon />
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setMode('view')}
-                    aria-label="Close actions"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-paper-light hover:text-charcoal"
-                  >
-                    <CloseIcon />
-                  </button>
-                </>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setMode('menu')}
-                  aria-label="More actions"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/55 transition duration-200 hover:bg-paper-light hover:text-charcoal"
-                >
-                  <MoreIcon />
-                </button>
-              )}
+                </div>
+              ) : null}
+              <button aria-describedby={contextId}
+                data-focus="more"
+                type="button"
+                onClick={() => setMode(mode === 'menu' ? 'view' : 'menu')}
+                aria-label={mode === 'menu' ? 'Close actions' : 'More actions'}
+                aria-expanded={mode === 'menu'}
+                aria-controls={mode === 'menu' ? `loop-actions-${loop.id}` : undefined}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full text-charcoal/70 hover:bg-paper-light"
+              >
+                {mode === 'menu' ? <CloseIcon /> : <MoreIcon />}
+              </button>
             </div>
           </div>
         </>

@@ -524,6 +524,52 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Upcoming Priorities
 
+## Mobile accessibility — locally approved, publication pending
+
+- Added shared high-contrast focus outlines for keyboard controls and
+  editable fields, plus scroll margins above fixed navigation.
+- After local visual feedback, Dashboard capture uses a thinner lavender
+  focus boundary around the whole capture surface. The textarea has no
+  separate outline crossing the microphone/+ row; keyboard focus remains
+  visibly indicated at the existing outer border.
+- Loop and note editors use a thin lavender border with an inset focus
+  line, avoiding the heavy external/double outline. Loop editing has
+  internal padding; note action buttons wrap when text is enlarged.
+- Inline note/edit/delay/delete panels return focus to the appropriate
+  surviving action when canceled or saved. Edit returns to More because
+  the Edit control is hidden when its panel closes.
+- Clear All now uses a labeled native modal dialog with initial focus on
+  Cancel, explicit Tab wrapping, Escape dismissal, background isolation,
+  and focus return to its trigger.
+- Loop cards have labeled groups and action descriptions tied to the loop
+  text. More remains mounted and exposes its expanded state and controls
+  relationship. Main navigation has an accessible name.
+- Shared minimum hit areas are 44 by 44 CSS pixels. Action rows wrap
+  instead of overflowing. Icons retain their small visual size.
+- Darkened meaningful secondary text and placeholders; raised the smallest
+  metadata/navigation labels to 12px at default size. Decorative artwork
+  remains subdued. Capture still renders at 16px at default text size.
+- The desktop shortcut hint is hidden below the small-screen breakpoint
+  to avoid crowding at narrow widths; Cmd/Ctrl+Enter still works.
+
+Local validation (2026-10-17): build, lint, and diff checks passed.
+Chromium checks cover capture focus indication; focus return from edit,
+note, and delay; expanded-state semantics; modal initial focus, forward
+and reverse Tab wrapping, Escape, and trigger focus return without data
+loss; 44px control bounds; and all five routes at 320/375/390px with both
+default and doubled root text size, including the expanded action row.
+No horizontal overflow or page errors occurred in those checks. The
+375px populated Dashboard was visually reviewed. Backup regression
+checks also cover downloads, full restoration, validation, and failures.
+
+The user approved the revised capture and editor focus borders and
+authorized committing the accessibility improvements and documentation
+to dev on 2026-10-17. Publication remains pending. Actual iPhone
+Safari/VoiceOver announcements, reading order, touch comfort, enlarged
+text, and dialog dismissal have not all been explicitly confirmed.
+Browser accessibility-tree and keyboard checks do not establish VoiceOver
+behavior. The keyboard-retention experiment remains reverted.
+
 ## Export and restore — locally approved, publication pending
 
 Dials → Data now offers a dated JSON backup download and a labeled file

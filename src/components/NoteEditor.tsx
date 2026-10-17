@@ -61,7 +61,7 @@ const NoteEditor: FC<NoteEditorProps> = ({
         onKeyDown={handleKeyDown}
         rows={3}
         placeholder="A small breadcrumb for later..."
-        className="w-full rounded-md border border-rule bg-paper-light/90 p-3 text-sm leading-6 text-charcoal shadow-soft focus:border-lavender/60 focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
+        className="edit-field block w-full rounded-md border border-rule bg-paper-light/90 p-3 text-sm leading-6 text-charcoal"
       />
 
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -72,14 +72,14 @@ const NoteEditor: FC<NoteEditorProps> = ({
               label="Voice append to note"
             />
           ) : (
-            <span className="text-xs italic text-charcoal/45">
+            <span className="text-xs italic text-charcoal/70">
               Voice capture isn't built into this browser. Try your
               keyboard's mic instead.
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={onCancel}

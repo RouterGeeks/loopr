@@ -67,8 +67,8 @@
 * [ ] Ctrl+Enter works
 * [ ] Enter creates newline only
 * [ ] Keyboard capture persists after refresh
-* [ ] "⌘ Enter to add" hint visible on desktop (fine pointer)
-* [ ] Hint stays on one line at narrow widths (whitespace-nowrap)
+* [ ] "⌘ Enter to add" hint visible on desktop (fine pointer, at least sm width)
+* [ ] Hint is hidden below sm width to keep capture controls usable
 * [ ] Hint hidden on phones/tablets (coarse pointer)
 * [ ] Hint hidden when running inside a Capacitor wrapper
 
@@ -237,6 +237,20 @@
 * [ ] Text remains readable
 * [ ] Navigation fits correctly
 * [ ] Layout still feels calm with many loops
+
+## Mobile accessibility
+
+* [ ] All fields and keyboard-focused controls have a clear focus outline
+* [ ] Focus stays visible above fixed navigation
+* [ ] Save/Cancel from note and edit returns focus to Note or More; delay/delete Cancel returns to its trigger
+* [ ] More/Close announces expanded state and actions include the relevant loop context
+* [ ] Clear All announces its title and description, starts on Cancel, traps Tab in both directions, closes with Escape, and returns focus
+* [ ] VoiceOver cannot browse or activate background controls while Clear All is open
+* [ ] Common controls have at least 44px hit areas with no overlapping targets
+* [ ] Secondary labels, hints, placeholders, and navigation text are readable
+* [ ] All routes and expanded action rows fit at 320/375/390px and 200% text enlargement
+* [ ] iPhone VoiceOver reads loop context, control names, and confirmation content in a useful order
+* [ ] Capture shortcuts, multiline entry, voice capture, state transitions, and backup/restore still work
 
 ---
 

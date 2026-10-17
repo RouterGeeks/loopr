@@ -140,7 +140,7 @@ const Home: FC = () => {
 
       <div className="space-y-2">
 
-        <div className="rounded-sm border border-charcoal/25 bg-paper-light/40">
+        <div className="capture-surface rounded-sm border border-charcoal/25 bg-paper-light/40">
           <textarea
             id="loop-input"
             ref={captureRef}
@@ -150,10 +150,10 @@ const Home: FC = () => {
             rows={4}
             aria-label="New loop"
             placeholder="What's on your mind?"
-            className="block w-full resize-none bg-transparent px-4 py-3 font-mono text-sm leading-relaxed text-charcoal placeholder:text-charcoal/40 focus:outline-none"
+            className="block w-full resize-none bg-transparent px-4 py-3 font-mono text-sm leading-relaxed text-charcoal placeholder:text-charcoal/70 focus:outline-none"
           />
 
-          <div className="flex items-center justify-between gap-2 px-3 pb-2 pt-1">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-3 pb-2 pt-1">
             <div className="flex items-center">
               {speechSupported && (
                 <MicButton
@@ -165,7 +165,7 @@ const Home: FC = () => {
 
             <div className="flex items-center gap-2">
               {showKeyboardHint && (
-                <span className="whitespace-nowrap font-mono text-xs text-charcoal/55">
+                <span className="hidden font-mono text-xs sm:inline text-charcoal/70">
                   ⌘ Enter to add
                 </span>
               )}
@@ -199,7 +199,7 @@ const Home: FC = () => {
         </div>
 
         {!speechSupported && (
-          <p className="font-mono text-xs italic text-charcoal/45">
+          <p className="font-mono text-xs italic text-charcoal/70">
             Voice capture isn't built into this browser. Try your
             keyboard's mic instead.
           </p>
@@ -220,7 +220,7 @@ const Home: FC = () => {
                 Quiet for now
                 <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
               </p>
-              <p className="font-mono text-xs text-charcoal/55">
+              <p className="font-mono text-xs text-charcoal/70">
                 Captured loops will appear here.
               </p>
             </div>
@@ -234,7 +234,7 @@ const Home: FC = () => {
                 </p>
                 {/* hand-drawn arrow */}
                 <svg
-                  className="absolute -bottom-3 -right-6 h-8 w-8 text-charcoal/55"
+                  className="absolute -bottom-3 -right-6 h-8 w-8 text-charcoal/70"
                   viewBox="0 0 30 30"
                   fill="none"
                   aria-hidden="true"
@@ -260,7 +260,7 @@ const Home: FC = () => {
           </div>
         ) : (
           <>
-            <h2 className="relative mb-1 inline-block pr-1 font-mono text-[0.7rem] tracking-[0.2em] text-charcoal/70">
+            <h2 className="relative mb-1 inline-block pr-1 font-mono text-xs tracking-[0.2em] text-charcoal/70">
               OPEN LOOPS
               <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
             </h2>

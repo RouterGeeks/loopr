@@ -94,11 +94,11 @@ const Revisit: FC = () => {
                 Nothing waiting
                 <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
               </p>
-              <p className="font-mono text-xs text-charcoal/55">
+              <p className="font-mono text-xs text-charcoal/70">
                 Delayed loops will resurface here.
               </p>
             </div>
-            <p className="mt-6 text-right font-serif italic text-sm text-charcoal/55">
+            <p className="mt-6 text-right font-serif italic text-sm text-charcoal/70">
               back when ready
             </p>
           </div>
