@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import DateEyebrow from '../components/DateEyebrow';
@@ -8,13 +8,14 @@ import { clearLoops, loadLoops } from '../lib/loops';
 import type { LoopItem } from '../lib/loops';
 
 const Settings: FC = () => {
-  const [loops, setLoops] = useState<LoopItem[]>([]);
+  const [loops, setLoops] = useState<LoopItem[]>(() => loadLoops());
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
 
-  useEffect(() => {
+  const handleConfirmationChange = (isOpen: boolean) => {
     setLoops(loadLoops());
-  }, [showConfirmation]);
+    setShowConfirmation(isOpen);
+  };
 
   const doCount = loops.filter((loop) => loop.status === 'do').length;
   const doingCount = loops.filter((loop) => loop.status === 'doing').length;
@@ -121,7 +122,7 @@ const Settings: FC = () => {
 
           <button
             type="button"
-            onClick={() => setShowConfirmation(true)}
+            onClick={() => handleConfirmationChange(true)}
             className="inline-block rounded-md bg-paper-light/80 px-5 py-3 text-sm font-semibold text-charcoal ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:ring-charcoal/20"
           >
             Clear All Data
@@ -144,7 +145,7 @@ const Settings: FC = () => {
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => setShowConfirmation(false)}
+                onClick={() => handleConfirmationChange(false)}
                 className="flex-1 rounded-md bg-paper-light/80 px-4 py-3 text-sm font-semibold text-charcoal ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light"
               >
                 Cancel
