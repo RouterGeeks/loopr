@@ -185,6 +185,20 @@
 * [ ] Clear All confirmation works
 * [ ] Clear All resets app correctly
 
+## Backup export and restore
+
+* [ ] Export downloads a dated JSON file with all loops, notes, states, and dates
+* [ ] Restore validates a selected file before any storage changes
+* [ ] Confirmation clearly says replacement, not merge; Cancel keeps current data
+* [ ] Empty backups explicitly warn that restoration removes all current loops
+* [ ] Full export/restore round trip preserves data after refresh and navigation
+* [ ] Invalid JSON, unsupported versions, duplicate IDs, malformed records, and files over 5 MB are rejected
+* [ ] Storage-write failure leaves existing data and counts intact
+* [ ] Changes to current loops during review require choosing the backup again
+* [ ] Dials counts update after restore
+* [ ] File selection and confirmation work with keyboard and screen reader
+* [ ] iPhone Safari can save an export and select it again from Files
+
 ---
 
 ## Persistence

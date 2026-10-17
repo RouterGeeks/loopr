@@ -93,7 +93,6 @@ The app should:
 - IndexedDB
 - Optional sync
 - Gentle notifications
-- Voice capture
 
 No backend in V1.
 No AI processing in V1.
@@ -168,13 +167,13 @@ All AI-assisted development sessions should review /docs before making significa
 
 ## Dashboard (route /)
 - Capture input with Cmd/Ctrl + Enter shortcut
-- Overview chips: Do / Doing / Delayed counts
+- Workflow legend: Do / Delay / Drop
 - List of Do (open) loops
 - Autofocus on mount and on return navigation
 
 ## Doing (route /doing)
 - Dedicated view for actively engaged loops
-- Seafoam-toned status pill for subtle visual distinction
+- Page heading identifies the Doing state; redundant status pills removed
 - "Started X" contextual timestamp
 - Transitions to Done, Delayed, or Dropped
 
@@ -191,6 +190,7 @@ All AI-assisted development sessions should review /docs before making significa
 
 ## Dials (route /dials)
 - Four-tile count grid: Do / Doing / Delayed / Done
+- Export and restore versioned JSON backups (locally approved; publication pending)
 - Clear all data
 - Confirmation protection
 
@@ -506,21 +506,98 @@ Completed:
 
 ---
 
+## Sprint 18 — Conceptual Clarity and Hierarchy Refinement
+
+Completed (commit `aa3bbde`):
+- Removed redundant overview chips on Dashboard, Doing, and Delayed,
+  and redundant state annotations on loop cards.
+- Simplified capture framing and connected "thoughts" with "open loops".
+- Added the Do / Delay / Drop workflow legend below capture.
+- Renamed the Dashboard list heading to "OPEN LOOPS".
+- Retained routing, storage, loop states, notes, voice, and visual identity.
+
+Subsequent maintenance: service-worker cache updated to v6 (`cf0ebbe`);
+Settings counts initialized from storage and refreshed through confirmation
+handlers to resolve the lint error (`e4dd5bb`).
+
+---
+
 # Upcoming Priorities
 
-(Sprint 17 complete — next sprint to be planned.)
+## Export and restore — locally approved, publication pending
+
+Dials → Data now offers a dated JSON backup download and a labeled file
+picker for restoration. Backups contain all five loop states, text, notes,
+IDs, and available timestamps, with `app: "loopr"`, `version: 1`, and an
+export timestamp. No account, server, or new dependency is required.
+
+Restore validates the entire file before offering an inline confirmation.
+It rejects unsupported versions, malformed records, duplicate IDs, invalid
+field types/dates, and files larger than 5 MB. Unknown fields are ignored.
+Restoration replaces all current loops; it never merges. The confirmation
+explains this and recommends exporting current loops first. Empty backups
+receive an explicit warning that all current loops will be removed.
+
+Canceling or rejecting a backup makes no storage changes. Confirmation
+checks that local data has not changed during review, then writes through
+the existing storage helper in one atomic localStorage operation. On a
+storage-write failure, the current data and counts remain unchanged.
+Successful restoration refreshes Dials counts immediately.
+
+Local validation (2026-10-17): production build, lint, and diff whitespace
+checks passed. Isolated Chromium production-preview tests verified actual
+backup downloads; complete round trips across all five states with notes,
+multiline text, and dates; reload persistence; cancellation; invalid JSON,
+versions, duplicate IDs, states, notes, dates, and records; simulated quota
+failure; data changed during review; and empty-backup confirmation. The
+375px layout has no horizontal overflow and was visually reviewed. No
+browser page errors occurred during these checks.
+
+The user approved export and restore after local review on 2026-10-17
+and authorized committing the feature and documentation to dev. Publication
+remains pending. iPhone Safari download/file-picker behavior and
+assistive-technology review have not been explicitly confirmed; local
+browser checks do not establish those device behaviors.
+
+Voice capture is already implemented (Sprint 14). Next priorities after
+backup review remain mobile accessibility and resurfacing clarity.
+
+## iPhone Safari capture investigation — reverted after device test
+
+On 2026-10-17, a local experiment prevented primary-pointer focus transfer
+from an already-focused Dashboard textarea when pressing +. Submission
+remained on click; no forced refocus, timers, keyboard hacks, dependencies,
+layout changes, or persistence changes were added.
+
+Local build and lint passed. Chromium desktop and touch-emulation checks
+passed for ten successive captures, draft clearing, retained DOM focus,
+stationary field bounds, unique saved entries, persistence after reload,
+multiline input, Cmd/Ctrl+Enter, empty-input validation, Tab/Enter activation,
+and no refocus after explicit blur. Mocked voice append/edit/save and a
+mouse press released outside the button also passed. These checks did not
+establish real iPhone software-keyboard behavior.
+
+The user tested the local preview on their iPhone and reported that the
+keyboard still dismissed after tapping +. The iOS version was not recorded;
+no conclusion is drawn about every Safari version. VoiceOver and actual
+microphone recognition were not verified in this investigation.
+
+Decision: revert the capture code experiment and retain existing capture
+behavior. The experiment was not published. Keyboard retention remains
+unresolved and is deferred unless repeated-capture friction warrants
+further investigation; do not add unreliable focus workarounds. Keep the
+project-plan corrections and this test result as the record of the work.
 
 ---
 
 # Future Exploration
 
 Possible future directions:
-- Voice capture
 - Gentle resurfacing notifications
 - Resurface history
 - Smaller-step suggestions
 - Emotional-context support
-- Optional sync/export
+- Optional sync (manual export/restore implemented locally above)
 
 These are exploratory and secondary to maintaining clarity and low friction.
 

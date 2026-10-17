@@ -4,6 +4,7 @@ import PageContainer from '../components/PageContainer';
 import DateEyebrow from '../components/DateEyebrow';
 import SectionCard from '../components/SectionCard';
 import SketchKnob from '../components/SketchKnob';
+import BackupControls from '../components/BackupControls';
 import { clearLoops, loadLoops } from '../lib/loops';
 import type { LoopItem } from '../lib/loops';
 
@@ -119,6 +120,8 @@ const Settings: FC = () => {
             All your loops are stored locally on this device. You can clear
             everything at any time.
           </p>
+
+          <BackupControls onRestore={setLoops} />
 
           <button
             type="button"
