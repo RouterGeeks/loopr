@@ -4,6 +4,7 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
+import UpdateNotice from './components/UpdateNotice';
 import Home from './pages/Home';
 import Doing from './pages/Doing';
 import Revisit from './pages/Revisit';
@@ -21,7 +22,8 @@ const routerBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 function App() {
   return (
     <Router basename={routerBase || undefined}>
-      <div className="bg-paper-shell text-charcoal">
+      <UpdateNotice />
+      <div id="loopr-content" className="bg-paper-shell text-charcoal">
         <AppHeader />
         <Routes>
           <Route path="/" element={<Home />} />

@@ -1,3 +1,4 @@
+import { useUpdateBlocker } from '../lib/updateSafety';
 import type { FC } from 'react';
 import { useSpeechCapture } from '../lib/useSpeechCapture';
 
@@ -29,6 +30,7 @@ const MicButton: FC<MicButtonProps> = ({ onText, label = 'Voice capture' }) => {
     onFinalText: onText,
   });
 
+  useUpdateBlocker(status === 'listening');
   if (!supported) return null;
 
   const listening = status === 'listening';

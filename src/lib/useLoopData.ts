@@ -1,3 +1,4 @@
+import { useUpdateBlocker } from './updateSafety';
 import { useEffect, useRef, useState } from 'react';
 import { decodeLoops, STORAGE_KEY, writeLoops } from './loops';
 import type { LoopItem } from './loops';
@@ -17,6 +18,7 @@ export function useLoopData() {
   const busy = useRef(false);
   const [error, setError] = useState(snapshot.error);
   const [saving, setSaving] = useState(false);
+  useUpdateBlocker(saving);
   const reload = () => {
     if (busy.current) return;
     const next = read(); current.current = next; setSnapshot(next); setError(next.error);

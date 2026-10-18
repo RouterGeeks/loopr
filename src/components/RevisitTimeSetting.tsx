@@ -1,14 +1,17 @@
+import { useUpdateBlocker } from '../lib/updateSafety';
 import { useState } from 'react';
 import { readRevisitTime, saveRevisitTime } from '../lib/scheduling';
 
 export default function RevisitTimeSetting() {
   const [initial] = useState(readRevisitTime);
   const [time, setTime] = useState(initial.time);
+  const [saved, setSaved] = useState(initial.time);
+  useUpdateBlocker(time !== saved);
   const [error, setError] = useState(initial.error);
   const [message, setMessage] = useState('');
   return <form className="space-y-3 border-t border-rule pt-6" onSubmit={event => {
     event.preventDefault();
-    try { saveRevisitTime(time); setError(''); setMessage('Default time saved. Existing schedules are unchanged.'); }
+    try { saveRevisitTime(time); setSaved(time); setError(''); setMessage('Default time saved. Existing schedules are unchanged.'); }
     catch { setMessage(''); setError('Could not save the default time. Your previous setting is unchanged. Try again.'); }
   }}>
     <h2 className="text-lg font-semibold text-charcoal">Revisit timing</h2>

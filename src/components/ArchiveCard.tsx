@@ -1,3 +1,4 @@
+import { useUpdateBlocker } from '../lib/updateSafety';
 import { useState } from 'react';
 import type { FC } from 'react';
 import type { LoopItem } from '../lib/loops';
@@ -84,6 +85,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
   onDelete,
 }) => {
   const [mode, setMode] = useState<CardMode>('view');
+  useUpdateBlocker(saving || mode !== 'view');
   const cardRef = useCardFocus(mode);
   const contextId = `loop-context-${loop.id}`;
 

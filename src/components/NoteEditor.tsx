@@ -1,3 +1,4 @@
+import { useUpdateBlocker } from '../lib/updateSafety';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FC, KeyboardEvent } from 'react';
 import MicButton from './MicButton';
@@ -19,6 +20,7 @@ const NoteEditor: FC<NoteEditorProps> = ({
   onCancel,
 }) => {
   const [draft, setDraft] = useState(initialValue);
+  useUpdateBlocker(true);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {

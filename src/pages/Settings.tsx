@@ -1,3 +1,4 @@
+import { useUpdateBlocker } from '../lib/updateSafety';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import RevisitTimeSetting from '../components/RevisitTimeSetting';
@@ -16,6 +17,7 @@ const Settings: FC = () => {
   const { loops, raw, readable, error, saving, reload } = useLoopData();
   const [clearError, setClearError] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
+  useUpdateBlocker(showConfirmation || saving);
   const [showAbout, setShowAbout] = useState(false);
 
   const handleConfirmationChange = (isOpen: boolean) => {

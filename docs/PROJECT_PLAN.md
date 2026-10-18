@@ -526,7 +526,41 @@ handlers to resolve the lint error (`e4dd5bb`).
 # Upcoming Priorities
 
 
-## Linked counts and revisit scheduling — locally approved, publication pending
+## App update notice — locally approved, publication pending
+
+- A quiet notice appears when a production service worker has an update waiting.
+  Later dismisses that worker's notice for this page session. Update now is an
+  explicit activation and reload; no other window is automatically reloaded.
+- Capture text, open edit/note/schedule/confirmation panels, pending backup work,
+  changed default-time preference, active voice capture, and in-progress saves
+  block updating. Open editors are conservatively protected even if unchanged.
+- The waiting worker counts all in-scope windows, including uncontrolled and
+  older clients. It permits activation only for the sole requesting window.
+  Other windows must be closed; a failed or missing reply leaves updating blocked.
+- The requesting UI is temporarily inert during the activation handshake. A
+  timeout restores interaction and instructs the user to close/reopen safely.
+  Only the requester reloads on controller change, and only if no blockers remain.
+- Forced activation retains earlier caches to protect a window opened during
+  the client-count/activation race. A later normal activation cleans old caches.
+  Window enumeration and activation are not atomic browser operations; the app
+  never commands other windows to reload. Saved thought storage is untouched.
+- Update checks run on startup and return to the app; offline failures are quiet.
+  Close-and-reopen remains supported. This release cannot show a notice inside
+  an already-running older build that has no notice code; first upgrade still
+  needs the existing close/reopen flow.
+
+Local verification: lint, root/Pages builds, 19 Node tests, and isolated two-build
+Chromium checks passed. Browser coverage includes failed capture saves, capture,
+edit, note, schedule and default-time guards, rejection with another window,
+Later, explicit activation/reload, and unchanged saved thoughts/preferences.
+The user approved the update notice and draft protection locally on 2026-10-18
+and authorized committing/pushing the implementation, documentation, and tests
+to dev. Publication to main remains pending. Actual iPhone announcement and
+activation results have not been explicitly supplied. AI remains deferred.
+
+
+
+## Linked counts and revisit scheduling — live (`1428fed`)
 
 - Dials count tiles link to Dashboard, Doing, Delayed, and Done. Done continues
   to include Dropped; its accessible link name states this.
@@ -553,7 +587,8 @@ failure, unchanged existing schedules, explicit custom save/cancel/reschedule,
 and narrow layouts. Actual iPhone date/time pickers and VoiceOver require user
 review. The user approved the local changes on 2026-10-18 and authorized
 committing/pushing the implementation, documentation, and tests to dev.
-Publication to main remains pending.
+Published to main and GitHub Pages on 2026-10-18. Deployment, live artifact
+comparison, and isolated live scheduling checks passed.
 
 
 

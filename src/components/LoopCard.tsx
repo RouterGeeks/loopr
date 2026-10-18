@@ -1,3 +1,4 @@
+import { useUpdateBlocker } from '../lib/updateSafety';
 import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
 import type { LoopItem, LoopStatus } from '../lib/loops';
@@ -135,6 +136,7 @@ const LoopCard: FC<LoopCardProps> = ({
   const contextId = `loop-context-${loop.id}`;
   const [draft, setDraft] = useState(loop.text);
   const [departing, setDeparting] = useState(false);
+  useUpdateBlocker(saving || departing || (mode !== 'view' && mode !== 'menu'));
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const departTimerRef = useRef<number | null>(null);
 

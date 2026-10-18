@@ -386,3 +386,27 @@ VoiceOver, cross-mode storage sharing, or a two-release iPhone update test.
 Local review result (2026-10-18): the user approved linked counts and scheduling
 after local review and authorized commit/push to dev. Specific iPhone picker
 and VoiceOver results were not supplied. Publication remains pending.
+
+
+# App update notice — two-build review
+
+* [ ] Install candidate A online, then serve candidate B on the same origin. A quiet update notice appears; no reload interrupts the page.
+* [ ] Later hides the notice for that waiting worker in this page session. Work continues normally.
+* [ ] Capture text, open edit/note/scheduling panels, changed default time, backup review, voice capture, confirmations, and active saves disable Update now.
+* [ ] Failed saves retain drafts and keep updating blocked. Saving or canceling open work permits updating when this is the only window.
+* [ ] A second Loopr tab/window blocks activation, even if running older code. Closing it allows retry. An unrelated app does not block.
+* [ ] Update now temporarily prevents new edits, then reloads only the requester. Saved thoughts, schedules, and preferences survive.
+* [ ] Missing worker replies/activation failures do not force a reload or leave the UI permanently inert.
+* [ ] Verify keyboard focus, notice announcements, narrow layout, and iPhone Home Screen behavior with two known builds.
+* [ ] Normal close/reopen updates and offline launch/capture continue to work.
+
+Optional local automation: after `npm run build:pages`, run
+`node scripts/update-browser-check.cjs` with Playwright/Chromium installed.
+It serves isolated successive builds and never uses the user's browser storage.
+The first transition from an older app without this notice still requires
+closing and reopening; subsequent releases can announce themselves.
+
+Local review result (2026-10-18): the user approved the update notice and draft
+protection locally and authorized commit/push to dev, including docs and tests.
+Specific iPhone announcement/activation results were not supplied. Publication
+to main remains pending.

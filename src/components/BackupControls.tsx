@@ -1,3 +1,4 @@
+import { useUpdateBlocker } from '../lib/updateSafety';
 import { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { createBackup, MAX_BACKUP_BYTES, parseBackup } from '../lib/backup';
@@ -9,6 +10,8 @@ const buttonClass = 'rounded-md bg-paper-light/80 px-4 py-3 text-sm font-semibol
 export default function BackupControls({ onRestore, needsRecovery = false }: { needsRecovery?: boolean; onRestore: (loops: LoopItem[]) => void }) {
   const [pending, setPending] = useState<{ loops: LoopItem[]; previous: string | null } | null>(null);
   const [reading, setReading] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  useUpdateBlocker(reading || restoring || pending !== null);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -52,7 +55,8 @@ export default function BackupControls({ onRestore, needsRecovery = false }: { n
   };
 
   const restoreBackup = async () => {
-    if (!pending) return;
+    if (!pending || restoring) return;
+    setRestoring(true);
     setError('');
     try {
       if (localStorage.getItem(STORAGE_KEY) !== pending.previous) {
@@ -68,6 +72,8 @@ export default function BackupControls({ onRestore, needsRecovery = false }: { n
       fileRef.current?.focus();
     } catch {
       setError('Could not restore. Your current loops are unchanged. Storage may be full or unavailable.');
+    } finally {
+      setRestoring(false);
     }
   };
 
@@ -92,7 +98,7 @@ export default function BackupControls({ onRestore, needsRecovery = false }: { n
       <div className="space-y-2">
         <label htmlFor="restore-backup" className="block text-sm font-semibold text-charcoal">Restore backup</label>
         <p id="backup-help" className="text-sm text-charcoal/70">Choose a Loopr JSON backup (up to 5 MB). You’ll review it before replacing any loops.</p>
-        <input ref={fileRef} id="restore-backup" type="file" accept=".json,application/json" disabled={reading} onChange={chooseBackup} aria-describedby="backup-help" className="block w-full min-w-0 text-sm text-charcoal file:mr-3 file:rounded-md file:border-0 file:bg-paper-light file:px-3 file:py-3 file:text-charcoal" />
+        <input ref={fileRef} id="restore-backup" type="file" accept=".json,application/json" disabled={reading || restoring} onChange={chooseBackup} aria-describedby="backup-help" className="block w-full min-w-0 text-sm text-charcoal file:mr-3 file:rounded-md file:border-0 file:bg-paper-light file:px-3 file:py-3 file:text-charcoal" />
       </div>
       {reading && <p role="status">Reading backup…</p>}
       {pending && (
@@ -101,8 +107,8 @@ export default function BackupControls({ onRestore, needsRecovery = false }: { n
           <p className="text-sm">This backup contains {pending.loops.length} loops. Restoring replaces every current loop and note in this browser, including completed and dropped loops. It does not merge them. Export your current loops first if you want to keep them.</p>
           {pending.loops.length === 0 && <p className="text-sm font-semibold">This backup is empty. Restoring it will remove all current loops.</p>}
           <div className="flex flex-wrap gap-3">
-            <button type="button" className={buttonClass} onClick={() => { setPending(null); setMessage('Restore canceled. Your loops are unchanged.'); fileRef.current?.focus(); }}>Cancel restore</button>
-            <button type="button" className={buttonClass} onClick={restoreBackup}>Replace all loops</button>
+            <button type="button" className={buttonClass} disabled={restoring} onClick={() => { setPending(null); setMessage('Restore canceled. Your loops are unchanged.'); fileRef.current?.focus(); }}>Cancel restore</button>
+            <button type="button" className={buttonClass} disabled={restoring} onClick={restoreBackup}>Replace all loops</button>
           </div>
         </section>
       )}

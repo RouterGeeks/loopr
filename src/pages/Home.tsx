@@ -1,3 +1,4 @@
+import { useUpdateBlocker } from '../lib/updateSafety';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { revisitGroup } from '../lib/resurfacing';
@@ -21,6 +22,7 @@ const Home: FC = () => {
   const [draft, setDraft] = useState('');
   const { loops, setLoops, error, saving, reload } = useLoopData();
   const now = useRevisitClock(loops);
+  useUpdateBlocker(draft.length > 0 || saving);
   const readyCount = loops.filter(loop => loop.status === 'delayed' && revisitGroup(loop, now) === 'ready').length;
   const captureRef = useRef<HTMLTextAreaElement | null>(null);
 
