@@ -966,3 +966,19 @@ remain unchanged. No AI or force animation added. On 2026-10-18 the user
 approved the constellation locally and authorized commit/push to dev, including
 the project plan, QA checklist, and tests. Publication remains a separate step;
 AI suggestions remain deferred.
+
+
+## Lavender Home Screen icon — locally approved, publication pending
+
+The user selected the Lavender concept: a full-bleed #C9BEDC background and
+a graphite #3E3B37 dash followed by two dots. The editable brand-icon.svg
+produces the 180px Apple-touch icon, 192/512px PWA icons, and 32px favicon.
+Artwork stays inside the maskable safe area; the operating system supplies
+rounded corners. Header mark, app palette, routes, and stored thoughts stay
+unchanged. No raster-generation dependency or new package is needed.
+
+The user approved the Lavender icon locally on 2026-10-18 and authorized
+committing/pushing the icon, project plan, and QA checklist to dev. Publication
+remains a separate step. Existing installed iPhone icons
+may remain cached; a served-file check does not establish installation refresh.
+Do not clear site data or remove the installed app just to force the icon update.

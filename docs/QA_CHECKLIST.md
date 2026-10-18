@@ -548,3 +548,26 @@ authorized committing/pushing the implementation, project plan, QA checklist,
 and tests to dev. Detailed iPhone/VoiceOver results were not supplied; preceding
 entries retain the test history. Publication remains pending. AI suggestions
 remain deferred.
+
+
+## Lavender Home Screen icon — local review
+
+* [ ] Icon is lavender with exactly one graphite dash and two equal graphite dots.
+* [ ] Apple-touch (180), PWA (192/512), and favicon (32) PNGs are opaque, square, and legible.
+* [ ] Mark stays inside the maskable safe area; no baked-in rounded tile or transparent corners.
+* [ ] Root and /loopr/ builds reference the correct icons and include them in the offline shell.
+* [ ] Header, page styling, app name, saved thoughts, and manual connections remain unchanged.
+* [ ] After publication or a trusted HTTPS candidate, check a new iPhone Add to Home Screen preview. Record separately whether an existing installation refreshes its icon without data removal.
+
+Local icon review pending. No commit, push, or publication authorized yet.
+
+Local checks passed: lint, 23 Node tests, root/Pages builds, diff check, and
+PNG dimension/opaque-RGB validation for all four sizes. The Apple-touch artwork
+was visually inspected; the local preview serves matching PNG bytes. Actual
+new/existing iPhone Home Screen behavior remains for review; not published.
+
+
+Lavender icon approval (2026-10-18): the user approved the icon locally and
+authorized commit/push to dev with the project plan and QA checklist. Earlier
+entries retain validation history. Publication and actual installed-iPhone
+icon-refresh verification remain pending.
