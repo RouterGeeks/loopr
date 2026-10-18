@@ -211,3 +211,21 @@ The app should always feel:
 * trustworthy
 * emotionally safe
 * recognition-first
+
+
+# Offline production regression
+
+Run `npm test`, `npm run lint`, and `npm run build:pages`. The Node tests
+validate generated shell paths, asset coverage, release identity, and failed
+installation behavior. For local browser QA, when Playwright and its Chromium
+binary are available, run `node scripts/offline-browser-check.cjs` after the
+Pages build. This optional browser harness is not part of CI and adds no
+package dependency. It serves real files and HTTP 404 deep-link fallbacks,
+uses isolated browser storage, and simulates offline and successive releases.
+Run `npm run build` afterward to restore the root-path local preview.
+
+Actual iPhone PWA review requires a trusted HTTPS candidate origin. A plain
+HTTP LAN preview can check layout but cannot establish offline/PWA behavior.
+Updates intentionally wait for existing clients to close; saving drafts and
+closing all app windows is part of the update test. Do not clear storage or
+reinstall the user's app merely to force an update.

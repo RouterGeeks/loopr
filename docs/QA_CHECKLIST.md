@@ -322,3 +322,48 @@
 ## Follow-ups for Next Sprint
 
 *
+
+
+# Installed-iPhone review — offline reliability
+
+Record iOS version, Safari vs Home Screen mode, preview URL, and tested build.
+Use a trusted HTTPS preview serving the candidate build, with an online first
+load. LAN HTTP is insufficient for service-worker QA. Export existing thoughts
+before device testing; Safari and Home Screen data sharing must be observed,
+not assumed. Use disposable thoughts for replacement/restore checks.
+
+* [ ] Open online, add to Home Screen, launch, then enable airplane mode with Wi-Fi off. Confirm all five pages load.
+* [ ] Offline: add three thoughts, edit one, add a note, and move one to Doing. Close and reopen the app; confirm every saved change survives.
+* [ ] Open a delayed thought, background the app, then return after its scheduled time. Confirm the ready label updates.
+* [ ] Export to Files and restore the test backup in the same mode; confirm text, notes, states, and dates. Repeat file selection in Safari and Home Screen mode.
+* [ ] With a newer candidate served, keep a draft open and confirm it is not reloaded. Save it, close every Loopr window, reopen online, then relaunch offline and verify the new build and saved data. This requires two known candidate builds.
+* [ ] Check VoiceOver reading order, enlarged text, and Clear All dialog cancellation in both modes; record any differences.
+
+Expected limits: first-ever offline launch is unsupported; unsaved drafts are
+not durable across closing the app; browser/OS storage removal can remove both
+offline assets and thoughts. Keep exported backups. In-app voice recognition
+is not an offline guarantee; typed capture is the offline test target.
+
+
+## Temporary HTTPS candidate — 2026-10-18
+
+URL: https://providers-keyboard-disposition-width.trycloudflare.com/loopr/
+
+Offline cache/build: `loopr-offline-%2Floopr%2F-bb8f43feb9359827`.
+Tested snapshot includes the offline fixes based on `2e0382b`.
+Served from `/private/tmp/loopr-iphone-preview`, not the repository or live
+site. A temporary Cloudflare tunnel forwards to the snapshot server on
+127.0.0.1:4185. Keep the Mac awake and both processes running while testing.
+This is a public testing URL, with separate storage from production. Use
+disposable thoughts and name its Home Screen shortcut "Loopr Preview".
+Restarting the tunnel changes the origin/URL, so continue using this URL
+for this test session. Production publication remains pending.
+
+Trusted HTTPS, service-worker control, offline reload/capture, and an offline
+Dials deep link passed in isolated Chromium.
+
+Device result (2026-10-18): the user reported that offline and Home Screen
+tests look good on their iPhone and approved committing/pushing to dev.
+The iOS version and per-step results were not supplied. The checklist remains
+available for repeat testing; this approval does not establish Files backup,
+VoiceOver, cross-mode storage sharing, or a two-release iPhone update test.

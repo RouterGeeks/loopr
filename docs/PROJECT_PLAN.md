@@ -525,7 +525,45 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Upcoming Priorities
 
-## Data reliability — locally approved, publication pending
+
+## Installed-iPhone and offline reliability — device approved, publication pending
+
+Production audit reproduced a failed service-worker install on a server
+matching GitHub Pages: virtual routes in `cache.addAll` returned 404. The
+old shell also omitted the built JS/CSS and cleared unrelated origin caches.
+
+- Build now generates a versioned offline shell from real files, including
+  the exact JS/CSS bundles; manifest scope and paths support root and /loopr/.
+- Navigations use the installed release's cached index, including deep links
+  and legacy redirects. Assets and HTML stay together through offline use.
+- New workers install the complete shell before activation. They wait until
+  existing app windows close; no forced reload or draft interruption. A failed
+  install leaves the previous release usable. Open windows can intentionally
+  remain on the old version until all are closed and Loopr is reopened.
+- Cleanup targets this app's scope-specific caches and known legacy Loopr
+  caches, preserving unrelated caches. Thought storage is untouched.
+- No new dependencies, screens, storage migration, or notifications.
+
+Local validation (2026-10-17): lint, both production builds, and 12 Node tests
+pass. Isolated Chromium tests on a Pages-like server cover initial control,
+all five routes and legacy redirects offline, offline capture/edit/notes,
+closing/reopening a page with saved data, a waiting update retaining an open
+draft, activation after closing the old client, unrelated-cache preservation,
+and failed-update fallback. Mobile width checked at 375px. This is not an
+actual iPhone process-termination or storage-eviction test.
+
+The user approved offline and Home Screen behavior on their iPhone on
+2026-10-18 and authorized committing/pushing the fixes, docs, and tests to dev.
+The candidate was served through a trusted temporary HTTPS preview; see
+QA_CHECKLIST for its URL and build identity. Chromium also verified its secure
+context, worker control, offline reload/capture, and offline deep link.
+Publication to main remains pending. iOS version and individual device steps
+were not recorded; cross-mode storage behavior, Files backup, VoiceOver,
+storage eviction, and updating between two releases on iPhone have not been
+explicitly confirmed by this approval.
+
+
+## Data reliability — live (`2e0382b`)
 
 - Capture, editing, notes, transitions, deletion, and restore now persist
   before updating the displayed data or closing the editor. Failed saves
@@ -548,8 +586,7 @@ handlers to resolve the lint error (`e4dd5bb`).
   external scripts do not participate in this lock protocol.
 - GitHub validation runs lint, `npm test`, and the Pages build for dev
   pushes and PRs. Main deployments now run lint and tests before building
-  and uploading. These workflow changes await a push; local results do
-  not establish that a GitHub run has passed.
+  and uploading. Dev validation and main deployment passed on 2026-10-17.
 
 Local validation: both production builds, lint, diff checks, and all nine
 unit tests pass. Tests cover unreadable bytes, read-only legacy
@@ -562,8 +599,9 @@ page errors, and the mobile error layout fits at 375px. Backup and
 resurfacing regression checks pass.
 
 Local review approved on 2026-10-17; commit and push to dev authorized,
-including documentation, tests, and GitHub validation. Publication to main
-remains pending. Installed-iPhone/offline testing remains a subsequent
+including documentation, tests, and GitHub validation. Published to main
+and GitHub Pages on 2026-10-17. Live artifact-byte comparison and isolated
+browser reliability checks passed. Installed-iPhone/offline testing remains a subsequent
 priority; the current work does not migrate storage or introduce sync.
 
 ## Resurfacing clarity — live (`d64dbe5`)
@@ -679,7 +717,7 @@ assistive-technology review have not been explicitly confirmed; local
 browser checks do not establish those device behaviors.
 
 Voice capture, backup, accessibility, and resurfacing improvements are live.
-The next focus is data reliability, followed by installed-iPhone/offline QA.
+Data reliability is also live. The current focus is installed-iPhone/offline QA.
 
 ## iPhone Safari capture investigation — reverted after device test
 
