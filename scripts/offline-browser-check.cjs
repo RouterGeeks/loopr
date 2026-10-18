@@ -17,7 +17,7 @@ const server = http.createServer((req, res) => {
     file = path.join(root, 'index.html');
   }
   res.setHeader('Content-Type', file.endsWith('.js') ? 'application/javascript' :
-    file.endsWith('.css') ? 'text/css' : file.endsWith('.html') ? 'text/html' : 'application/octet-stream');
+    file.endsWith('.png') ? 'image/png' : file.endsWith('.css') ? 'text/css' : file.endsWith('.html') ? 'text/html' : 'application/octet-stream');
   res.setHeader('Cache-Control', 'no-store');
   let body = fs.readFileSync(file);
   if (name === 'sw.js' && release > 1) {
@@ -66,6 +66,26 @@ const server = http.createServer((req, res) => {
     await page.goto(url);
     await page.getByRole('group', { name: 'Offline thought edited', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => localStorage.getItem('loopr.loops')), saved);
+    // Direct image navigations must return image bytes, online and offline.
+    for (const offline of [false, true]) {
+      await context.setOffline(offline);
+      for (const name of ['apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'favicon.png']) {
+        for (const query of ['', '?v=lavender']) {
+          const response = await page.goto(url + name + query);
+          assert.equal(response.headers()['content-type'], 'image/png');
+          assert.equal(response.fromServiceWorker(), true);
+          assert.deepEqual(await response.body(), fs.readFileSync(path.join(root, name)));
+          await page.waitForFunction(() => document.querySelector('img')?.naturalWidth > 0);
+          assert.equal(await page.getByRole('navigation').count(), 0);
+        }
+      }
+      for (const route of ['thoughts/42', 'thoughts/42/connections']) {
+        await page.goto(url + route);
+        await page.getByRole('heading', { level: 1 }).waitFor();
+      }
+      await page.goto(url);
+      assert.equal(await page.evaluate(() => localStorage.getItem('loopr.loops')), saved);
+    }
     await context.setOffline(false);
     await page.locator('#loop-input').fill('Unsaved draft stays');
     release = 2;

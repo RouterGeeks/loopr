@@ -571,3 +571,38 @@ Lavender icon approval (2026-10-18): the user approved the icon locally and
 authorized commit/push to dev with the project plan and QA checklist. Earlier
 entries retain validation history. Publication and actual installed-iPhone
 icon-refresh verification remain pending.
+
+## Offline asset navigation fix — local candidate
+
+The user reported a grey D Home Screen icon and a direct Apple-touch PNG URL
+opening the app shell on their iPhone. The same icon displayed via GitHub raw,
+and Home Screen installation worked on their wife's iPhone. Reproduced cause
+of the blank image page: every navigation received cached index.html before
+asset matching. This does not yet prove the cause of the Home Screen fallback.
+
+* [ ] With the candidate worker controlling Safari, open Apple-touch/PWA/favicon PNG URLs directly, with and without a query string. They display images, never app navigation.
+* [ ] Repeat direct icon navigation offline after an online install.
+* [ ] Dashboard, Doing, Delayed, Done, Dials, legacy routes, and thought/connection deep links still work offline.
+* [ ] Saved thoughts, notes, and connections remain unchanged after visiting images and returning to Dashboard.
+* [ ] Unknown file URLs do not receive the worker's offline HTML substitute (hosting may still supply its own 404 page).
+* [ ] Waiting updates preserve unsaved drafts; normal update activation and cache isolation still work.
+* [ ] On the affected iPhone, inspect Add to Home Screen's Lavender preview after the candidate worker has activated. Record separately from direct-image loading; do not clear data or delete the existing app.
+
+Local automated checks passed: lint, 24 Node tests, Pages build, isolated
+Chromium direct PNG byte/content-type/image-decoding checks online/offline,
+app/legacy/thought deep links, saved-data equality, offline capture/edit/note,
+update-draft protection, cache isolation, and failed-update fallback.
+
+The existing temporary HTTPS test preview now serves this candidate:
+https://providers-keyboard-disposition-width.trycloudflare.com/loopr/
+Candidate cache: loopr-offline-%2Floopr%2F-aeb43a85173c5d67.
+This is separate test-origin storage, not production thoughts. Keep the Mac
+awake. Save test drafts and close all earlier preview tabs/windows before
+reopening if an old worker remains active. Production is unchanged; iPhone
+results, commit, and publication were pending at this check.
+
+Offline routing approval (2026-10-18): after retesting the HTTPS preview, the
+user reported “looks good” and authorized committing and pushing the fix,
+QA checklist, and regression tests to dev. This is general preview approval;
+individual manual checklist items above are not claimed as separately verified.
+Production publication remains pending.

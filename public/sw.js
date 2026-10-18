@@ -26,13 +26,23 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET' || url.origin !== self.location.origin ||
       !url.pathname.startsWith(base)) return;
 
-  if (request.mode === 'navigate') {
-    event.respondWith(caches.open(cacheName).then(async (cache) =>
-      (await cache.match(indexUrl)) || fetch(request)));
-  } else if (shell.includes(url.pathname)) {
+  // Asset URLs must remain assets even when opened as a top-level document.
+  // Query strings do not change which versioned shell asset we serve.
+  if (shell.includes(url.pathname)) {
     event.respondWith(caches.open(cacheName).then(async (cache) =>
       (await cache.match(url.pathname)) || fetch(request)));
+    return;
   }
+
+  const route = url.pathname.slice(base.length).replace(/\/$/, '');
+  const appRoute = ['', 'doing', 'delayed', 'done', 'dials', 'revisit', 'archive', 'settings'].includes(route) ||
+    /^thoughts\/\d+(?:\/connections)?$/.test(route);
+  if (request.mode === 'navigate' && appRoute) {
+    event.respondWith(caches.open(cacheName).then(async (cache) =>
+      (await cache.match(indexUrl)) || fetch(request)));
+  }
+  // Unknown files/routes use the network, never an offline HTML substitute.
+
 });
 
 

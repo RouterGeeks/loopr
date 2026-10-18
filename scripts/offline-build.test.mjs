@@ -56,3 +56,36 @@ test('worker template compiles and does not force activation of waiting updates'
   handlers.install({ waitUntil: promise => { waited = promise; } });
   return assert.rejects(waited, /asset unavailable/);
 });
+
+
+test('asset navigations return assets; only known app routes receive the offline index', async () => {
+  for (const base of ['/', '/loopr/']) {
+    const handlers = {};
+    const assets = ['index.html', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'favicon.png', 'manifest.webmanifest', 'assets/app.js'];
+    const shell = assets.map(name => base + name);
+    vm.runInNewContext(worker.replace('/* BUILD_CONFIG */ null', JSON.stringify({cacheName:'test',prefix:'test',shell,base})), {
+      URL,
+      self: { location: { origin: 'https://example.test' }, addEventListener: (name, fn) => { handlers[name] = fn; } },
+      caches: { open: async () => ({ match: async path => ({ path }) }) },
+      fetch: async () => ({ path: 'network' }),
+    });
+    const request = async (path, mode = 'navigate', method = 'GET') => {
+      let response;
+      handlers.fetch({ request: {url:'https://example.test' + path, mode, method}, respondWith: value => { response = value; } });
+      return response ? (await response).path : 'network';
+    };
+    for (const asset of assets) for (const query of ['', '?v=lavender']) {
+      assert.equal(await request(base + asset + query), base + asset);
+      assert.equal(await request(base + asset + query, 'no-cors'), base + asset);
+    }
+    for (const route of ['', 'doing', 'delayed', 'done', 'dials', 'revisit', 'archive', 'settings', 'thoughts/42', 'thoughts/42/connections']) {
+      assert.equal(await request(base + route + '?view=test'), base + 'index.html');
+      if (route) assert.equal(await request(base + route + '/'), base + 'index.html');
+    }
+    for (const path of ['missing.png', 'brand-icon.svg', 'assets/missing.js', 'unknown', 'thoughts/not-an-id']) {
+      assert.equal(await request(base + path), 'network');
+    }
+    assert.equal(await request(base + 'doing', 'cors'), 'network');
+    assert.equal(await request(base + 'apple-touch-icon.png', 'navigate', 'POST'), 'network');
+  }
+});
