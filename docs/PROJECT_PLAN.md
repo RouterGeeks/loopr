@@ -531,9 +531,11 @@ handlers to resolve the lint error (`e4dd5bb`).
   No AI processing, suggestions, API keys, backend, or new dependencies.
 - Active cards expose Connect the dots in a compact More panel; completed/dropped cards
   expose it alongside their existing controls. Current bottom navigation remains.
-- A focused graph shows up to four neighbors per page with static solid lines.
-  Graph labels use normal document flow and wrap with enlarged text. List view
-  includes every connection and explicit Remove connection actions.
+- A focused graph shows up to four neighbors per page. The local constellation
+  refinement uses small clickable dots around a slightly larger central dot,
+  with a direct solid line for each relationship. Labels wrap up to three lines;
+  full text remains in the accessible name, thought detail, and List view.
+  List includes every connection and explicit Remove connection actions.
 - Every dot and its label is a real link to a thought detail page, including the
   central dot. Detail shows full text and existing state-appropriate controls;
   Back to connections returns to the originating neighborhood. Missing/deleted
@@ -952,3 +954,15 @@ Avoid:
 - overly cute UX writing
 - excessive metaphor usage
 - sepia vintage / scrapbook decoration
+
+
+## Constellation presentation — locally approved, publication pending
+
+Replaces the branching graph with a static constellation. SVG lines track the
+actual dot centers as the layout and text size change. Visible dots are 10px
+(neighbors) and 16px (center), inside links with at least 44px touch targets.
+Manual connection data, four-neighbor paging, List, routes, and persistence
+remain unchanged. No AI or force animation added. On 2026-10-18 the user
+approved the constellation locally and authorized commit/push to dev, including
+the project plan, QA checklist, and tests. Publication remains a separate step;
+AI suggestions remain deferred.

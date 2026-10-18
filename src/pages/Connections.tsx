@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import ThoughtConstellation from '../components/ThoughtConstellation';
 import PageContainer from '../components/PageContainer';
 import StorageNotice from '../components/StorageNotice';
 import { connectedThoughts, setConnection, stateLabel, type LoopItem } from '../lib/loops';
@@ -39,14 +40,6 @@ function ConnectionView({ id }: { id: string }) {
       if (value) close(); else listButton.current?.focus();
     }
   };
-  const dot = (item: LoopItem, center = false) => <Link
-    className={`thought-dot ${center ? 'thought-dot-center' : ''}`}
-    to={`/thoughts/${item.id}`} state={{ connectionOrigin: thought?.id }}
-    aria-label={`Open thought: ${item.text}`}>
-    <span className="dot-circle" aria-hidden="true" />
-    <span className="dot-text">{item.text}</span>
-    <span className="text-xs text-charcoal/70">{stateLabel[item.status]}</span>
-  </Link>;
 
   return <PageContainer>
     <Link className="dots-link" to={thought ? `/thoughts/${thought.id}` : '/'}>{thought ? '← Back to thought' : '← Dashboard'}</Link>
@@ -58,10 +51,7 @@ function ConnectionView({ id }: { id: string }) {
       <div className="my-5 flex gap-2" role="group" aria-label="Connection view">
         {(['graph', 'list'] as const).map(option => <button key={option} ref={option === 'list' ? listButton : undefined} aria-pressed={view === option} onClick={() => setView(option)} className={`dots-button flex-1 ${view === option ? 'bg-lavender/40' : ''}`}>{option === 'graph' ? 'Graph' : 'List'}</button>)}
       </div>
-      {view === 'graph' ? <div aria-label="Connected thoughts" className="thought-graph">
-        {dot(thought, true)}
-        {shown.length > 0 && <div className="dot-branches">{shown.map(item => <div className="dot-branch" key={item.id}>{dot(item)}</div>)}</div>}
-      </div> : <ul className="divide-y divide-rule">
+      {view === 'graph' ? <ThoughtConstellation thought={thought} neighbors={shown} /> : <ul className="divide-y divide-rule">
         {linked.map(item => <li key={item.id} className="py-3">
           <Link className="dots-link font-serif" to={`/thoughts/${item.id}`} state={{ connectionOrigin: thought.id }}>{item.text} →</Link>
           <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-sm text-charcoal/70">{stateLabel[item.status]}</span><button className="dots-button text-sm" disabled={data.saving} aria-label={`Remove connection: ${item.text}`} onClick={() => connect(item, false)}>Remove connection</button></div>
@@ -73,7 +63,7 @@ function ConnectionView({ id }: { id: string }) {
         <button className="dots-button" disabled={(currentPage + 1) * 4 >= linked.length} onClick={() => setPage(currentPage + 1)}>Next</button>
       </div>}
       {linked.length === 0 && <p className="my-5 text-sm text-charcoal/70">No connections yet. Choose another thought that belongs with this one.</p>}
-      {view === 'graph' && linked.length > 0 && <p className="my-4 text-sm text-charcoal/70">Solid lines show your connections. Use List to remove a connection.</p>}
+      {view === 'graph' && linked.length > 0 && <p className="my-4 text-sm text-charcoal/70">Each line connects directly to this thought. Use List for full text or to remove a connection.</p>}
       <p role="status" className="my-3 text-sm">{message}</p>
       <button ref={addButton} className="dots-button bg-lavender/40 w-full" disabled={adding || data.saving} onClick={() => setAdding(true)}>Connect a thought</button>
       {adding && <section aria-label="Choose a thought" className="mt-5 border-t border-rule pt-4" onKeyDown={event => { if (event.key === 'Escape') close(); }}>

@@ -518,3 +518,33 @@ one editable note per thought, Add note/Edit note in More, and visible saved
 note previews. Detailed device/VoiceOver results were not supplied. Earlier
 local-review entries are the testing history. Publication remains pending; AI
 suggestions and connection counts remain deferred.
+
+
+## Constellation layout — local review
+
+* [ ] Zero through four neighbors render clearly; each neighbor has its own direct line to the central dot, with no branching trunk.
+* [ ] Small dots and labels open the correct thought; keyboard focus is visible and Enter opens it. Back returns to connections.
+* [ ] Dot touch areas are at least 44px and do not overlap at 320/375/390px or doubled text.
+* [ ] Lines remain attached to dot centers after resizing or enlarging text. No animation or new AI behavior.
+* [ ] Long labels are limited to three lines in the graph; full text is available in List and thought detail, and in accessible link names.
+* [ ] More than four neighbors still page correctly. List, adding/removing links, backup, and offline use retain existing behavior.
+* [ ] On iPhone, review label readability, dot/label tapping, orientation changes, and VoiceOver.
+
+Optional geometry check: `node scripts/constellation-browser-check.cjs` against
+the root production preview. Use `node scripts/connections-browser-check.cjs`
+for connection/data regression coverage. Changes remain local and unpublished.
+
+Local result: lint, 23 Node tests, root/Pages builds, and diff checks passed.
+Isolated Chromium verified 0–4 neighbors, exact line-to-dot endpoints after
+resizing, nonoverlapping 44px links at 320/375/390px and 200% text, keyboard
+opening/back navigation, and List. Connection regression passed manual changes,
+paging, long text, failed/stale writes, backup restore, and offline deep links
+and saves. The mobile constellation was visually reviewed. Actual iPhone
+review remains pending; no commit, push, or publication performed.
+
+
+Constellation approval (2026-10-18): the user approved the layout locally and
+authorized committing/pushing the implementation, project plan, QA checklist,
+and tests to dev. Detailed iPhone/VoiceOver results were not supplied; preceding
+entries retain the test history. Publication remains pending. AI suggestions
+remain deferred.
