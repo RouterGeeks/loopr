@@ -110,11 +110,16 @@
 * [ ] No double borders/cards
 * [ ] Doing dot is visually distinct (sage tone) but calm
 
-# Card Action Overflow Menu (Sprint 17)
+# Compact thought actions — local review
 
-* [ ] Default LoopCard footer shows only Note + More (⋯)
-* [ ] Tapping More reveals Edit + trash + Close (✕) inline
-* [ ] Tapping Close returns to default footer state
+* [ ] Default LoopCard footer shows only More (⋯); Note is inside the menu
+* [ ] Tapping More opens a compact floating panel with Add note/Edit note, Connect the dots, Edit thought, and Delete thought; the card does not expand or move.
+* [ ] Selecting an action, tapping outside, tapping More again, or pressing Escape closes the panel. No extra Close icon is shown.
+* [ ] Opening focuses Add note/Edit note; Tab/Shift+Tab follow ordinary links/buttons and dismiss on leaving. Escape returns focus to More.
+* [ ] Clicking an outside control dismisses without stealing focus; edit/delete Cancel returns to More.
+* [ ] Panel stays inside the viewport and above bottom navigation at 320/375/390px and 200% text; every row has at least a 44px target.
+* [ ] Add note/Edit note lives in the menu in every state, with a 44px target. Existing note preview remains beneath the thought; no standalone Note control.
+* [ ] No connection count is displayed.
 * [ ] Edit from the overflow menu enters edit mode normally
 * [ ] Delete from the overflow menu still shows the confirmation step
 * [ ] Trash icon is recessive charcoal — never red
@@ -123,7 +128,7 @@
 
 # Notes
 
-* [ ] Note button visible on every card (Do, Doing, Delayed, Done, Dropped)
+* [ ] Add note/Edit note available through More in every state (Do, Doing, Delayed, Done, Dropped)
 * [ ] Notes are collapsed by default (no expanded editor on first render)
 * [ ] Clicking Note opens an inline editor with a focused textarea
 * [ ] Save persists the note to localStorage
@@ -131,7 +136,7 @@
 * [ ] Empty Save clears the note (no empty-string artifact in storage)
 * [ ] Cancel discards the draft without changing the stored value
 * [ ] Esc cancels the editor; Cmd/Ctrl+Enter saves
-* [ ] Small dot indicator appears on the Note button when a note exists
+* [ ] Menu says Add note when empty and Edit note when a note exists; saved preview remains visible
 * [ ] Note carries through state transitions (Do → Doing → Done)
 * [ ] Note carries through Restore (Done/Dropped → Do)
 * [ ] Notes persist after a full page refresh
@@ -265,13 +270,13 @@
 
 * [ ] All fields and keyboard-focused controls have a clear focus outline
 * [ ] Focus stays visible above fixed navigation
-* [ ] Save/Cancel from note and edit returns focus to Note or More; delay/delete Cancel returns to its trigger
-* [ ] More/Close announces expanded state and actions include the relevant loop context
+* [ ] Save/Cancel from note and edit returns focus to More; delay/delete Cancel returns to its trigger
+* [ ] More announces expanded state and actions include the relevant loop context
 * [ ] Clear All announces its title and description, starts on Cancel, traps Tab in both directions, closes with Escape, and returns focus
 * [ ] VoiceOver cannot browse or activate background controls while Clear All is open
 * [ ] Common controls have at least 44px hit areas with no overlapping targets
 * [ ] Secondary labels, hints, placeholders, and navigation text are readable
-* [ ] All routes and expanded action rows fit at 320/375/390px and 200% text enlargement
+* [ ] All routes and compact action panels fit at 320/375/390px and 200% text enlargement
 * [ ] iPhone VoiceOver reads loop context, control names, and confirmation content in a useful order
 * [ ] Capture shortcuts, multiline entry, voice capture, state transitions, and backup/restore still work
 
@@ -438,3 +443,78 @@ sections use historical loop terminology for the same entries.
 * [ ] Dashboard says THOUGHTS; Dials says Your thoughts. Empty states, About, confirmations, and accessible capture/edit/delete labels use thought(s).
 * [ ] Backup export/restore and validation messages use thoughts; older backups remain accepted without changing app: loopr, version: 1, or the loops field.
 * [ ] Old storage keys, write locks, update protocol, DOM identifiers, and /loopr/ routes remain compatible.
+
+
+# Connect the dots — local review (2026-10-18)
+
+* [ ] Open a thought's More → Connect the dots; also check Done and Dropped cards.
+* [ ] Connect two thoughts manually; confirm the connection appears from both ends and survives reload.
+* [ ] Tap each dot, including the center, to open full thought text and the appropriate actions. Back to connections returns to the source neighborhood.
+* [ ] Confirm long labels wrap without overlapping; Graph pages through more than four neighbors. List exposes every connection.
+* [ ] Search by thought text across all states; self-links/already-connected thoughts cannot be chosen. Cancel/Escape returns focus without saving.
+* [ ] Remove a connection in List: both thoughts remain; keyboard focus returns to List and a status message confirms removal.
+* [ ] Edit, note, Do/Done/Delay/Drop/Restore preserve connections. Delete removes affected links only; a missing-thought URL remains navigable.
+* [ ] Failed saves preserve saved bytes and picker/search. Another tab's edits reject stale connection writes until Review latest saved thoughts.
+* [ ] Export and restore a connected dataset (version 2) through Dials; old version 1 backups still restore. Restoring replaces connections too.
+* [ ] Malformed connections are rejected without changing original saved data; Clear All removes connections with thoughts.
+* [ ] Offline: open thought/connection deep links, add/remove connections, and reload after an online installation.
+* [ ] A waiting update is blocked while the connection picker or a save is active.
+* [ ] iPhone: tap targets, long labels, enlarged text, Graph/List controls, search keyboard, and VoiceOver link names/reading order are comfortable.
+
+Automated checks: `npm test`, `npm run lint`, both root and Pages builds.
+Optional isolated Chromium checks: `node scripts/connections-browser-check.cjs`
+against the root production preview, plus existing offline/update browser checks
+against the Pages build. Use disposable data; automation does not touch the
+user's normal browser profile. Device review and publication remain pending.
+
+Local result (2026-10-18): lint, 23 Node tests, root/Pages builds, and diff
+whitespace checks passed. Isolated Chromium passed manual connect/remove,
+clickable detail/back navigation, reciprocal links, more-than-four pagination,
+320/375/390px layouts at default/200% text, failed saves, stale-tab review/retry,
+Done Restore, deletion cleanup, actual backup download/restore, offline deep
+links and offline connection saves. Existing offline/update regressions passed,
+including the new connection-picker update guard. The 390px graph was visually
+inspected. No page errors occurred. Actual iPhone touch/VoiceOver checks remain
+unchecked above, pending the user's local review. Nothing committed or published.
+
+
+Compact menu local checks (2026-10-18): build, lint, 23 Node tests, and isolated
+Chromium menu checks passed. Verified unchanged card height, selection,
+outside dismissal, Escape/Tab/Shift+Tab, editor/delete-cancel focus return,
+confirmation before deletion, Connect the dots navigation, and 44px targets at
+320/375/390px with default and doubled text. The 390px panel was visually
+reviewed. Optional repeat: `node scripts/thought-menu-browser-check.cjs` against
+the root production preview. Actual iPhone Safari/VoiceOver comfort and touch
+dismissal remain for user review. These changes are local and unpublished.
+Connection/backup/offline and two-build update regressions also passed. The
+connection regression caught a delayed scroll event dismissing a newly opened
+panel; scrolling now repositions the panel instead. Both menu and connection
+checks passed after that correction. Root preview was rebuilt for review.
+
+
+## One note in the menu — local refinement
+
+* [ ] More opens Add note first for an empty note, or Edit note for an existing one. No separate Note button remains.
+* [ ] Save creates/replaces one note; multiline text is retained. Saving an empty note removes it and restores Add note wording.
+* [ ] Saved preview remains visible beneath the thought while the menu is closed or open; Cancel preserves it.
+* [ ] Save/Cancel/Escape returns focus to More. Failed saves keep the editor/draft and block updating.
+* [ ] Do, Doing, Delayed, Done, and Dropped all expose notes through the same compact menu; archived thoughts retain Restore and do not gain unsupported text editing.
+* [ ] iPhone: check four-row panel fit, touch comfort, VoiceOver labels, and enlarged text. Connection counts remain deferred.
+
+Still local and unpublished; actual iPhone review pending.
+
+Local result: lint, 23 Node tests, root/Pages builds, and isolated menu,
+offline, and update browser checks passed. Menu checks include Add/Edit wording,
+multiline note save/reopen/clear on a completed thought, preview visibility,
+focus return, and four-row panel bounds at 320/375/390px and 200% text.
+Existing offline note saves and note-draft update guards passed through More.
+
+
+## Manual connections and menu approval — 2026-10-18
+
+The user approved the manual connections and menu changes locally and authorized
+commit/push to dev, including project plan, QA checklist, and tests. This includes
+one editable note per thought, Add note/Edit note in More, and visible saved
+note previews. Detailed device/VoiceOver results were not supplied. Earlier
+local-review entries are the testing history. Publication remains pending; AI
+suggestions and connection counts remain deferred.

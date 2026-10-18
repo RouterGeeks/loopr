@@ -9,8 +9,7 @@ export function useCardFocus(mode: string) {
     previousMode.current = mode;
     if (mode === previous) return;
     if (mode === 'view') {
-      const target = previous === 'editing-note' ? 'note'
-        : previous === 'choosing-delay' ? 'delay' : 'more';
+      const target = previous === 'choosing-delay' ? 'delay' : 'more';
       rootRef.current?.querySelector<HTMLButtonElement>(`[data-focus="${target}"]`)?.focus();
     } else if (mode === 'confirming-delete' || mode === 'choosing-delay') {
       rootRef.current?.querySelector<HTMLButtonElement>('[data-panel] button')?.focus();

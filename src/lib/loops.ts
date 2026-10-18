@@ -10,6 +10,7 @@ export interface LoopItem {
   doneAt?: string;
   droppedAt?: string;
   note?: string;
+  connections?: number[]; // Undirected edges stored once, on the lower-ID thought.
 }
 
 export const STORAGE_KEY = 'loopr.loops';
@@ -83,6 +84,7 @@ export function decodeLoops(saved: string | null): LoopItem[] {
     ids.add(id);
   }
 
+  validateConnections(parsed as LoopItem[]);
   const legacy = isLegacyStatusPresent(parsed);
 
   return parsed
@@ -110,6 +112,7 @@ export function decodeLoops(saved: string | null): LoopItem[] {
         loop.note = item.note;
       }
 
+      if (Array.isArray(item.connections) && item.connections.length) loop.connections = [...item.connections];
       return loop;
     });
 };
@@ -133,3 +136,50 @@ export async function writeLoops(loops: LoopItem[] | null, expected: string | nu
   if (navigator.locks) return navigator.locks.request('loopr-write', commit);
   return commit();
 }
+
+// Fail closed on malformed relationships; never silently drop backup data.
+export function validateConnections(loops: LoopItem[]) {
+  const ids = new Set(loops.map(item => Number(item.id)));
+  for (const item of loops) {
+    if (item.connections === undefined) continue;
+    if (!Array.isArray(item.connections) || new Set(item.connections).size !== item.connections.length ||
+        item.connections.some(id => !Number.isSafeInteger(id) || id <= Number(item.id) || !ids.has(id))) {
+      throw new Error('Some thought connections could not be read. The original data has been kept.');
+    }
+  }
+}
+
+export function pruneConnections(loops: LoopItem[]): LoopItem[] {
+  const ids = new Set(loops.map(item => item.id));
+  return loops.map(item => {
+    if (!item.connections) return item;
+    const next = { ...item };
+    const connections = item.connections.filter(id => ids.has(id));
+    if (connections.length) next.connections = connections;
+    else delete next.connections;
+    return next;
+  });
+}
+
+export function connectedThoughts(loops: LoopItem[], id: number): LoopItem[] {
+  const own = loops.find(item => item.id === id)?.connections ?? [];
+  return loops.filter(item => own.includes(item.id) || item.connections?.includes(id));
+}
+
+export function setConnection(loops: LoopItem[], from: number, to: number, connected: boolean): LoopItem[] {
+  if (from === to || !loops.some(item => item.id === from) || !loops.some(item => item.id === to)) {
+    throw new Error('Choose two different saved thoughts.');
+  }
+  const low = Math.min(from, to), high = Math.max(from, to);
+  return loops.map(item => {
+    if (item.id !== low) return item;
+    const next = { ...item };
+    const ids = new Set(item.connections ?? []);
+    if (connected) ids.add(high); else ids.delete(high);
+    if (ids.size) next.connections = [...ids].sort((a, b) => a - b);
+    else delete next.connections;
+    return next;
+  });
+}
+
+export const stateLabel: Record<LoopStatus, string> = { do: 'Do', doing: 'Doing', delayed: 'Delayed', done: 'Done', dropped: 'Dropped' };

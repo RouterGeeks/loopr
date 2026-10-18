@@ -1,3 +1,4 @@
+import ThoughtActions from './ThoughtActions';
 import { useUpdateBlocker } from '../lib/updateSafety';
 import { useState } from 'react';
 import type { FC } from 'react';
@@ -38,44 +39,6 @@ const relativeAgoLabel = (iso: string, now: Date): string | null => {
     day: 'numeric',
   });
 };
-
-const NoteIcon: FC = () => (
-  <svg
-    viewBox="0 0 16 16"
-    width="11"
-    height="11"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.6"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <line x1="3" y1="5" x2="13" y2="5" />
-    <line x1="3" y1="8" x2="10" y2="8" />
-    <line x1="3" y1="11" x2="13" y2="11" />
-  </svg>
-);
-
-const TrashIcon: FC = () => (
-  <svg
-    viewBox="0 0 16 16"
-    width="13"
-    height="13"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.6"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M3 4.5h10" />
-    <path d="M6.5 4.5V3.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 .75.75V4.5" />
-    <path d="M4.75 4.5l.55 8.3a1 1 0 0 0 1 .95h3.4a1 1 0 0 0 1-.95l.55-8.3" />
-    <path d="M7 7v4" />
-    <path d="M9 7v4" />
-  </svg>
-);
 
 const ArchiveCard: FC<ArchiveCardProps> = ({
   loop,
@@ -179,37 +142,13 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
           <div className="flex flex-wrap items-center gap-2">
             <button aria-describedby={contextId}
               type="button"
-              onClick={() => setMode('editing-note')}
-              data-focus="note"
-                aria-label={hasNote ? 'Edit note' : 'Add note'}
-              className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
-            >
-              <NoteIcon />
-              Note
-              {hasNote && (
-                <span
-                  aria-hidden
-                  className="ml-0.5 h-1.5 w-1.5 rounded-full bg-lavender-dark/70"
-                />
-              )}
-            </button>
-
-            <button aria-describedby={contextId}
-              type="button"
               onClick={() => onRestore(loop.id)}
               className="rounded-full bg-paper-light/90 px-4 py-1.5 text-xs font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
               Restore
             </button>
 
-            <button aria-describedby={contextId}
-              type="button"
-              onClick={() => setMode('confirming-delete')}
-              data-focus="more" aria-label="Delete thought"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/65 transition duration-200 hover:bg-paper-light/70 hover:text-charcoal"
-            >
-              <TrashIcon />
-            </button>
+            <ThoughtActions id={loop.id} contextId={contextId} hasNote={hasNote} onNote={() => setMode('editing-note')} onDelete={() => setMode('confirming-delete')} />
           </div>
         </div>
       )}

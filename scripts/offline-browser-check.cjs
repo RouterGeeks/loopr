@@ -49,6 +49,7 @@ const server = http.createServer((req, res) => {
     await page.getByRole('textbox', { name: 'New thought', exact: true }).fill('Offline thought');
     await page.getByRole('button', { name: 'Add thought', exact: true }).click();
     await page.waitForFunction(() => document.querySelector('#loop-input').value === '');
+    await page.getByRole('button', { name: 'More actions', exact: true }).click();
     await page.getByRole('button', { name: 'Add note', exact: true }).click();
     await page.getByRole('textbox', { name: 'Note', exact: true }).fill('Offline note');
     await page.getByRole('button', { name: 'Save', exact: true }).click();

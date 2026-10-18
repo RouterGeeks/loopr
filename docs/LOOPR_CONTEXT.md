@@ -333,6 +333,16 @@ The app should feel:
 - emotionally safe
 - fast
 
-Current identity (locally approved): Dash Dot Dot. Earlier Loopr references describe
+Current live identity: Dash Dot Dot. Earlier Loopr references describe
 the same product. Storage keys, backup identity, repository and /loopr/ URL remain
 unchanged for compatibility; the name change does not migrate data.
+
+
+## Manual thought connections (local candidate)
+
+Connect the dots adds user-created relationships between saved thoughts.
+Graph and List are alternate views of the same manual connections; dots open
+thought details. Connections never change state or scheduling. There is no AI
+processing or remote request. Connections live in the same guarded thought
+storage and are included in version 2 backups; version 1 remains importable.
+See PROJECT_PLAN and QA_CHECKLIST for scope and review status.

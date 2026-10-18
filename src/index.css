@@ -58,3 +58,25 @@ textarea:focus, input:focus, select:focus {
 textarea, input { max-width: 100%; }
 p { overflow-wrap: anywhere; }
 dialog::backdrop { background: rgb(0 0 0 / 30%); backdrop-filter: blur(4px); }
+
+/* A static, small neighborhood: normal-flow labels grow with enlarged text. */
+.dots-link { display: inline-flex; align-items: center; min-height: 44px; padding-block: .5rem; text-decoration: underline; overflow-wrap: anywhere; }
+.dots-button { min-height: 44px; border: 1px solid #d7d3ce; border-radius: .6rem; padding: .5rem .85rem; }
+.dots-button:disabled { opacity: .5; }
+.thought-graph { padding: 1rem .25rem; }
+.thought-dot { position: relative; display: flex; flex-direction: column; align-items: center; gap: .5rem; text-align: center; padding: .5rem; min-height: 44px; min-width: 44px; border-radius: .6rem; }
+.thought-dot:hover { background: #e9e4ef; }
+.dot-circle { width: 2.75rem; height: 2.75rem; border-radius: 50%; background: #b9c4b2; border: 1px solid #78856f; flex-shrink: 0; }
+.thought-dot-center { max-width: 18rem; margin: auto; }
+.thought-dot-center .dot-circle { width: 4rem; height: 4rem; background: #d5cbe3; border-color: #8c7aa5; }
+.dot-text { font-family: Georgia, serif; overflow-wrap: anywhere; max-width: 100%; }
+.dot-branches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 0; padding-top: 2rem; position: relative; }
+.dot-branches::before { content: ''; position: absolute; height: 100%; top: 0; left: 50%; border-left: 1px solid #8c858e; }
+.dot-branch { position: relative; padding-top: 1.5rem; border-top: 1px solid #8c858e; }
+.dot-branch::before { content: ''; position: absolute; top: 0; height: 1.5rem; left: 50%; border-left: 1px solid #8c858e; }
+
+
+.thought-actions { position: fixed; z-index: 45; width: 14rem; overflow-y: auto; overscroll-behavior: contain; padding: .35rem; background: #faf9f6; border: 1px solid #d7d3ce; border-radius: .65rem; box-shadow: 0 4px 18px rgb(35 34 32 / 12%); }
+.thought-actions > a, .thought-actions > button { display: flex; align-items: center; width: 100%; min-height: 44px; padding: .65rem .75rem; text-align: left; border-radius: .35rem; font-size: .875rem; overflow-wrap: anywhere; }
+.thought-actions > :hover { background: #ece7f1; }
+.thought-actions > :focus-visible { outline-offset: -3px; background: #ece7f1; }

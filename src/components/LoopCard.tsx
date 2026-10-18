@@ -1,3 +1,4 @@
+import ThoughtActions from './ThoughtActions';
 import { useUpdateBlocker } from '../lib/updateSafety';
 import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
@@ -26,8 +27,7 @@ type CardMode =
   | 'editing'
   | 'editing-note'
   | 'choosing-delay'
-  | 'confirming-delete'
-  | 'menu';
+  | 'confirming-delete';
 
 const startOfDay = (d: Date): Date =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -53,74 +53,6 @@ const relativeDaysAgoPhrase = (iso: string, now: Date): string | null => {
   });
 };
 
-const NoteIcon: FC = () => (
-  <svg
-    viewBox="0 0 16 16"
-    width="12"
-    height="12"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.6"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <line x1="3" y1="5" x2="13" y2="5" />
-    <line x1="3" y1="8" x2="10" y2="8" />
-    <line x1="3" y1="11" x2="13" y2="11" />
-  </svg>
-);
-
-const TrashIcon: FC = () => (
-  <svg
-    viewBox="0 0 16 16"
-    width="13"
-    height="13"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.6"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M3 4.5h10" />
-    <path d="M6.5 4.5V3.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 .75.75V4.5" />
-    <path d="M4.75 4.5l.55 8.3a1 1 0 0 0 1 .95h3.4a1 1 0 0 0 1-.95l.55-8.3" />
-    <path d="M7 7v4" />
-    <path d="M9 7v4" />
-  </svg>
-);
-
-const MoreIcon: FC = () => (
-  <svg
-    viewBox="0 0 16 16"
-    width="14"
-    height="14"
-    fill="currentColor"
-    aria-hidden="true"
-  >
-    <circle cx="3.5" cy="8" r="1.2" />
-    <circle cx="8" cy="8" r="1.2" />
-    <circle cx="12.5" cy="8" r="1.2" />
-  </svg>
-);
-
-const CloseIcon: FC = () => (
-  <svg
-    viewBox="0 0 16 16"
-    width="13"
-    height="13"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.6"
-    strokeLinecap="round"
-    aria-hidden="true"
-  >
-    <line x1="4" y1="4" x2="12" y2="12" />
-    <line x1="12" y1="4" x2="4" y2="12" />
-  </svg>
-);
-
 const LoopCard: FC<LoopCardProps> = ({
   loop,
   saving = false,
@@ -136,7 +68,7 @@ const LoopCard: FC<LoopCardProps> = ({
   const contextId = `loop-context-${loop.id}`;
   const [draft, setDraft] = useState(loop.text);
   const [departing, setDeparting] = useState(false);
-  useUpdateBlocker(saving || departing || (mode !== 'view' && mode !== 'menu'));
+  useUpdateBlocker(saving || departing || mode !== 'view');
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const departTimerRef = useRef<number | null>(null);
 
@@ -503,70 +435,7 @@ const LoopCard: FC<LoopCardProps> = ({
             )}
 
             <div className="flex flex-wrap items-center gap-1.5">
-              <button aria-describedby={contextId}
-                type="button"
-                onClick={startNote}
-                data-focus="note"
-                aria-label={hasNote ? 'Edit note' : 'Add note'}
-                className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
-              >
-                <NoteIcon />
-                Note
-                {hasNote && (
-                  <span
-                    aria-hidden
-                    className="ml-0.5 h-1.5 w-1.5 rounded-full bg-lavender-dark/70"
-                  />
-                )}
-              </button>
-
-              {mode === 'menu' ? (
-                <div id={`loop-actions-${loop.id}`} className="contents">
-                  <button aria-describedby={contextId}
-                    type="button"
-                    onClick={startEdit}
-                    aria-label="Edit thought"
-                    className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
-                  >
-                    <svg
-                      viewBox="0 0 16 16"
-                      width="12"
-                      height="12"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M10.5 2.5l3 3L5 14H2v-3z" />
-                      <path d="M9.5 3.5l3 3" />
-                    </svg>
-                    Edit
-                  </button>
-
-                  <button aria-describedby={contextId}
-                    type="button"
-                    onClick={startDelete}
-                    aria-label="Delete thought"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/70 transition duration-200 hover:bg-paper-light hover:text-charcoal"
-                  >
-                    <TrashIcon />
-                  </button>
-
-                </div>
-              ) : null}
-              <button aria-describedby={contextId}
-                data-focus="more"
-                type="button"
-                onClick={() => setMode(mode === 'menu' ? 'view' : 'menu')}
-                aria-label={mode === 'menu' ? 'Close actions' : 'More actions'}
-                aria-expanded={mode === 'menu'}
-                aria-controls={mode === 'menu' ? `loop-actions-${loop.id}` : undefined}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full text-charcoal/70 hover:bg-paper-light"
-              >
-                {mode === 'menu' ? <CloseIcon /> : <MoreIcon />}
-              </button>
+              <ThoughtActions id={loop.id} contextId={contextId} hasNote={hasNote} onNote={startNote} onEdit={startEdit} onDelete={startDelete} />
             </div>
           </div>
         </>

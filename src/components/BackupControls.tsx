@@ -79,7 +79,7 @@ export default function BackupControls({ onRestore, needsRecovery = false }: { n
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-charcoal/70">Save a backup of your thoughts, notes, and dates. Backup files contain your text, so keep them somewhere private.</p>
+      <p className="text-sm text-charcoal/70">Save a backup of your thoughts, connections, notes, and dates. Backup files contain your text, so keep them somewhere private.</p>
       <button type="button" className={buttonClass} onClick={exportBackup}>Export backup</button>
       {needsRecovery && <>
       <button type="button" className={buttonClass} onClick={() => {
@@ -104,7 +104,7 @@ export default function BackupControls({ onRestore, needsRecovery = false }: { n
       {pending && (
         <section aria-labelledby="restore-heading" className="space-y-3 rounded-md border border-rule p-4">
           <h3 id="restore-heading" className="font-semibold" aria-live="polite">Replace all thoughts with this backup?</h3>
-          <p className="text-sm">This backup contains {pending.loops.length} thoughts. Restoring replaces every current thought and note in this browser, including completed and dropped thoughts. It does not merge them. Export your current thoughts first if you want to keep them.</p>
+          <p className="text-sm">This backup contains {pending.loops.length} thoughts. Restoring replaces every current thought, connection, and note in this browser, including completed and dropped thoughts. It does not merge them. Export your current thoughts first if you want to keep them.</p>
           {pending.loops.length === 0 && <p className="text-sm font-semibold">This backup is empty. Restoring it will remove all current thoughts.</p>}
           <div className="flex flex-wrap gap-3">
             <button type="button" className={buttonClass} disabled={restoring} onClick={() => { setPending(null); setMessage('Restore canceled. Your thoughts are unchanged.'); fileRef.current?.focus(); }}>Cancel restore</button>

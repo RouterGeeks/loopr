@@ -5,6 +5,8 @@ import {
   Navigate,
 } from 'react-router-dom';
 import UpdateNotice from './components/UpdateNotice';
+import Thought from './pages/Thought';
+import Connections from './pages/Connections';
 import Home from './pages/Home';
 import Doing from './pages/Doing';
 import Revisit from './pages/Revisit';
@@ -30,6 +32,8 @@ function App() {
           <Route path="/doing" element={<Doing />} />
           <Route path="/delayed" element={<Revisit />} />
           <Route path="/done" element={<Archive />} />
+          <Route path="/thoughts/:id" element={<Thought />} />
+          <Route path="/thoughts/:id/connections" element={<Connections />} />
           <Route path="/dials" element={<Settings />} />
 
           {/* Legacy route redirects (pre-Sprint 12). Kept for PWA caches and

@@ -1,6 +1,6 @@
 import { useUpdateBlocker } from './updateSafety';
 import { useEffect, useRef, useState } from 'react';
-import { decodeLoops, STORAGE_KEY, writeLoops } from './loops';
+import { decodeLoops, pruneConnections, STORAGE_KEY, writeLoops } from './loops';
 import type { LoopItem } from './loops';
 
 function read() {
@@ -37,7 +37,7 @@ export function useLoopData() {
     if (!current.current.readable) { setError('Saved thoughts could not be read. Download the original data in Dials before restoring a backup. Your draft is still here.'); return false; }
     busy.current = true; setSaving(true);
     try {
-      const loops = update(current.current.loops);
+      const loops = pruneConnections(update(current.current.loops));
       const raw = await writeLoops(loops, current.current.raw);
       const next = { raw, loops, error: '', readable: true };
       current.current = next; setSnapshot(next); setError('');

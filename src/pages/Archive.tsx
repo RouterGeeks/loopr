@@ -24,6 +24,7 @@ const Archive: FC = () => {
         };
         if (loop.revisitAt) restored.revisitAt = loop.revisitAt;
         if (loop.startedAt) restored.startedAt = loop.startedAt;
+        if (loop.connections) restored.connections = loop.connections;
         if (loop.note) restored.note = loop.note;
         return restored;
       })

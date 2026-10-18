@@ -525,7 +525,46 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Upcoming Priorities
 
-## Dash Dot Dot identity — locally approved, publication pending
+## Connect the dots — locally approved, publication pending
+
+- Manual, undirected connections between existing thoughts in all five states.
+  No AI processing, suggestions, API keys, backend, or new dependencies.
+- Active cards expose Connect the dots in a compact More panel; completed/dropped cards
+  expose it alongside their existing controls. Current bottom navigation remains.
+- A focused graph shows up to four neighbors per page with static solid lines.
+  Graph labels use normal document flow and wrap with enlarged text. List view
+  includes every connection and explicit Remove connection actions.
+- Every dot and its label is a real link to a thought detail page, including the
+  central dot. Detail shows full text and existing state-appropriate controls;
+  Back to connections returns to the originating neighborhood. Missing/deleted
+  thoughts have an explicit empty state. Routes: /thoughts/:id and
+  /thoughts/:id/connections, beneath the existing deployment base.
+- Search and choose a saved thought to connect. Self-links and duplicates are
+  excluded. Failed saves retain search and saved data; stale writes use the
+  existing review/retry flow. Open picker and in-progress writes block updates.
+- Connections persist with thoughts in loopr.loops as optional connections ID
+  arrays. Each undirected edge is stored once on its lower-ID endpoint. Loading
+  remains read-only; invalid edge types, duplicate/self/missing endpoints fail
+  closed. Successful mutations prune links to deleted thoughts atomically with
+  the existing write. State changes and Restore preserve links. Removing a
+  connection leaves both thoughts untouched; Clear All removes both.
+- Backups with connections use version 2 so older builds reject them rather
+  than silently discarding links. Backups without connections retain version 1;
+  the new reader accepts both. Restoring an old backup replaces the full dataset
+  and therefore its connections too. Existing app identifier remains loopr.
+- AI suggestions, automatic linking, whole-library graphs, and sync are deferred.
+- Local refinement: More opens matching Note/Connect/Edit/Delete rows without expanding
+  the card. Outside tap, Escape, focus departure, or selection dismisses it. Add note/Edit note
+  is inside the menu in every state; one editable note and its saved preview remain.
+  Connection counts remain deferred.
+
+Local validation is recorded in QA_CHECKLIST. On 2026-10-18 the user approved
+manual connections and menu changes locally and authorized committing/pushing
+the implementation, project plan, QA checklist, and tests to dev. Publication
+remains a separate step. Detailed iPhone/VoiceOver results were not supplied;
+AI suggestions remain deferred.
+
+## Dash Dot Dot identity — live (`9ba5f9c`)
 
 - Entries are called thoughts throughout visible copy, accessibility labels,
   confirmations, backup errors, and metadata. Internal names and compatibility
@@ -552,7 +591,7 @@ Offline/update and scheduling browser regressions passed after the thoughts
 wording cleanup. Actual iPhone installed-name/icon
 refresh and VoiceOver review remain pending; no reinstall or data clearing is
 needed for review. The user approved the branding locally on 2026-10-18 and authorized the
-thoughts wording cleanup and commit/push to dev. Publication remains pending.
+thoughts wording cleanup and commit/push to dev. Published on 2026-10-18; live assets and browser checks passed.
 
 
 
@@ -815,7 +854,7 @@ assistive-technology review have not been explicitly confirmed; local
 browser checks do not establish those device behaviors.
 
 Voice capture, backup, accessibility, and resurfacing improvements are live.
-Data reliability is also live. The current focus is installed-iPhone/offline QA.
+Data reliability and offline improvements are also live. Current work is local review of manual thought connections.
 
 ## iPhone Safari capture investigation — reverted after device test
 

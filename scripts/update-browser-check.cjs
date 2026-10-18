@@ -52,6 +52,7 @@ const server = http.createServer((req, res) => {
     await page.waitForFunction(()=>document.querySelector('#loop-input').value==='');
     await update.waitFor({state:'visible'});
     await page.waitForFunction(()=>!Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='Update now').disabled);
+    await page.getByRole('button', { name: 'More actions', exact: true }).click();
     await page.getByRole('button',{name:'Add note',exact:true}).click();
     await page.getByRole('textbox',{name:'Note',exact:true}).fill('Keep note');
     assert.equal(await update.isEnabled(),false);
@@ -65,6 +66,13 @@ const server = http.createServer((req, res) => {
     await page.getByLabel('Pick date').fill('2027-01-20');
     assert.equal(await update.isEnabled(),false);
     await page.getByRole('button',{name:'Cancel',exact:true}).click();
+    await page.getByRole('button', {name:'More actions'}).click();
+    await page.getByRole('link', {name:'Connect the dots',exact:true}).click();
+    await page.getByRole('button', {name:'Connect a thought',exact:true}).click();
+    await page.getByLabel('Find a thought').fill('Keep search');
+    assert.equal(await update.isEnabled(), false);
+    await page.getByRole('button', {name:'Cancel',exact:true}).click();
+    await page.waitForFunction(()=>!Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='Update now').disabled);
     const other = await context.newPage(); await other.goto(url);
     await other.locator('#loop-input').fill('Other window draft');
     await page.waitForFunction(()=>Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='Update now').disabled);

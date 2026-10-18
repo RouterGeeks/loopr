@@ -1,4 +1,4 @@
-import type { LoopItem } from './loops';
+import { validateConnections, type LoopItem } from './loops';
 
 export const MAX_BACKUP_BYTES = 5 * 1024 * 1024;
 const dateFields = ['createdAt', 'revisitAt', 'startedAt', 'doneAt', 'droppedAt'] as const;
@@ -12,11 +12,11 @@ export function parseBackup(text: string): LoopItem[] {
   if (new Blob([text]).size > MAX_BACKUP_BYTES) throw new Error('Choose a backup smaller than 5 MB.');
   let data: unknown;
   try { data = JSON.parse(text); } catch { throw new Error('This file is not valid JSON. Choose a Dash Dot Dot backup.'); }
-  if (!isObject(data) || data.app !== 'loopr' || data.version !== 1 || !isDate(data.exportedAt) || !Array.isArray(data.loops)) {
-    throw new Error('This is not a supported Dash Dot Dot backup. Choose a version 1 backup exported from Dials.');
+  if (!isObject(data) || data.app !== 'loopr' || ![1, 2].includes(data.version as number) || !isDate(data.exportedAt) || !Array.isArray(data.loops)) {
+    throw new Error('This is not a supported Dash Dot Dot backup. Choose a version 1 or 2 backup exported from Dials.');
   }
   const ids = new Set<number>();
-  return data.loops.map((item, index) => {
+  const loops = data.loops.map((item, index) => {
     const invalid = () => new Error(`Thought ${index + 1} has invalid or missing data. Nothing was restored.`);
     if (!isObject(item) || typeof item.id !== 'number' || !Number.isSafeInteger(item.id) || item.id < 0 || item.id > 8640000000000000 || ids.has(item.id) || typeof item.text !== 'string' || typeof item.status !== 'string' || !statuses.has(item.status)) throw invalid();
     ids.add(item.id);
@@ -31,12 +31,18 @@ export function parseBackup(text: string): LoopItem[] {
       if (typeof item.note !== 'string') throw invalid();
       loop.note = item.note;
     }
+    if (item.connections !== undefined) {
+      if (data.version !== 2 || !Array.isArray(item.connections)) throw invalid();
+      loop.connections = item.connections as number[];
+    }
     return loop;
   });
+  validateConnections(loops);
+  return loops;
 }
 
 export function createBackup(loops: LoopItem[]): string {
-  const text = JSON.stringify({ app: 'loopr', version: 1, exportedAt: new Date().toISOString(), loops }, null, 2);
+  const text = JSON.stringify({ app: 'loopr', version: loops.some(item => item.connections !== undefined) ? 2 : 1, exportedAt: new Date().toISOString(), loops }, null, 2);
   parseBackup(text);
   return text;
 }
