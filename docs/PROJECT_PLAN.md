@@ -494,11 +494,11 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Current work and release status
 
-## Embedded Lavender Home Screen icon — local candidate, not published
+## Embedded Lavender Home Screen icon — live (`69be861`), iPhone preview passed
 
 The user authorized this workaround on 2026-10-18 after the filename refresh
 failed on their iPhone (iOS 27.2, public-beta updates selected). The direct PNG
-loads, but the installation preview remains a grey D with Open as Web App on
+loaded, but the installation preview remained a grey D with Open as Web App on
 or off and in Private Safari. This does not establish the underlying iOS cause.
 [Firsthand reports](https://www.reddit.com/r/PWA/comments/1wsruwy/pwa_icon_not_working_on_ios_272beta2/)
 describe similar symptoms and success with embedded icons; this is not an
@@ -509,12 +509,19 @@ single Apple touch icon link before computing the offline shell digest. The
 source HTML keeps the file URL for development; root and Pages production
 previews use embedded bytes. PNG files and manifest icons remain available.
 No storage, app identity, routes, dependencies, or activation changes are made.
-The existing installed app stays intact. Local review and actual iPhone
-preview confirmation are required before calling the workaround successful.
-Approved for commit and push to `dev` on 2026-10-18; publication and iPhone
-confirmation remain pending.
+The existing installed app stays intact. Released as `69be861` after GitHub
+validation passed; Pages deployment 39162528428 succeeded. Live HTML, worker,
+manifest, icons, and bundles matched the release artifact. Isolated Chromium
+and WebKit loaded the Dashboard and decoded the exact embedded 180px PNG.
 
-## Home Screen icon refresh — live (`a656ec4`), iPhone preview unresolved
+On 2026-10-18 the user confirmed “it's working” after retesting the live
+https://routergeeks.github.io/loopr/ Add to Home Screen preview on their iPhone
+(iOS 27.2, public-beta updates selected; exact build not recorded). Mark the
+Lavender preview check passed. This confirms the workaround on that device;
+a newly installed icon, other devices, and additional storage/draft checks were
+not separately reported in this retest.
+
+## Earlier filename refresh — released (`a656ec4`), superseded by embedded workaround
 
 On 2026-10-18 the user confirmed the direct Lavender PNG loads in iPhone Safari,
 but Add to Home Screen still previews a grey D after reloading the app. Live

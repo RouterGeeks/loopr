@@ -2,21 +2,24 @@
 
 > Use this checklist after major features, sprint completions, merges, or AI-assisted coding sessions.
 
-## Embedded Lavender icon — local candidate (2026-10-18)
+## Embedded Lavender icon — live (`69be861`), iPhone preview passed (2026-10-18)
 
 Device evidence: iOS 27.2 with public-beta updates selected. After the live
-filename refresh, the user still sees a grey D in Add to Home Screen, in both
+filename refresh, the user still saw a grey D in Add to Home Screen, in both
 web-app toggle states and Private Safari. The direct PNG displays correctly.
-This candidate tests a community-reported workaround; the cause is unconfirmed.
+The embedded workaround now passes the affected iPhone preview test; the
+underlying iOS cause remains unconfirmed.
 
-* [ ] On trusted HTTPS after candidate activation, inspect Add to Home Screen on the affected iPhone; record preview result, URL, iOS build, and date.
+* [x] User confirmed “it's working” on 2026-10-18 after retesting the live Add to Home Screen preview at https://routergeeks.github.io/loopr/ following release `69be861`. iOS 27.2, public-beta updates selected; exact build not recorded.
 * [ ] Keep the existing installed app and website data intact; confirm saved thoughts and unfinished drafts remain accessible.
 * [ ] Check an unaffected iPhone if available, recording its version separately.
-* [ ] Treat preview success and installed-icon success as separate results; cancel the preview initially, without deleting the current installation.
+* [ ] Confirm a newly installed Home Screen icon separately; only the preview result is established by this retest. Keep the existing installation intact.
 
 Production builds embed the existing PNG before shell hashing. Dev mode retains
-the source file link. No app identity or storage changes. Approved for commit
-and push to `dev` on 2026-10-18; publication and iPhone confirmation pending.
+the source file link. No app identity or storage changes. GitHub validation
+passed and Pages deployment 39162528428 published `69be861`. Live files matched
+the artifact; isolated Chromium/WebKit confirmed startup, worker control, and
+exact embedded PNG decoding. The user subsequently confirmed preview success.
 
 Local checks passed: 40 Node tests, lint, Pages/root production builds; offline
 browser checks decode the embedded 180px PNG online and offline and preserve
@@ -24,7 +27,7 @@ saved thought/note bytes. Chromium/WebKit mixed-release tests and update guards
 passed, including drafts and other-window protection. Root preview restored.
 These checks do not exercise the native iPhone Add to Home Screen sheet.
 
-## Home Screen icon refresh — live (`a656ec4`), preview still grey
+## Earlier filename refresh — released (`a656ec4`), superseded by embedded workaround
 
 Observed on the user's iPhone: direct Lavender image loads, but Add to Home
 Screen remains a grey D after Safari reload. A fresh icon filename is a cache
@@ -39,9 +42,13 @@ Local checks passed: 39 Node tests, lint, Pages and root builds, and the isolate
 offline browser suite including both icon URLs. Root preview restored.
 Published in deployment 39161343127 after validation passed; live files matched
 the artifact and isolated Chromium/WebKit startup passed. User retest failed
-the Lavender preview check; see embedded-icon candidate above.
+the Lavender preview check at that release; the embedded workaround above
+subsequently passed on the affected iPhone.
 
 ## Current release status — reconciled 2026-10-18
+
+- Embedded Lavender icon workaround is live as `69be861`; affected iPhone
+  Add to Home Screen preview passed on 2026-10-18 (evidence above).
 
 - Note/thought-edit recovery is live as `7b83c72`: validation and deployment
   39159902588 passed, live files matched the artifact, and isolated live checks
