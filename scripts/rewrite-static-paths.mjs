@@ -23,6 +23,8 @@ const hash = createHash('sha256').update(base).update(source);
 for (const file of files) hash.update(file).update(readFileSync(resolve(dist, file)));
 const prefix = `loopr-offline-${encodeURIComponent(base)}-`;
 const config = { base, prefix, cacheName: `${prefix}${hash.digest('hex').slice(0, 16)}`,
-  shell: files.map((file) => `${base}${file}`) };
+  shell: files.map((file) => `${base}${file}`),
+  integrity: Object.fromEntries(files.map(file => [base + file,
+    createHash('sha256').update(readFileSync(resolve(dist, file))).digest('hex')])) };
 writeFileSync(resolve(dist, 'sw.js'), source.replace('/* BUILD_CONFIG */ null', JSON.stringify(config)));
 console.log(`[offline-shell] ${config.cacheName}: ${files.length} files`);

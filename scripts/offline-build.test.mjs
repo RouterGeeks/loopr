@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import vm from 'node:vm';
+import { createHash, webcrypto } from 'node:crypto';
 
 const script = resolve('scripts/rewrite-static-paths.mjs');
 const worker = readFileSync('public/sw.js', 'utf8');
@@ -34,6 +35,8 @@ test('offline builds include actual bundles, correct scope, and no virtual route
     assert(config.shell.includes(`${base}assets/app.js`));
     assert(config.shell.includes(`${base}assets/app.css`));
     assert(config.shell.includes(`${base}index.html`));
+    assert.equal(config.integrity[`${base}index.html`], createHash('sha256').update('index.html').digest('hex'));
+    assert.deepEqual(Object.keys(config.integrity), config.shell);
     assert(!config.shell.includes(`${base}doing`));
   }
 }));
@@ -51,7 +54,7 @@ test('worker template compiles and does not force activation of waiting updates'
   const failure = new Error('asset unavailable');
   vm.runInNewContext(worker.replace('/* BUILD_CONFIG */ null', JSON.stringify({cacheName:'test',prefix:'loopr-offline-',shell:['/index.html'],base:'/'})), {
     self: { addEventListener: (name, fn) => { handlers[name] = fn; } },
-    caches: { open: async () => ({ addAll: async () => { throw failure; } }) },
+    fetch: async () => { throw failure; },
   });
   handlers.install({ waitUntil: promise => { waited = promise; } });
   return assert.rejects(waited, /asset unavailable/);
@@ -87,5 +90,30 @@ test('asset navigations return assets; only known app routes receive the offline
     }
     assert.equal(await request(base + 'doing', 'cors'), 'network');
     assert.equal(await request(base + 'apple-touch-icon.png', 'navigate', 'POST'), 'network');
+  }
+});
+
+
+test('install rejects mixed HTML, wrong asset bytes, and HTTP failures before caching', async () => {
+  for (const bad of ['html', 'asset', 'http', 'missing-integrity', null, 'put']) {
+    const handlers = {}; const writes = []; const removed = []; let opened = 0;
+    const files = {'/loopr/index.html':'new html', '/loopr/assets/app.js':'new script'};
+    const integrity = Object.fromEntries(Object.entries(files).map(([path,body])=>[path,createHash('sha256').update(body).digest('hex')]));
+    if (bad === 'missing-integrity') delete integrity['/loopr/index.html'];
+    const config = {cacheName:'candidate',prefix:'loopr-',base:'/loopr/',shell:Object.keys(files),integrity};
+    vm.runInNewContext(worker.replace('/* BUILD_CONFIG */ null',JSON.stringify(config)), {
+      crypto:webcrypto, Uint8Array,
+      self:{addEventListener:(name,fn)=>{handlers[name]=fn;}},
+      fetch:async(path, options)=>{
+        assert.equal(options.cache,'reload');
+        return new Response((bad==='html' && path.endsWith('.html')) || (bad==='asset' && path.endsWith('.js')) ? 'stale bytes' : files[path], {status:bad==='http'?404:200});
+      },
+      caches:{open:async()=>{opened++;return {put:async(path)=>{if(bad==='put' && writes.length) throw Error('quota');writes.push(path);}};},delete:async key=>{removed.push(key);}},
+    });
+    let install;handlers.install({waitUntil:p=>{install=p;}});
+    if (bad) await assert.rejects(install);else await install;
+    if(['html','asset','http','missing-integrity'].includes(bad)){assert.equal(opened,0);assert.deepEqual(writes,[]);assert.deepEqual(removed,[]);}
+    if(bad==='put') assert.deepEqual(removed,['candidate']);
+    if(bad===null){assert.deepEqual(writes,Object.keys(files));assert.deepEqual(removed,[]);}
   }
 });

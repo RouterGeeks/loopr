@@ -4,6 +4,37 @@
 
 ## Current release status — reconciled 2026-10-18
 
+- Note/thought-edit recovery is live as `7b83c72`: validation and deployment
+  39159902588 passed, live files matched the artifact, and isolated live checks
+  passed. Subsequent blank-page investigation exposed an older mixed cache;
+  fresh-profile tests alone did not cover that upgrade condition.
+
+## Mixed-release shell prevention — local fix (2026-10-18)
+
+* [ ] Serve HTTP-200 older HTML with a new worker/asset manifest: installation fails instead of accepting mixed versions.
+* [ ] Changed JS/CSS/icon/manifest bytes, missing digests, and HTTP failures also reject installation. Existing active cache/data remain intact.
+* [ ] A partial candidate cache-write failure removes only that candidate, with no pending writes recreating it.
+* [ ] A consistent update installs and waits normally; blockers and other-window checks still protect open work.
+* [ ] Saved thoughts and unfinished drafts survive rejection, reload, and later successful update.
+* [ ] A previously blank client with a healthy waiting update recovers after app windows close/reopen, without clearing website data.
+* [ ] iPhone Home Screen: save open Safari work, close site tabs and dismiss the app from the app switcher, then reopen online. Verify thoughts/drafts and later offline launch. Do not delete the installation.
+
+Observed Chrome result: empty app root and JS/CSS 404s; cache metadata showed
+older HTML in the newer Dashboard-draft release cache. A healthy editor-recovery
+release was waiting. Navigating away/reopening restored the Dashboard and visible
+saved thoughts. No localStorage/sessionStorage was edited, no caches cleared,
+and no installation deleted. iPhone Home Screen retest remains pending.
+
+Local validation: 38 Node tests, lint, Pages/root builds, and isolated Chromium
+and WebKit mixed-response upgrade checks passed; existing offline/update checks
+passed. Test: after `npm run build:pages`, run
+`node scripts/shell-integrity-browser-check.cjs` (requires both local browser
+engines), followed by offline/update browser checks. Rebuild root preview with
+`npm run build`. Approved for commit and push to `dev` on 2026-10-18;
+publication to `main` and the iPhone Home Screen retest remain pending.
+
+## Earlier release and local-review evidence
+
 Recorded release evidence; this documentation review adds no new device results.
 
 - Live: linked counts/scheduling (`1428fed`), update protection (`029424c`),

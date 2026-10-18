@@ -494,7 +494,36 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Current work and release status
 
-## Note and thought-edit recovery — locally approved, not published
+## Mixed-release offline shell — local fix, not published
+
+Incident (2026-10-18): the user's Chrome tab and iPhone Home Screen shortcut
+were blank, while iPhone Safari loaded saved thoughts. Chrome's console showed
+404s for older JS/CSS. Read-only cache inspection found the Dashboard-draft
+release cache (`4a2897564260a962`) contained HTML referencing the labels release's
+`index--0p1o1np.js`, while its asset list contained `index-CFfj0CN_.js`. A newer,
+consistent editor-recovery release was installed and waiting. Navigating the
+blank Chrome tab away and reopening activated it; the Dashboard and saved
+thoughts became visible without clearing storage or changing saved data.
+The iPhone cause is suspected to be the same but is not yet directly verified.
+
+The installer previously accepted any successful HTTP response through
+`cache.addAll`, so stale HTML could be cached beside new assets. The local fix
+emits SHA-256 digests for every shell file, requests cache reload, and verifies
+all response bytes before writing the candidate cache. HTTP errors, absent
+digests, or mismatches reject installation and leave the active release alone.
+Failed candidate cache writes remove only that candidate cache. Activation,
+update blockers, saved thoughts, drafts, and backup formats are unchanged.
+This prevents new mixed installs; existing broken clients still need a healthy
+waiting update to activate by closing/reopening app windows.
+
+Node tests and isolated Chromium/WebKit upgrade checks cover stale HTTP-200
+HTML, preservation of the active release and saved thoughts/draft, and successful
+consistent updates. Existing offline/update regressions remain required.
+Approved for commit and push to `dev` on 2026-10-18. Publication to `main`
+remains pending; the iPhone Home Screen retest is not yet confirmed.
+
+
+## Note and thought-edit recovery — live (`7b83c72`)
 
 - Reopening Add/Edit note or Edit thought restores unfinished text without saving
   it. One recovery record per thought field; notes remain available in all five
@@ -533,8 +562,10 @@ publication remain pending; no release approval is implied by local results.
 
 Local approval (2026-10-18): the user approved note and thought-edit recovery
 locally and authorized commit/push to dev with the plan, QA checklist, supporting
-docs, and tests. No specific iPhone/VoiceOver results were supplied. Main merge
-and publication remain separate steps.
+docs, and tests. No specific iPhone/VoiceOver results were supplied. Published to main and GitHub Pages after validation passed. Deployment
+39159902588 succeeded; live artifact comparison and isolated live editor-recovery
+checks passed. Fresh-load checks did not expose the older mixed-cache incident
+described above.
 
 ## Dashboard draft recovery — live (`3626f21`)
 

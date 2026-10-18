@@ -1,12 +1,33 @@
 // The production build replaces this configuration with its exact asset list.
 const CONFIG = /* BUILD_CONFIG */ null;
-const { cacheName, prefix, shell, base } = CONFIG;
+const { cacheName, prefix, shell, base, integrity } = CONFIG;
 let preserveCaches = false;
 const indexUrl = `${base}index.html`;
 
+async function installShell() {
+  // HTTP/CDN caches can return an older index.html alongside newer bundles.
+  // Verify every response against this build before accepting an offline shell.
+  const responses = await Promise.all(shell.map(async path => {
+    const response = await fetch(path, { cache: 'reload' });
+    if (!response.ok || !integrity?.[path]) throw new Error('Offline shell file unavailable');
+    const digest = await crypto.subtle.digest('SHA-256', await response.clone().arrayBuffer());
+    const actual = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+    if (actual !== integrity[path]) throw new Error('Offline shell release mismatch');
+    return response;
+  }));
+  const cache = await caches.open(cacheName);
+  try {
+    // Sequential puts ensure cleanup cannot race a still-pending write.
+    for (let index = 0; index < shell.length; index++) await cache.put(shell[index], responses[index]);
+  } catch (error) {
+    await caches.delete(cacheName);
+    throw error;
+  }
+}
+
 self.addEventListener('install', (event) => {
-  // A partial download must never replace a working offline release.
-  event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(shell)));
+  // A partial or mixed download must never replace a working offline release.
+  event.waitUntil(installShell());
   // Wait for existing tabs to close: never reload or replace an open draft.
 });
 
