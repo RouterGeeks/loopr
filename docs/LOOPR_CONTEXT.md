@@ -338,7 +338,7 @@ the same product. Storage keys, backup identity, repository and /loopr/ URL rema
 unchanged for compatibility; the name change does not migrate data.
 
 
-## Manual thought connections (local candidate)
+## Manual thought connections (live)
 
 Connect the dots adds user-created relationships between saved thoughts.
 Graph and List are alternate views of the same manual connections; dots open

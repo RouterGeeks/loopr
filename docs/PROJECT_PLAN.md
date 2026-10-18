@@ -523,9 +523,61 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 ---
 
-# Upcoming Priorities
+# Current work and release status
 
-## Connect the dots — locally approved, publication pending
+## Find a thought — locally approved, publication pending
+
+- A small magnifying-glass link at the upper right beside the header mark opens /find without adding a bottom-navigation tab.
+  It prevents navigation while a draft, editor, voice capture, or save blocks
+  updates, so opening search does not discard that work.
+- Search saved thought text and its single note across Do, Doing, Delayed, Done,
+  and Dropped. Match every whitespace-separated word, case-insensitively and
+  literally; no AI, fuzzy matching, labels, remote queries, or new dependencies.
+- Results keep saved order, include state and text/note excerpts around matches,
+  and open the existing thought detail. Back to search retains the query in
+  session navigation history, not the URL or saved-thought storage.
+- Blank searches show guidance. No matches, unreadable data, and stale-tab data
+  have distinct handling using the existing storage notice/review controls.
+  Show more exposes further results in batches of 20. /find works offline.
+- Storage schema, backups, states, schedules, and manual connections are unchanged.
+  Local and actual iPhone review are recorded separately in QA_CHECKLIST.
+
+Local approval (2026-10-18): the user approved search and its upper-right
+magnifying-glass placement and authorized committing/pushing the implementation,
+release-status corrections, project plan, QA checklist, and tests to dev.
+Labels remain deferred. Publication is a separate step.
+
+## Labels and connections — discussion only
+
+Optional labels could describe themes (Garden, Family) without requiring a
+categorization decision during capture. A shared label could filter search or
+surface related thoughts in Connect the dots. It should not automatically
+create saved pairwise connections: shared topic and an intentional relationship
+are different things. A future suggestion would explain the shared label and
+require an explicit Connect action. Label creation, editing, backup schema,
+visual presentation, and any graph grouping need separate design approval.
+No labels or AI are implemented in this search candidate.
+
+## Release reconciliation — 2026-10-18
+
+Manual connections and compact note menus (`e33e775`) and the constellation
+layout (`e6c2304`) are live. Lavender icons (`3b9b459`) and offline asset routing
+(`aa3af0b`) are also live. The latter deployment passed GitHub checks and isolated
+live-browser verification of branding, direct PNG navigation, and offline Dials.
+The user approved the HTTPS routing preview. This does not mark every device
+check complete or prove that every existing installed icon has refreshed.
+Historical local-test entries describe their status at that time.
+
+## Offline asset routing — live (`aa3af0b`)
+
+Known shell assets are served as assets even for document navigations. Only
+known app routes receive the offline index fallback; unknown paths use the
+network. Icon PNGs with or without query strings decode online and offline.
+Saved-thought storage and update activation protections are unchanged.
+
+# Released improvements
+
+## Connect the dots — live (`e33e775`, `e6c2304`)
 
 - Manual, undirected connections between existing thoughts in all five states.
   No AI processing, suggestions, API keys, backend, or new dependencies.
@@ -562,8 +614,8 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 Local validation is recorded in QA_CHECKLIST. On 2026-10-18 the user approved
 manual connections and menu changes locally and authorized committing/pushing
-the implementation, project plan, QA checklist, and tests to dev. Publication
-remains a separate step. Detailed iPhone/VoiceOver results were not supplied;
+the implementation, project plan, QA checklist, and tests to dev. Subsequently
+published to main and GitHub Pages with the constellation release. Detailed iPhone/VoiceOver results were not supplied;
 AI suggestions remain deferred.
 
 ## Dash Dot Dot identity — live (`9ba5f9c`)
@@ -856,7 +908,7 @@ assistive-technology review have not been explicitly confirmed; local
 browser checks do not establish those device behaviors.
 
 Voice capture, backup, accessibility, and resurfacing improvements are live.
-Data reliability and offline improvements are also live. Current work is local review of manual thought connections.
+Data reliability and offline improvements are also live. Manual thought connections are live; current work is local review of Find a thought.
 
 ## iPhone Safari capture investigation — reverted after device test
 
@@ -956,7 +1008,7 @@ Avoid:
 - sepia vintage / scrapbook decoration
 
 
-## Constellation presentation — locally approved, publication pending
+## Constellation presentation — live (`e6c2304`)
 
 Replaces the branching graph with a static constellation. SVG lines track the
 actual dot centers as the layout and text size change. Visible dots are 10px
@@ -964,11 +1016,11 @@ actual dot centers as the layout and text size change. Visible dots are 10px
 Manual connection data, four-neighbor paging, List, routes, and persistence
 remain unchanged. No AI or force animation added. On 2026-10-18 the user
 approved the constellation locally and authorized commit/push to dev, including
-the project plan, QA checklist, and tests. Publication remains a separate step;
-AI suggestions remain deferred.
+the project plan, QA checklist, and tests. Subsequently published to main and
+GitHub Pages; AI suggestions remain deferred.
 
 
-## Lavender Home Screen icon — locally approved, publication pending
+## Lavender Home Screen icon — live (`3b9b459`)
 
 The user selected the Lavender concept: a full-bleed #C9BEDC background and
 a graphite #3E3B37 dash followed by two dots. The editable brand-icon.svg
@@ -978,7 +1030,7 @@ rounded corners. Header mark, app palette, routes, and stored thoughts stay
 unchanged. No raster-generation dependency or new package is needed.
 
 The user approved the Lavender icon locally on 2026-10-18 and authorized
-committing/pushing the icon, project plan, and QA checklist to dev. Publication
-remains a separate step. Existing installed iPhone icons
+committing/pushing the icon, project plan, and QA checklist to dev. Subsequently
+published to main and GitHub Pages. Existing installed iPhone icons
 may remain cached; a served-file check does not establish installation refresh.
 Do not clear site data or remove the installed app just to force the icon update.

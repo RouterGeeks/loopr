@@ -35,7 +35,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   const route = url.pathname.slice(base.length).replace(/\/$/, '');
-  const appRoute = ['', 'doing', 'delayed', 'done', 'dials', 'revisit', 'archive', 'settings'].includes(route) ||
+  const appRoute = ['', 'find', 'doing', 'delayed', 'done', 'dials', 'revisit', 'archive', 'settings'].includes(route) ||
     /^thoughts\/\d+(?:\/connections)?$/.test(route);
   if (request.mode === 'navigate' && appRoute) {
     event.respondWith(caches.open(cacheName).then(async (cache) =>

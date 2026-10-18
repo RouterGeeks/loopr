@@ -5,6 +5,7 @@ import {
   Navigate,
 } from 'react-router-dom';
 import UpdateNotice from './components/UpdateNotice';
+import Find from './pages/Find';
 import Thought from './pages/Thought';
 import Connections from './pages/Connections';
 import Home from './pages/Home';
@@ -29,6 +30,7 @@ function App() {
         <AppHeader />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/find" element={<Find />} />
           <Route path="/doing" element={<Doing />} />
           <Route path="/delayed" element={<Revisit />} />
           <Route path="/done" element={<Archive />} />

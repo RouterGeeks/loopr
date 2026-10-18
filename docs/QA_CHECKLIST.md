@@ -2,6 +2,20 @@
 
 > Use this checklist after major features, sprint completions, merges, or AI-assisted coding sessions.
 
+## Current release status — reconciled 2026-10-18
+
+- Live: linked counts/scheduling (`1428fed`), update protection (`029424c`),
+  Dash Dot Dot identity (`9ba5f9c`), manual connections/menu (`e33e775`),
+  constellation (`e6c2304`), Lavender icons (`3b9b459`), and offline routing (`aa3af0b`).
+- Offline routing: GitHub deployment passed; isolated live Chromium verified
+  the updated worker, brand, direct Lavender PNG online/offline, and Dials offline.
+  The user reported the HTTPS preview looked good before release.
+- Find a thought is locally approved for dev; production publication remains pending.
+- Older “local review” / “publication pending” entries below are historical
+  snapshots, superseded by this release record. Unchecked manual/device steps
+  remain unverified; publication does not establish VoiceOver or every iPhone test.
+
+
 ---
 
 # Session Info
@@ -606,3 +620,47 @@ user reported “looks good” and authorized committing and pushing the fix,
 QA checklist, and regression tests to dev. This is general preview approval;
 individual manual checklist items above are not claimed as separately verified.
 Production publication remains pending.
+
+
+## Find a thought — local review
+
+* [ ] Header Find a thought is reachable from existing pages; bottom navigation stays unchanged.
+* [ ] Capture/edit/note/scheduling drafts and active saves cannot be discarded by opening search; save or close them first.
+* [ ] Blank/whitespace search shows guidance; no matches has a calm message. Clear search returns focus to the input.
+* [ ] Search text and notes across all five states; mixed case, multiline notes, multiple words split across text/note, Unicode and literal punctuation work.
+* [ ] Results include state and excerpts around matches, with no HTML interpretation. More than 20 results can all be reached.
+* [ ] Open a result and return via Back to search or browser Back; query is retained and refreshed results reflect any edits/deletions.
+* [ ] Search does not alter saved bytes, schedules, notes, connections, preferences, or backup schema; query is not sent in a URL.
+* [ ] Unreadable storage remains intact and shows recovery guidance; another-tab changes can be reviewed without losing the query.
+* [ ] After installing online, /find works on offline navigation and refresh; direct PNG URLs still show images.
+* [ ] At 320/375/390px and 200% text, labels/results fit; keyboard focus is visible and targets are at least 44px.
+* [ ] iPhone: check search keyboard, Clear, result opening/back navigation, long note excerpts, and VoiceOver reading order/count announcements.
+
+Labels are discussion-only: optional shared themes may later help find related
+thoughts, but they will not automatically create manual connections. No labels,
+AI, notifications, or sync are included. Local checks are recorded below after
+execution; publication requires separate approval.
+
+Local result (2026-10-18): lint, 26 Node tests, and Pages/root production builds
+passed. Isolated Chromium verified text/note matching across all states,
+20-result paging, detail/back query retention, capture and note-draft navigation
+guards, unchanged saved bytes, clear-input focus, stale-tab review, unreadable
+storage preservation, and offline search/refresh. Layout and 44px input/result
+links passed at 320/375/390px and 200% text; the 390px search screen was visually
+reviewed. Offline icon/navigation and two-build update/draft regression checks
+also passed. No page errors were observed. Actual iPhone keyboard, VoiceOver,
+and touch comfort remain for user review; nothing committed or published.
+Repeat: after `npm run build:pages`, run `node scripts/search-browser-check.cjs`,
+`node scripts/offline-browser-check.cjs`, and `node scripts/update-browser-check.cjs`.
+Then `npm run build` restores the root-path preview.
+
+Search placement refinement: moved the entry point from beneath the tagline to
+a 44px magnifying-glass link at the upper right beside the mark. Accessible name
+is Find a thought; decorative SVG is hidden from assistive technology. Back to
+search remains a text link. Draft protection and five-tab navigation are unchanged.
+
+Find a thought approval (2026-10-18): the user approved search and the new icon
+placement locally and authorized commit/push to dev, including the project plan,
+QA checklist, release-status corrections, and tests. Labels remain deferred.
+Earlier local-test entries are historical; individual iPhone/VoiceOver steps
+remain unchecked unless explicitly verified. Publication remains pending.
