@@ -348,9 +348,17 @@ storage and are included in version 2 backups; version 1 remains importable.
 See PROJECT_PLAN and QA_CHECKLIST for scope and review status.
 
 
-## Custom labels and filters (local candidate)
+## Custom labels and filters (live)
 
 Optional user-created labels describe themes; explicit thought connections
 remain distinct. Labels can filter Find and explain suggestions in Connect the
 dots, but never create automatic links. Labeled backups use version 3; existing
 v1/v2 remain readable. See PROJECT_PLAN and QA_CHECKLIST for scope and status.
+
+
+## Dashboard draft recovery (local candidate)
+
+Unfinished Dashboard text is separate from saved thoughts and backups. Supported
+secure browsers use per-draft ownership locks for safe reload/closed-tab recovery;
+other browsers use session-only recovery. No AI, sync, or note/edit draft recovery
+is included. See PROJECT_PLAN and QA_CHECKLIST for validation and release status.

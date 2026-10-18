@@ -134,7 +134,7 @@ const Settings: FC = () => {
 
           <p className="text-sm text-charcoal/70">
             All your thoughts are stored locally on this device. You can clear
-            everything at any time.
+            saved thoughts at any time. Unfinished capture drafts are separate from backups and can be discarded on Dashboard.
           </p>
 
           <BackupControls onRestore={reload} needsRecovery={!readable} />

@@ -525,6 +525,44 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Current work and release status
 
+## Dashboard draft recovery — iPhone approved, publication pending
+
+- Dashboard capture text is retained across in-app navigation and stored locally
+  as it changes. Returning/reloading restores the owned draft with a quiet Draft
+  restored message. Recovery controls sit below capture so typing does not move
+  the field. Capture, multiline, shortcuts, and voice append remain unchanged.
+- Each draft has its own storage key. A lifetime Web Lock gives one document
+  ownership; the session pointer restores that owner after reload. Duplicated
+  tabs that inherit a pointer get a fresh draft when the original is still open.
+  Other tabs never replace the visible text or clear another owner's draft.
+- Other saved drafts is collapsed by default. Recovery requires an empty current
+  capture and exclusive ownership of the selected draft. An open owner blocks
+  recovery with an explanation; closing it releases ownership. No timeout-based
+  takeover, last-writer-wins merging, cloud service, or new dependency.
+- Successful capture clears only its own unchanged draft. A pending capture ID
+  is journaled before saving; reload verifies the saved thought ID and text before
+  clearing a draft whose cleanup was interrupted. Failed writes keep the text.
+  New text typed during an in-flight save remains an unfinished draft.
+- Explicit Discard draft asks for confirmation; Keep draft cancels. Manually
+  erasing the text also clears that draft. Storage failures show retry/copy
+  guidance. Malformed draft bytes are preserved and new typing uses a fresh key.
+- Drafts are separate from saved thoughts, Find, labels, connections, and backups.
+  Clear All continues to clear saved thoughts only; Dials/dialog copy explicitly
+  tells users to discard unfinished drafts on Dashboard.
+- Without Web Locks (including insecure LAN HTTP), recovery uses per-tab session
+  storage only. It survives same-session reloads, not a promise of reopening a
+  closed tab. Full closed-tab recovery requires a secure supported browser.
+  Browser storage deletion/eviction can still remove drafts; this is not a backup.
+- Saved thought/backup schemas and the existing update protocol remain unchanged.
+  Note/edit/label editor drafts remain in-memory and are outside this increment.
+
+Local checks and actual iPhone results are tracked separately in QA_CHECKLIST.
+On 2026-10-18 the user reported that draft recovery looks good on their iPhone
+and authorized commit/push to dev, including the plan, QA checklist, release
+status corrections, and tests. Individual device steps and iOS version were not
+supplied; publication remains a separate step.
+
+
 ## Find a thought — live (`77b57a7`)
 
 - A small magnifying-glass link at the upper right beside the header mark opens /find without adding a bottom-navigation tab.
@@ -547,9 +585,9 @@ magnifying-glass placement and authorized committing/pushing the implementation,
 release-status corrections, project plan, QA checklist, and tests to dev.
 Published to main and GitHub Pages on 2026-10-18. GitHub checks, artifact
 comparison, and isolated live search/offline/draft-protection checks passed.
-Labels were deferred for that release and are now a separate local candidate.
+Labels were deferred for that release and subsequently shipped in `290457f`.
 
-## Custom labels and Find filters — locally approved, publication pending
+## Custom labels and Find filters — live (`290457f`)
 
 - Labels are optional custom themes added after capture through More → Edit
   labels. The focused thought-detail editor supports existing-label reuse,
@@ -585,7 +623,9 @@ Labels were deferred for that release and are now a separate local candidate.
 Validation and actual iPhone review are tracked in QA_CHECKLIST. On 2026-10-18,
 the user approved labels, filters, and shared-label suggestions locally and
 authorized commit/push to dev, including the plan, QA checklist, and tests.
-Publication remains a separate step. Automatic connections and AI remain excluded.
+Published to main and GitHub Pages on 2026-10-18. Deployment and artifact
+comparison passed, as did isolated live label/filter/manual-connection, backup,
+and offline checks. Automatic connections and AI remain excluded.
 
 ## Release reconciliation — 2026-10-18
 
@@ -937,7 +977,7 @@ assistive-technology review have not been explicitly confirmed; local
 browser checks do not establish those device behaviors.
 
 Voice capture, backup, accessibility, and resurfacing improvements are live.
-Data reliability and offline improvements are also live. Manual thought connections are live; Find a thought is live; current work is local review of labels and filters.
+Data reliability and offline improvements are also live. Manual thought connections are live; Find a thought is live; current work is local review of Dashboard draft recovery.
 
 ## iPhone Safari capture investigation — reverted after device test
 

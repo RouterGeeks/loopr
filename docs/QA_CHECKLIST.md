@@ -11,8 +11,9 @@
   the updated worker, brand, direct Lavender PNG online/offline, and Dials offline.
   The user reported the HTTPS preview looked good before release.
 - Find a thought (`77b57a7`) is live; deployment, artifact comparison, and
-  isolated live search/draft/offline checks passed. Labels/filters are the new
-  locally approved candidate for dev; publication remains pending.
+  isolated live search/draft/offline checks passed. Labels/filters (`290457f`) are also live; deployment, artifact comparison, and
+  isolated live label/filter/backup/offline checks passed. Dashboard draft recovery
+  is approved on iPhone for commit/push to dev; publication remains pending.
 - Older “local review” / “publication pending” entries below are historical
   snapshots, superseded by this release record. Unchecked manual/device steps
   remain unverified; publication does not establish VoiceOver or every iPhone test.
@@ -713,3 +714,51 @@ project plan, QA checklist, and tests. AI and automatic connections remain
 excluded. Earlier local-check entries retain their historical status; this
 approval does not mark individual iPhone/VoiceOver steps as verified. Production
 publication remains pending.
+
+
+## Dashboard draft recovery — local review
+
+* [ ] Type multiline text or append dictation, navigate away/back, reload, and reopen offline. The owned draft is restored without changing saved thoughts or moving the capture field.
+* [ ] Two open tabs keep separate drafts. Duplicate a tab: its inherited session pointer cannot overwrite or clear the original tab's draft.
+* [ ] Other saved drafts stays collapsed; recovering while the owner is open explains why it cannot proceed. Close the owner and recover into an empty capture.
+* [ ] A nonempty capture cannot be replaced by another saved draft. Recovery transfers ownership without copying/deleting other tabs' text.
+* [ ] Successful capture clears only that draft; failed writes preserve it. Reload between saved-thought commit and draft cleanup does not reintroduce a completed capture.
+* [ ] Type new text while a capture save waits: the submitted thought saves once and the new draft survives reload.
+* [ ] Discard → Keep draft retains text; confirmed discard clears only the current draft. Failed storage cleanup explains retry and does not claim durability.
+* [ ] Draft-storage failures keep current text visible, show retry/copy guidance, and do not silently report capture success. Malformed records remain byte-for-byte intact.
+* [ ] Drafts do not appear in Find or backups. Clear All/backup restore retain separate drafts; Dials explains this boundary.
+* [ ] Update guards still block active capture drafts; a safely stored draft survives leaving Dashboard and updating/reloading from another page.
+* [ ] Without Web Locks, session-only fallback is explained; no shared local draft is written or taken over. Same-session reload still works.
+* [ ] iPhone over trusted HTTPS: type, background/return, reload, close/reopen, and try two tabs/Home Screen windows. Record iOS version and mode; do not assume Safari/Home Screen storage is shared.
+* [ ] VoiceOver announces restoration/errors without reading every keystroke; recovery/discard controls have clear names and usable targets at enlarged text.
+
+Run `node scripts/draft-browser-check.cjs` after `npm run build:pages`, plus
+existing offline/update/search browser checks. Use disposable data in isolated
+profiles. Drafts are best-effort local recovery, not exported backups. Browser
+storage removal can remove them; note/edit/label drafts remain outside this scope.
+
+Local result (2026-10-18): lint, 29 Node tests, root/Pages builds, and diff checks
+passed. Isolated Chromium tested navigation/reload, separate and duplicated-tab
+ownership, refusal to recover an active tab, recovery after closing it, failed
+thought writes, failed draft cleanup after capture, new typing during a blocked
+write, discard/cancel, corrupt draft preservation, offline reload, session-only
+and denied-lock fallback, and 320/375/390px at doubled text. Search, offline PNG
+routing/capture, and two-build update/draft protection regressions passed. The
+mobile capture view was visually reviewed. Actual iPhone/VoiceOver and OS process
+termination/storage eviction remain device-review items. Nothing published.
+
+The trusted HTTPS test preview has been refreshed for this candidate:
+https://providers-keyboard-disposition-width.trycloudflare.com/loopr/
+Pages cache: loopr-offline-%2Floopr%2F-4a2897564260a962. Secure-context Web Locks and
+draft restoration after reload were verified against the final candidate in
+isolated Chromium. The final candidate also passed the isolated local browser suite. This is separate test-origin data, not production thoughts.
+Keep the Mac awake; save earlier test drafts and use the update notice or close
+earlier preview windows to load the candidate. LAN HTTP only tests session-level
+recovery. No commit, push, or publication performed.
+
+Dashboard draft recovery approval (2026-10-18): the user reported that draft
+recovery looks good on their iPhone and authorized commit/push to dev with the
+project plan, QA checklist, release-status corrections, and tests. The iOS
+version and individual device-step results were not supplied; this approval
+does not mark every VoiceOver/process-termination/storage-eviction check complete.
+Earlier local results remain historical. Production publication remains pending.

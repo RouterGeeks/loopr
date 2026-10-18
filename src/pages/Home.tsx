@@ -1,3 +1,4 @@
+import { useCaptureDraft, changeCaptureDraft, prepareDraftCapture, finishDraftCapture, recoverCaptureDraft, retryCaptureDraft } from '../lib/captureDraft';
 import { useUpdateBlocker } from '../lib/updateSafety';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -19,7 +20,11 @@ import { isSpeechCaptureSupported } from '../lib/useSpeechCapture';
 type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
 const Home: FC = () => {
-  const [draft, setDraft] = useState('');
+  const recovery = useCaptureDraft();
+  const draft = recovery.text;
+  const setDraft = changeCaptureDraft;
+  const [discarding, setDiscarding] = useState(false);
+  const [captureError, setCaptureError] = useState('');
   const { loops, setLoops, error, saving, reload } = useLoopData();
   const now = useRevisitClock(loops);
   useUpdateBlocker(draft.length > 0 || saving);
@@ -36,13 +41,19 @@ const Home: FC = () => {
 
   const addLoop = async () => {
     const trimmed = draft.trim();
-    if (!trimmed) return;
+    if (!trimmed || !recovery.ready || saving) return;
+    setCaptureError('');
 
     const now = new Date();
 
+    const captureId = loops.reduce((id, loop) => Math.max(id, loop.id + 1), now.getTime());
+    if (!prepareDraftCapture(captureId)) {
+      setCaptureError('Could not save. Your draft and previously saved thoughts are unchanged. Allow storage or free some space, then try again.');
+      return;
+    }
     const saved = await setLoops((current) => [
       {
-        id: current.reduce((id, loop) => Math.max(id, loop.id + 1), now.getTime()),
+        id: captureId,
         text: trimmed,
         status: 'do',
         createdAt: now.toISOString(),
@@ -50,7 +61,7 @@ const Home: FC = () => {
       ...current,
     ]);
 
-    if (saved) setDraft(current => current === draft ? '' : current);
+    if (saved) { finishDraftCapture(draft); setDiscarding(false); }
   };
 
   const handleTransition = (id: number, status: TransitionStatus) => {
@@ -112,7 +123,7 @@ const Home: FC = () => {
   const appendVoiceTextToDraft = useCallback((text: string) => {
     setDraft((prev) => (prev ? `${prev.trimEnd()} ${text}` : text));
     captureRef.current?.focus({ preventScroll: true });
-  }, []);
+  }, [setDraft]);
 
   const speechSupported = isSpeechCaptureSupported();
 
@@ -125,13 +136,13 @@ const Home: FC = () => {
     return window.matchMedia?.('(pointer: fine)').matches ?? false;
   }, []);
 
-  const canAddLoop = draft.trim().length > 0;
+  const canAddLoop = recovery.ready && !saving && draft.trim().length > 0;
 
   const doLoops = loops.filter((loop) => loop.status === 'do');
 
   return (
     <PageContainer>
-      <StorageNotice error={error} saving={saving} onReload={reload} />
+      <StorageNotice error={captureError || error} saving={saving} onReload={reload} />
       <div className="relative mb-6">
         <DateEyebrow />
         <h1 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-charcoal sm:text-3xl">
@@ -156,6 +167,7 @@ const Home: FC = () => {
             id="loop-input"
             ref={captureRef}
             value={draft}
+            readOnly={!recovery.ready}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={handleDraftKeyDown}
             rows={4}
@@ -208,6 +220,18 @@ const Home: FC = () => {
             </div>
           </div>
         </div>
+
+        {recovery.limited && draft && !recovery.error && <p className="text-sm text-charcoal/70">Draft recovery is limited to this tab’s session in this browser.</p>}
+        {recovery.restored && <p role="status" className="text-sm text-charcoal/70">Draft restored.</p>}
+        {recovery.error && <div className="text-sm text-charcoal/80"><p role="status">{recovery.error}</p><button className="dots-link" onClick={retryCaptureDraft}>Retry draft storage</button></div>}
+        {draft && <div className="text-sm">
+          {discarding ? <div className="flex flex-wrap items-center gap-3"><span>Discard this unfinished thought?</span><button className="dots-link" onClick={() => setDiscarding(false)}>Keep draft</button><button className="dots-link" onClick={() => { setDraft(''); setDiscarding(false); setCaptureError(''); captureRef.current?.focus(); }}>Discard draft</button></div> : <button className="dots-link text-charcoal/70" onClick={() => setDiscarding(true)}>Discard draft</button>}
+        </div>}
+        {recovery.others.length > 0 && <details className="text-sm text-charcoal/70">
+          <summary className="min-h-11 cursor-pointer py-3">Other saved drafts</summary>
+          <p>Recover a draft from a closed tab. Save or discard this tab’s draft first. Open tabs keep their own drafts.</p>
+          <ul className="divide-y divide-rule">{recovery.others.map(item => <li key={item.id} className="py-3"><p className="whitespace-pre-wrap break-words">{item.text.slice(0, 180)}{item.text.length > 180 ? '…' : ''}</p><button className="dots-link" disabled={Boolean(draft) || !recovery.ready} onClick={() => { void recoverCaptureDraft(item.id); }}>Recover draft</button></li>)}</ul>
+        </details>}
 
         {!speechSupported && (
           <p className="font-mono text-xs italic text-charcoal/70">
