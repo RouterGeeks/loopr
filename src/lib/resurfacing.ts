@@ -20,8 +20,9 @@ export function revisitLabel(loop: LoopItem, now: number): string {
   if (date.toDateString() === today.toDateString()) {
     return `Today at ${date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}`;
   }
-  if (date.toDateString() === tomorrow.toDateString()) return 'Tomorrow';
-  return `Scheduled for ${date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}`;
+  const clock = date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  if (date.toDateString() === tomorrow.toDateString()) return `Tomorrow at ${clock}`;
+  return `Scheduled for ${date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} at ${clock}`;
 }
 export function scheduledContext(loop: LoopItem): string | null {
   const time = revisitTime(loop);

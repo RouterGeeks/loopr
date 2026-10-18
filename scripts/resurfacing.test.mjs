@@ -27,7 +27,7 @@ test('calendar labels and refresh boundaries across daylight-saving changes', ()
       const start = new Date(`${day}T00:00:00`).getTime();
       assert.equal(nextRevisitRefresh([], start) - start, hours * 3600000);
       const tomorrow = new Date(start); tomorrow.setDate(tomorrow.getDate() + 1); tomorrow.setHours(9);
-      assert.equal(revisitLabel(loop(tomorrow.toISOString()), start), 'Tomorrow');
+      assert.match(revisitLabel(loop(tomorrow.toISOString()), start), /^Tomorrow at /);
     }
     const now = new Date('2026-10-17T08:59:00').getTime();
     const due = new Date('2026-10-17T09:00:00').getTime();

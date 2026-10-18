@@ -4,6 +4,8 @@ import type { LoopItem, LoopStatus } from '../lib/loops';
 import NoteEditor from './NoteEditor';
 import { revisitLabel, revisitGroup, scheduledContext } from '../lib/resurfacing';
 import { useCardFocus } from '../lib/useCardFocus';
+import { readRevisitTime, presetDate, scheduledDate, localDate, timeLabel } from '../lib/scheduling';
+import type { DelayPreset } from '../lib/scheduling';
 
 type TransitionStatus = Exclude<LoopStatus, 'delayed'>;
 
@@ -25,45 +27,6 @@ type CardMode =
   | 'choosing-delay'
   | 'confirming-delete'
   | 'menu';
-
-type DelayPreset = 'tomorrow' | 'weekend' | 'nextWeek';
-
-const at9amLocal = (d: Date): Date => {
-  d.setHours(9, 0, 0, 0);
-  return d;
-};
-
-const computePresetDate = (preset: DelayPreset): Date => {
-  const d = new Date();
-  switch (preset) {
-    case 'tomorrow':
-      d.setDate(d.getDate() + 1);
-      return at9amLocal(d);
-    case 'weekend': {
-      const day = d.getDay();
-      let add: number;
-      if (day === 6) add = 1; // Saturday → Sunday (still this weekend)
-      else if (day === 0) add = 6; // Sunday → next Saturday
-      else add = 6 - day; // Mon–Fri → upcoming Saturday
-      d.setDate(d.getDate() + add);
-      return at9amLocal(d);
-    }
-    case 'nextWeek': {
-      const day = d.getDay();
-      const add = day === 1 ? 7 : (8 - day) % 7 || 7;
-      d.setDate(d.getDate() + add);
-      return at9amLocal(d);
-    }
-  }
-};
-
-const localTodayString = (): string => {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-};
 
 const startOfDay = (d: Date): Date =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -248,21 +211,35 @@ const LoopCard: FC<LoopCardProps> = ({
     setMode('view');
   };
 
-  const startDelay = () => setMode('choosing-delay');
-  const cancelDelay = () => setMode('view');
-
-  const applyPreset = async (preset: DelayPreset) => {
-    if (!await onDelay(loop.id, computePresetDate(preset).toISOString())) return;
-    setMode('view');
+  const [delayTime, setDelayTime] = useState('09:00');
+  const [delayDate, setDelayDate] = useState('');
+  const [defaultTime, setDefaultTime] = useState('09:00');
+  const [delayError, setDelayError] = useState('');
+  const startDelay = () => {
+    const preference = readRevisitTime();
+    const existing = loop.status === 'delayed' && loop.revisitAt ? new Date(loop.revisitAt) : null;
+    const valid = existing && Number.isFinite(existing.getTime());
+    setDefaultTime(preference.time);
+    setDelayTime(valid ? `${String(existing.getHours()).padStart(2, '0')}:${String(existing.getMinutes()).padStart(2, '0')}` : preference.time);
+    setDelayDate(valid ? localDate(existing) : '');
+    setDelayError(preference.error);
+    setMode('choosing-delay');
   };
-
-  const applyCustomDate = async (yyyymmdd: string) => {
-    if (!yyyymmdd) return;
-    const [y, m, d] = yyyymmdd.split('-').map(Number);
-    if (!y || !m || !d) return;
-    const date = new Date(y, m - 1, d, 9, 0, 0, 0);
-    if (!await onDelay(loop.id, date.toISOString())) return;
-    setMode('view');
+  const cancelDelay = () => setMode('view');
+  const applyPreset = async (preset: DelayPreset) => {
+    try {
+      const date = presetDate(preset, defaultTime);
+      if (!await onDelay(loop.id, date.toISOString())) return;
+      setMode('view');
+    } catch (cause) { setDelayError((cause as Error).message); }
+  };
+  const applyCustomDate = async () => {
+    try {
+      const date = scheduledDate(delayDate, delayTime);
+      if (date.getTime() <= Date.now()) throw new Error('Choose a future date and time.');
+      if (!await onDelay(loop.id, date.toISOString())) return;
+      setMode('view');
+    } catch (cause) { setDelayError((cause as Error).message); }
   };
 
   const startDelete = () => setMode('confirming-delete');
@@ -406,7 +383,7 @@ const LoopCard: FC<LoopCardProps> = ({
               onClick={() => applyPreset('tomorrow')}
               className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
-              Tomorrow
+              Tomorrow · {timeLabel(defaultTime)}
             </button>
 
             <button aria-describedby={contextId}
@@ -414,7 +391,7 @@ const LoopCard: FC<LoopCardProps> = ({
               onClick={() => applyPreset('weekend')}
               className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
-              This weekend
+              This weekend · {timeLabel(defaultTime)}
             </button>
 
             <button aria-describedby={contextId}
@@ -422,7 +399,7 @@ const LoopCard: FC<LoopCardProps> = ({
               onClick={() => applyPreset('nextWeek')}
               className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal shadow-soft ring-1 ring-charcoal/10 hover:bg-cream-light"
             >
-              Next week
+              Next week · {timeLabel(defaultTime)}
             </button>
           </div>
 
@@ -437,13 +414,21 @@ const LoopCard: FC<LoopCardProps> = ({
             <input
               id={`delay-date-${loop.id}`}
               type="date"
-              min={localTodayString()}
-              onChange={(event) => applyCustomDate(event.target.value)}
-              className="rounded-md border border-rule bg-paper-light/90 px-3 py-1.5 text-sm text-charcoal shadow-soft focus:border-lavender/60 focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
+              min={localDate(new Date())}
+              value={delayDate}
+              onChange={(event) => setDelayDate(event.target.value)}
+              className="min-h-11 min-w-0 max-w-full rounded-md border border-rule bg-paper-light/90 px-3 py-1.5 text-sm text-charcoal shadow-soft focus:border-lavender/60 focus:outline-none focus:ring-2 focus:ring-lavender-soft/40"
             />
           </div>
 
-          <div className="flex justify-end pt-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <label htmlFor={`delay-time-${loop.id}`} className="text-sm">Time</label>
+            <input id={`delay-time-${loop.id}`} type="time" value={delayTime} onChange={event => setDelayTime(event.target.value)} className="min-h-11 max-w-full rounded-md border border-rule bg-paper-light px-3 text-base" />
+          </div>
+          <p className="text-sm text-charcoal/70">Times use your local timezone. Quick choices use your default time.</p>
+          {delayError && <p role="alert" className="text-sm text-charcoal">{delayError}</p>}
+          <div className="flex flex-wrap justify-end gap-2 pt-1">
+            <button type="button" disabled={saving || !delayDate || !delayTime} onClick={applyCustomDate} className="min-h-11 rounded-md bg-lavender/25 px-4 text-sm font-semibold disabled:opacity-50">Schedule revisit</button>
             <button aria-describedby={contextId}
               type="button"
               onClick={cancelDelay}

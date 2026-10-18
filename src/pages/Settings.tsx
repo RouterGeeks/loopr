@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import RevisitTimeSetting from '../components/RevisitTimeSetting';
 import type { FC } from 'react';
 import PageContainer from '../components/PageContainer';
 import DateEyebrow from '../components/DateEyebrow';
@@ -30,11 +32,11 @@ const Settings: FC = () => {
     (loop) => loop.status === 'done' || loop.status === 'dropped'
   ).length;
 
-  const countTiles: Array<{ label: string; value: number }> = [
-    { label: 'Do', value: doCount },
-    { label: 'Doing', value: doingCount },
-    { label: 'Delayed', value: delayedCount },
-    { label: 'Done', value: doneCount },
+  const countTiles: Array<{ label: string; value: number; to: string }> = [
+    { label: 'Do', value: doCount, to: '/' },
+    { label: 'Doing', value: doingCount, to: '/doing' },
+    { label: 'Delayed', value: delayedCount, to: '/delayed' },
+    { label: 'Done', value: doneCount, to: '/done' },
   ];
 
   const handleClearData = async () => {
@@ -107,9 +109,9 @@ const Settings: FC = () => {
 
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             {countTiles.map((tile) => (
-              <div
+              <Link to={tile.to} aria-label={`${tile.value} ${tile.label} loops${tile.label === 'Done' ? ' (includes dropped)' : ''}`}
                 key={tile.label}
-                className="flex items-baseline gap-1.5 rounded-md border border-rule bg-paper-light/60 px-3 py-2.5"
+                className="flex min-h-11 flex-wrap items-baseline gap-1.5 rounded-md border border-rule bg-paper-light/60 px-3 py-2.5"
               >
                 <span className="text-base font-semibold leading-none text-charcoal tabular-nums">
                   {tile.value}
@@ -118,10 +120,12 @@ const Settings: FC = () => {
                 <span className="text-xs font-medium uppercase tracking-[0.25em] text-charcoal/70">
                   {tile.label}
                 </span>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
+
+        <RevisitTimeSetting />
 
         <div className="space-y-3 border-t border-rule pt-6">
           <h2 className="text-lg font-semibold text-charcoal">Data</h2>

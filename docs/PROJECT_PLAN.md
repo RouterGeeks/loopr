@@ -526,7 +526,38 @@ handlers to resolve the lint error (`e4dd5bb`).
 # Upcoming Priorities
 
 
-## Installed-iPhone and offline reliability — device approved, publication pending
+## Linked counts and revisit scheduling — locally approved, publication pending
+
+- Dials count tiles link to Dashboard, Doing, Delayed, and Done. Done continues
+  to include Dropped; its accessible link name states this.
+- Dashboard uses a calm lavender Ready to revisit row with a count and an
+  explicit View thought(s) action, shown only when scheduled thoughts are ready.
+- Dials offers a saved default revisit time (initially 09:00). Quick choices
+  show that time; opening a new delay panel reads the latest saved preference.
+  Changing it leaves existing loop timestamps unchanged.
+- Custom scheduling has labeled date/time controls and an explicit Schedule
+  revisit button. Cancel leaves data unchanged. Rescheduling starts with the
+  existing date/time. Past or nonexistent local times show an inline message.
+- Times use the device timezone at scheduling, stored as an absolute timestamp.
+  Future labels now include the time. DST gaps are rejected; when clocks fall
+  back, an ambiguous local time uses the first occurrence (native Date behavior).
+- Default time is a separate device preference, `loopr.revisitTime`. Thought
+  backup/restore and Clear All retain their existing scope and leave this setting
+  unchanged. The Dials copy makes the backup boundary explicit. Failed preference
+  writes retain the previous value and show a retry message.
+- AI, similarity detection, notifications, and automatic rescheduling are deferred.
+
+Local checks: lint, root/Pages production builds, and 15 Node tests; isolated
+browser checks cover linked navigation, default-time persistence and write
+failure, unchanged existing schedules, explicit custom save/cancel/reschedule,
+and narrow layouts. Actual iPhone date/time pickers and VoiceOver require user
+review. The user approved the local changes on 2026-10-18 and authorized
+committing/pushing the implementation, documentation, and tests to dev.
+Publication to main remains pending.
+
+
+
+## Installed-iPhone and offline reliability — live (`014378e`)
 
 Production audit reproduced a failed service-worker install on a server
 matching GitHub Pages: virtual routes in `cache.addAll` returned 404. The
@@ -557,7 +588,8 @@ The user approved offline and Home Screen behavior on their iPhone on
 The candidate was served through a trusted temporary HTTPS preview; see
 QA_CHECKLIST for its URL and build identity. Chromium also verified its secure
 context, worker control, offline reload/capture, and offline deep link.
-Publication to main remains pending. iOS version and individual device steps
+Published on 2026-10-18; deployment passed, live files matched the artifact,
+and isolated live offline navigation/capture/reopen checks passed. iOS version and individual device steps
 were not recorded; cross-mode storage behavior, Files backup, VoiceOver,
 storage eviction, and updating between two releases on iPhone have not been
 explicitly confirmed by this approval.

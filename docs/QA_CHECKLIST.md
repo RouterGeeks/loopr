@@ -367,3 +367,22 @@ tests look good on their iPhone and approved committing/pushing to dev.
 The iOS version and per-step results were not supplied. The checklist remains
 available for repeat testing; this approval does not establish Files backup,
 VoiceOver, cross-mode storage sharing, or a two-release iPhone update test.
+
+
+# Linked counts and scheduling — local review
+
+* [ ] Dials Do / Doing / Delayed / Done counts link to the correct pages, including zero counts; Done includes Dropped.
+* [ ] Dashboard ready cue is legible, links to Delayed, has correct singular/plural copy, and disappears when no thoughts are ready.
+* [ ] Save a default time in Dials; reload and confirm it persists. Existing scheduled thoughts retain their exact timestamps.
+* [ ] Tomorrow / This weekend / Next week display and use the default local time, including weekend/year boundaries.
+* [ ] Date and time entry does not save until Schedule revisit; Cancel leaves all saved data unchanged.
+* [ ] Reopen a delayed thought's picker; its existing date/time is prefilled. Future labels display the chosen time.
+* [ ] Reject past dates/times, invalid dates, and nonexistent DST times. A repeated fall-back hour uses its first occurrence.
+* [ ] Failed schedule writes retain entered date/time and previous saved thoughts; failed default writes retain the old preference and editable draft.
+* [ ] Default preference remains separate from thought backup/restore and Clear All; a new device starts at 09:00.
+* [ ] On iPhone, check native date/time controls, focus/VoiceOver labels, touch comfort, narrow layout, and enlarged text.
+* [ ] Capture, notes, state transitions, persistence, and offline shell still work. No AI behavior or notifications added.
+
+Local review result (2026-10-18): the user approved linked counts and scheduling
+after local review and authorized commit/push to dev. Specific iPhone picker
+and VoiceOver results were not supplied. Publication remains pending.

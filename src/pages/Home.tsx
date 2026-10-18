@@ -211,11 +211,10 @@ const Home: FC = () => {
       </div>
 
       {readyCount > 0 && (
-        <p className="mt-5 text-sm text-charcoal/70">
-          <Link to="/delayed" className="inline-flex min-h-11 items-center underline decoration-lavender underline-offset-4">
-            {readyCount} {readyCount === 1 ? 'thought is' : 'thoughts are'} ready to revisit
-          </Link>
-        </p>
+        <Link to="/delayed" className="mt-5 flex min-h-11 flex-wrap items-center justify-between gap-2 rounded-md border border-lavender/50 bg-lavender/15 px-4 py-3 text-sm text-charcoal">
+          <span className="font-semibold">Ready to revisit · {readyCount}</span>
+          <span className="underline underline-offset-4">View {readyCount === 1 ? 'thought' : 'thoughts'} →</span>
+        </Link>
       )}
 
       <p className="mt-8 max-w-md font-serif italic text-sm leading-relaxed text-charcoal/70 sm:text-base">
