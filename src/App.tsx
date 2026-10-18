@@ -35,6 +35,7 @@ function App() {
           <Route path="/delayed" element={<Revisit />} />
           <Route path="/done" element={<Archive />} />
           <Route path="/thoughts/:id" element={<Thought />} />
+          <Route path="/thoughts/:id/labels" element={<Thought />} />
           <Route path="/thoughts/:id/connections" element={<Connections />} />
           <Route path="/dials" element={<Settings />} />
 

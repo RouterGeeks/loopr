@@ -525,7 +525,7 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Current work and release status
 
-## Find a thought — locally approved, publication pending
+## Find a thought — live (`77b57a7`)
 
 - A small magnifying-glass link at the upper right beside the header mark opens /find without adding a bottom-navigation tab.
   It prevents navigation while a draft, editor, voice capture, or save blocks
@@ -545,18 +545,47 @@ handlers to resolve the lint error (`e4dd5bb`).
 Local approval (2026-10-18): the user approved search and its upper-right
 magnifying-glass placement and authorized committing/pushing the implementation,
 release-status corrections, project plan, QA checklist, and tests to dev.
-Labels remain deferred. Publication is a separate step.
+Published to main and GitHub Pages on 2026-10-18. GitHub checks, artifact
+comparison, and isolated live search/offline/draft-protection checks passed.
+Labels were deferred for that release and are now a separate local candidate.
 
-## Labels and connections — discussion only
+## Custom labels and Find filters — locally approved, publication pending
 
-Optional labels could describe themes (Garden, Family) without requiring a
-categorization decision during capture. A shared label could filter search or
-surface related thoughts in Connect the dots. It should not automatically
-create saved pairwise connections: shared topic and an intentional relationship
-are different things. A future suggestion would explain the shared label and
-require an explicit Connect action. Label creation, editing, backup schema,
-visual presentation, and any graph grouping need separate design approval.
-No labels or AI are implemented in this search candidate.
+- Labels are optional custom themes added after capture through More → Edit
+  labels. The focused thought-detail editor supports existing-label reuse,
+  creation, removal, explicit Save/Cancel, retained drafts on failed/stale saves,
+  and update protection. Label changes apply only to this thought. No global
+  rename/delete interface, starter categories, nested labels, or color taxonomy.
+- Labels contain 1–40 characters. Trim/collapse whitespace and normalize Unicode;
+  case variants such as Garden/garden refer to the same label. Existing spelling
+  is reused. Vocabulary comes from saved thoughts; unused labels disappear from
+  the picker. Label chips live on thought details, not Dashboard rows.
+- Find → Filters is collapsed by default. Match any selected label, combined
+  with all search words and optional inclusive From/To captured dates. Filters
+  work without query text; active chips can be removed or cleared together.
+  Back to search and browser Back retain query/filters in session history,
+  never URLs. Empty results and invalid date ranges have explicit messages.
+- Captured dates use the current device timezone, not revisit time. Either
+  boundary may be blank. Invalid/missing creation dates are excluded when date
+  filtering. Existing loader behavior still infers a missing legacy creation
+  time from its timestamp ID; no new migration or timestamp rewrite is added.
+- Connect the dots has a collapsed Shared labels section. It lists unconnected
+  thoughts with their shared labels and state, with Open and explicit Connect
+  actions. No label automatically draws a line; no AI or remote request. Labels
+  are not graph nodes, and removing a label does not remove manual connections.
+- Optional labels arrays live alongside existing thought data. The read-only
+  loader rejects invalid/duplicate labels without replacing stored bytes.
+  Labeled exports use backup version 3; unlabeled exports retain v1/v2 as before.
+  The new reader supports all three versions; older app builds reject v3.
+  Restore remains whole-dataset replacement. Close older app windows before
+  creating labeled data: older readers/writers do not preserve this new field.
+- Thought states, scheduling, capture, manual connection semantics, and the
+  five bottom-navigation tabs remain unchanged. No dependency or backend added.
+
+Validation and actual iPhone review are tracked in QA_CHECKLIST. On 2026-10-18,
+the user approved labels, filters, and shared-label suggestions locally and
+authorized commit/push to dev, including the plan, QA checklist, and tests.
+Publication remains a separate step. Automatic connections and AI remain excluded.
 
 ## Release reconciliation — 2026-10-18
 
@@ -908,7 +937,7 @@ assistive-technology review have not been explicitly confirmed; local
 browser checks do not establish those device behaviors.
 
 Voice capture, backup, accessibility, and resurfacing improvements are live.
-Data reliability and offline improvements are also live. Manual thought connections are live; current work is local review of Find a thought.
+Data reliability and offline improvements are also live. Manual thought connections are live; Find a thought is live; current work is local review of labels and filters.
 
 ## iPhone Safari capture investigation — reverted after device test
 

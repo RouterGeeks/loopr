@@ -10,6 +10,7 @@ export interface LoopItem {
   doneAt?: string;
   droppedAt?: string;
   note?: string;
+  labels?: string[];
   connections?: number[]; // Undirected edges stored once, on the lower-ID thought.
 }
 
@@ -85,6 +86,7 @@ export function decodeLoops(saved: string | null): LoopItem[] {
   }
 
   validateConnections(parsed as LoopItem[]);
+  for (const item of parsed) validateLabels(item.labels);
   const legacy = isLegacyStatusPresent(parsed);
 
   return parsed
@@ -113,6 +115,7 @@ export function decodeLoops(saved: string | null): LoopItem[] {
       }
 
       if (Array.isArray(item.connections) && item.connections.length) loop.connections = [...item.connections];
+      if (Array.isArray(item.labels) && item.labels.length) loop.labels = [...item.labels];
       return loop;
     });
 };
@@ -183,3 +186,25 @@ export function setConnection(loops: LoopItem[], from: number, to: number, conne
 }
 
 export const stateLabel: Record<LoopStatus, string> = { do: 'Do', doing: 'Doing', delayed: 'Delayed', done: 'Done', dropped: 'Dropped' };
+
+
+export const cleanLabel = (value: string) => value.normalize('NFC').trim().replace(/\s+/g, ' ');
+export const labelKey = (value: string) => cleanLabel(value).toLowerCase();
+export function validateLabels(value: unknown): asserts value is string[] | undefined {
+  if (value === undefined) return;
+  if (!Array.isArray(value) || value.some(label => typeof label !== 'string' || !cleanLabel(label) || cleanLabel(label) !== label || label.length > 40) ||
+      new Set(value.map(labelKey)).size !== value.length) {
+    throw new Error('Some thought labels could not be read. The original data has been kept.');
+  }
+}
+export function allLabels(thoughts: LoopItem[]): string[] {
+  const labels = new Map<string, string>();
+  for (const thought of thoughts) for (const label of thought.labels ?? []) {
+    if (!labels.has(labelKey(label))) labels.set(labelKey(label), label);
+  }
+  return [...labels.values()].sort((a, b) => a.localeCompare(b));
+}
+export function sharedLabels(first: LoopItem, second: LoopItem): string[] {
+  const keys = new Set((second.labels ?? []).map(labelKey));
+  return (first.labels ?? []).filter(label => keys.has(labelKey(label)));
+}

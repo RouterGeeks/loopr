@@ -79,7 +79,7 @@ const server = http.createServer((req, res) => {
           assert.equal(await page.getByRole('navigation').count(), 0);
         }
       }
-      for (const route of ['find', 'thoughts/42', 'thoughts/42/connections']) {
+      for (const route of ['find', 'thoughts/42', 'thoughts/42/connections', 'thoughts/42/labels']) {
         await page.goto(url + route);
         await page.getByRole('heading', { level: 1 }).waitFor();
       }

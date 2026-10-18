@@ -67,9 +67,13 @@ const server = http.createServer((req, res) => {
     assert.equal(await update.isEnabled(),false);
     await page.getByRole('button',{name:'Cancel',exact:true}).click();
     await page.getByRole('button', {name:'More actions'}).click();
-    await page.getByRole('link', {name:'Connect the dots',exact:true}).click();
+    await page.getByRole('link', {name:'Edit labels',exact:true}).click();
+    await page.getByLabel('Find or create a label').fill('Unfinished label');
+    assert.equal(await update.isEnabled(), false);
+    await page.getByRole('button', {name:'Cancel labels',exact:true}).click();
+    await page.getByRole('link', {name:'Connect the dots →',exact:true}).click();
     await page.getByRole('button', {name:'Connect a thought',exact:true}).click();
-    await page.getByLabel('Find a thought').fill('Keep search');
+    await page.getByRole('searchbox', { name: 'Find a thought', exact: true }).fill('Keep search');
     assert.equal(await update.isEnabled(), false);
     await page.getByRole('button', {name:'Cancel',exact:true}).click();
     await page.waitForFunction(()=>!Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='Update now').disabled);

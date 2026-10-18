@@ -21,6 +21,7 @@ const assert = require('node:assert/strict');
   assert.equal((await card.boundingBox()).height,before.height);
   assert.equal(await page.locator(':focus').textContent(),'Edit note');
   await page.keyboard.press('Tab'); assert.equal(await page.locator(':focus').textContent(),'Connect the dots');
+  await page.keyboard.press('Tab'); assert.equal(await page.locator(':focus').textContent(),'Edit labels');
   await page.keyboard.press('Tab'); assert.equal(await page.locator(':focus').textContent(),'Edit thought');
   await page.keyboard.press('Tab'); assert.equal(await page.locator(':focus').textContent(),'Delete thought');
   await page.keyboard.press('Escape'); await menu.waitFor({state:'hidden'});

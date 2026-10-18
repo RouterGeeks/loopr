@@ -78,7 +78,7 @@ test('asset navigations return assets; only known app routes receive the offline
       assert.equal(await request(base + asset + query), base + asset);
       assert.equal(await request(base + asset + query, 'no-cors'), base + asset);
     }
-    for (const route of ['', 'find', 'doing', 'delayed', 'done', 'dials', 'revisit', 'archive', 'settings', 'thoughts/42', 'thoughts/42/connections']) {
+    for (const route of ['', 'find', 'doing', 'delayed', 'done', 'dials', 'revisit', 'archive', 'settings', 'thoughts/42', 'thoughts/42/connections', 'thoughts/42/labels']) {
       assert.equal(await request(base + route + '?view=test'), base + 'index.html');
       if (route) assert.equal(await request(base + route + '/'), base + 'index.html');
     }

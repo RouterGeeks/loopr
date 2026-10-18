@@ -1,4 +1,4 @@
-import { validateConnections, type LoopItem } from './loops';
+import { validateLabels, validateConnections, type LoopItem } from './loops';
 
 export const MAX_BACKUP_BYTES = 5 * 1024 * 1024;
 const dateFields = ['createdAt', 'revisitAt', 'startedAt', 'doneAt', 'droppedAt'] as const;
@@ -12,8 +12,8 @@ export function parseBackup(text: string): LoopItem[] {
   if (new Blob([text]).size > MAX_BACKUP_BYTES) throw new Error('Choose a backup smaller than 5 MB.');
   let data: unknown;
   try { data = JSON.parse(text); } catch { throw new Error('This file is not valid JSON. Choose a Dash Dot Dot backup.'); }
-  if (!isObject(data) || data.app !== 'loopr' || ![1, 2].includes(data.version as number) || !isDate(data.exportedAt) || !Array.isArray(data.loops)) {
-    throw new Error('This is not a supported Dash Dot Dot backup. Choose a version 1 or 2 backup exported from Dials.');
+  if (!isObject(data) || data.app !== 'loopr' || ![1, 2, 3].includes(data.version as number) || !isDate(data.exportedAt) || !Array.isArray(data.loops)) {
+    throw new Error('This is not a supported Dash Dot Dot backup. Choose a version 1, 2, or 3 backup exported from Dials.');
   }
   const ids = new Set<number>();
   const loops = data.loops.map((item, index) => {
@@ -32,8 +32,13 @@ export function parseBackup(text: string): LoopItem[] {
       loop.note = item.note;
     }
     if (item.connections !== undefined) {
-      if (data.version !== 2 || !Array.isArray(item.connections)) throw invalid();
+      if ((data.version !== 2 && data.version !== 3) || !Array.isArray(item.connections)) throw invalid();
       loop.connections = item.connections as number[];
+    }
+    if (item.labels !== undefined) {
+      if (data.version !== 3) throw invalid();
+      validateLabels(item.labels);
+      loop.labels = item.labels;
     }
     return loop;
   });
@@ -42,7 +47,7 @@ export function parseBackup(text: string): LoopItem[] {
 }
 
 export function createBackup(loops: LoopItem[]): string {
-  const text = JSON.stringify({ app: 'loopr', version: loops.some(item => item.connections !== undefined) ? 2 : 1, exportedAt: new Date().toISOString(), loops }, null, 2);
+  const text = JSON.stringify({ app: 'loopr', version: loops.some(item => item.labels !== undefined) ? 3 : loops.some(item => item.connections !== undefined) ? 2 : 1, exportedAt: new Date().toISOString(), loops }, null, 2);
   parseBackup(text);
   return text;
 }

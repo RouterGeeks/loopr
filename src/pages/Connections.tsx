@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import ThoughtConstellation from '../components/ThoughtConstellation';
 import PageContainer from '../components/PageContainer';
 import StorageNotice from '../components/StorageNotice';
-import { connectedThoughts, setConnection, stateLabel, type LoopItem } from '../lib/loops';
+import { connectedThoughts, setConnection, sharedLabels, stateLabel, type LoopItem } from '../lib/loops';
 import { useLoopData } from '../lib/useLoopData';
 import { useUpdateBlocker } from '../lib/updateSafety';
 
@@ -20,15 +20,18 @@ function ConnectionView({ id }: { id: string }) {
   const [adding, setAdding] = useState(false);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
+  const [suggestionLimit, setSuggestionLimit] = useState(10);
   const [message, setMessage] = useState('');
   const heading = useRef<HTMLHeadingElement>(null);
   const listButton = useRef<HTMLButtonElement>(null);
   const search = useRef<HTMLInputElement>(null);
+  const sharedSummary = useRef<HTMLElement>(null);
   const addButton = useRef<HTMLButtonElement>(null);
   useUpdateBlocker(adding);
   useEffect(() => { heading.current?.focus(); window.scrollTo(0, 0); }, []);
   useEffect(() => { if (adding) search.current?.focus(); }, [adding]);
   const linked = thought ? connectedThoughts(data.loops, thought.id) : [];
+  const suggestions = thought ? data.loops.filter(item => item.id !== thought.id && sharedLabels(thought, item).length && !linked.some(link => link.id === item.id)) : [];
   const candidates = data.loops.filter(item => item.id !== thought?.id && !linked.some(other => other.id === item.id) && item.text.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
   const currentPage = Math.min(page, Math.max(0, Math.ceil(linked.length / 4) - 1));
   const shown = linked.slice(currentPage * 4, currentPage * 4 + 4);
@@ -37,7 +40,7 @@ function ConnectionView({ id }: { id: string }) {
     if (!thought) return;
     if (await data.setLoops(items => setConnection(items, thought.id, item.id, value))) {
       setMessage(value ? 'Connection saved.' : 'Connection removed. Both thoughts are kept.');
-      if (value) close(); else listButton.current?.focus();
+      if (value) { if (adding) close(); else sharedSummary.current?.focus(); } else listButton.current?.focus();
     }
   };
 
@@ -64,6 +67,18 @@ function ConnectionView({ id }: { id: string }) {
       </div>}
       {linked.length === 0 && <p className="my-5 text-sm text-charcoal/70">No connections yet. Choose another thought that belongs with this one.</p>}
       {view === 'graph' && linked.length > 0 && <p className="my-4 text-sm text-charcoal/70">Each line connects directly to this thought. Use List for full text or to remove a connection.</p>}
+      <details className="my-4 border-t border-rule pt-3">
+        <summary ref={sharedSummary} className="min-h-11 cursor-pointer py-3 text-sm">Shared labels</summary>
+        <p className="text-sm text-charcoal/70">Related themes, not saved connections. Choose Connect to add a line.</p>
+        {!thought.labels?.length ? <p className="my-3 text-sm">Add labels to this thought to find others with shared themes.</p> : !suggestions.length ? <p className="my-3 text-sm">No unconnected thoughts share these labels yet.</p> : <ul className="divide-y divide-rule">
+          {suggestions.slice(0, suggestionLimit).map(item => <li key={item.id} className="py-3">
+            <Link className="dots-link break-words font-serif" to={`/thoughts/${item.id}`} state={{ connectionOrigin: thought.id }}>{item.text}</Link>
+            <p className="break-words text-sm text-charcoal/70">Also labeled {sharedLabels(thought, item).join(', ')} · {stateLabel[item.status]}</p>
+            <button className="dots-button mt-2 text-sm" disabled={data.saving} aria-label={`Connect shared thought: ${item.text}`} onClick={() => connect(item, true)}>Connect</button>
+          </li>)}
+        </ul>}
+        {suggestions.length > suggestionLimit && <button className="dots-button" onClick={() => setSuggestionLimit(value => value + 10)}>Show more suggestions</button>}
+      </details>
       <p role="status" className="my-3 text-sm">{message}</p>
       <button ref={addButton} className="dots-button bg-lavender/40 w-full" disabled={adding || data.saving} onClick={() => setAdding(true)}>Connect a thought</button>
       {adding && <section aria-label="Choose a thought" className="mt-5 border-t border-rule pt-4" onKeyDown={event => { if (event.key === 'Escape') close(); }}>

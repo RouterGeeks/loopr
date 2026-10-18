@@ -74,6 +74,7 @@ export default function ThoughtActions({ id, contextId, hasNote, onNote, onEdit,
     {open && <div ref={panel} id={panelId} role="group" aria-label="Thought actions" aria-describedby={contextId} className="thought-actions">
       <button type="button" onClick={() => { setOpen(false); onNote(); }}>{hasNote ? 'Edit note' : 'Add note'}</button>
       <Link to={`/thoughts/${id}/connections`} onClick={() => setOpen(false)}>Connect the dots</Link>
+      <Link to={`/thoughts/${id}/labels`} onClick={() => setOpen(false)}>Edit labels</Link>
       {onEdit && <button type="button" onClick={() => { setOpen(false); onEdit(); }}>Edit thought</button>}
       <button type="button" onClick={() => { setOpen(false); onDelete(); }}>Delete thought</button>
     </div>}

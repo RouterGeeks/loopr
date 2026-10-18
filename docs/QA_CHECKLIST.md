@@ -10,7 +10,9 @@
 - Offline routing: GitHub deployment passed; isolated live Chromium verified
   the updated worker, brand, direct Lavender PNG online/offline, and Dials offline.
   The user reported the HTTPS preview looked good before release.
-- Find a thought is locally approved for dev; production publication remains pending.
+- Find a thought (`77b57a7`) is live; deployment, artifact comparison, and
+  isolated live search/draft/offline checks passed. Labels/filters are the new
+  locally approved candidate for dev; publication remains pending.
 - Older “local review” / “publication pending” entries below are historical
   snapshots, superseded by this release record. Unchecked manual/device steps
   remain unverified; publication does not establish VoiceOver or every iPhone test.
@@ -664,3 +666,50 @@ placement locally and authorized commit/push to dev, including the project plan,
 QA checklist, release-status corrections, and tests. Labels remain deferred.
 Earlier local-test entries are historical; individual iPhone/VoiceOver steps
 remain unchecked unless explicitly verified. Publication remains pending.
+
+
+## Custom labels, filters, and shared-label suggestions — local review
+
+* [ ] More → Edit labels works in all five states; Dashboard capture has no label requirement or extra chips.
+* [ ] Create/reuse multiple labels; whitespace and Garden/garden do not produce duplicates. Empty or over-40-character names are rejected. Cancel/Escape leaves saved data untouched.
+* [ ] Save with unadded typed text asks the user to add/clear it. Failed storage writes preserve selections/text; another-tab review/retry preserves other changes.
+* [ ] An open labels editor blocks update activation and the search shortcut. Label-filter chips and Edit labels do not discard an open note/edit draft.
+* [ ] Saved detail chips open label-filtered Find. Filters work with no query, OR across labels, AND with text/note words and captured date range.
+* [ ] From/To boundaries are inclusive in device timezone; one-sided ranges work. Reversed/invalid ranges explain the problem; they do not silently show unfiltered data.
+* [ ] Active filters can be removed individually or cleared; words remain. Detail/back and browser Back retain the full filter/query selection.
+* [ ] Shared labels starts collapsed, explains the match, excludes self/already-connected thoughts, and supports more than 10 suggestions. Opening it or a result saves nothing.
+* [ ] Explicit Connect creates one reciprocal manual connection. Failure retains the suggestion; retry works. Removing labels leaves existing connections intact.
+* [ ] Labels/notes/connections survive state transitions and v3 export/restore. v1/v2 still import; malformed labels and labels hidden in older backup versions are rejected without mutation.
+* [ ] Offline /find and /thoughts/:id/labels support filtering, label editing, reload, and saved data. PNG routing and update-draft safeguards remain correct.
+* [ ] 320/375/390px and 200% text: editor, longer menu, filter fields, long labels, and suggestions fit; controls retain visible focus and 44px row targets.
+* [ ] iPhone: review native date pickers, keyboard Save/Cancel, label-chip navigation, VoiceOver labels/selected states, and collapsed suggestions. Record Safari vs Home Screen mode and iOS version.
+
+Scope: no AI, automatic connections, label graph nodes, global label management,
+or sync. Existing legacy timestamp-ID fallback is unchanged. Use an updated
+candidate in all open windows before testing labels; older builds do not retain
+unknown label fields. Keep production data separate from disposable test data.
+
+Repeat after Pages build: `node scripts/labels-browser-check.cjs`, existing
+search/offline/update browser scripts, and `npm test`. Rebuild root preview
+with `npm run build` afterward. Actual iPhone checks remain pending review.
+
+Local result (2026-10-18): 29 Node tests, lint, root/Pages builds, and diff checks
+passed. Isolated Chromium passed label create/reuse/remove/cancel in all states,
+failed writes and stale-tab review/retry, unchanged connections after removing
+labels, filter-only search and inclusive date bounds, invalid range messaging,
+filter retention on return, shared-label explanation and explicit connection,
+actual v3 download/restore, and offline label editing/filter reload. Editor and
+filter layouts fit 320/375/390px at default and doubled text. Search, offline PNG
+routing, manual connection/backup regressions, and two-build update protection
+(including the open label editor) passed. The extended More menu passed keyboard,
+focus, dismissal, and mobile/enlarged-text bounds checks after adding Edit labels
+to its expected Tab order. The filter view was visually reviewed; checkbox art
+is small inside a full 44px tappable row. Actual iPhone/VoiceOver review remains
+pending. No commit, push, or publication was performed.
+
+Labels approval (2026-10-18): the user approved custom labels, Find filters, and
+shared-label suggestions locally and authorized commit/push to dev with the
+project plan, QA checklist, and tests. AI and automatic connections remain
+excluded. Earlier local-check entries retain their historical status; this
+approval does not mark individual iPhone/VoiceOver steps as verified. Production
+publication remains pending.
