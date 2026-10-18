@@ -373,3 +373,12 @@ Unfinished Dashboard text is separate from saved thoughts and backups. Supported
 secure browsers use per-draft ownership locks for safe reload/closed-tab recovery;
 other browsers use session-only recovery. No AI, sync, or note/edit draft recovery
 is included. See PROJECT_PLAN and QA_CHECKLIST for validation and release status.
+
+
+## Note and thought-edit recovery (local candidate, not published)
+
+Recovery extends the existing reliability direction: restore unfinished text for
+review, keep Save/Cancel explicit, protect other-tab ownership, and require review
+of newer saved content. Dials exposes unfinished text when a thought is no longer
+available. This does not add AI, sync, automatic saves, or label-draft recovery.
+See PROJECT_PLAN and QA_CHECKLIST for candidate scope and validation.

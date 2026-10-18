@@ -31,7 +31,7 @@ export default function ClearDataDialog({ onCancel, onConfirm }: { onCancel: () 
       }}
       className="fixed inset-0 m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-sm overflow-y-auto rounded-lg border border-rule bg-paper-light p-6 text-charcoal shadow-card">
       <h2 id="clear-title" className="mb-2 text-lg font-semibold">Clear all data?</h2>
-      <p id="clear-description" className="mb-6 text-charcoal/70">This will delete every thought on this device, across Do, Doing, Delayed, Done, and Dropped. This action cannot be undone. Unfinished capture drafts are separate; discard them on Dashboard.</p>
+      <p id="clear-description" className="mb-6 text-charcoal/70">This will delete every thought on this device, across Do, Doing, Delayed, Done, and Dropped. This action cannot be undone. Unfinished drafts are separate. Discard capture drafts on Dashboard and note/edit drafts in Dials → Unfinished edits.</p>
       <div className="flex flex-wrap gap-3">
         <button ref={cancelRef} type="button" onClick={onCancel} className="flex-1 rounded-md bg-paper-light px-4 py-3 font-semibold ring-1 ring-charcoal/20">Cancel</button>
         <button type="button" onClick={onConfirm} className="flex-1 rounded-md bg-charcoal px-4 py-3 font-semibold text-cream-light">Clear</button>

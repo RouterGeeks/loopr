@@ -234,6 +234,7 @@ These optional harnesses are separate from the package-defined CI checks.
 After `npm run build:pages`, these scripts start their own Pages-like servers:
 
 ```bash
+node scripts/editor-draft-browser-check.cjs
 node scripts/draft-browser-check.cjs
 node scripts/labels-browser-check.cjs
 node scripts/search-browser-check.cjs

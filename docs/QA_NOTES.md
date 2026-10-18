@@ -150,7 +150,16 @@ fallback message works universally.
 
 ---
 
-## Thought notes — current behavior
+## Editor recovery candidate — not published
+
+The local candidate extends recovery to notes and thought edits with explicit
+Save/Cancel, exclusive per-field ownership, and conflict review. Dials exposes
+unfinished text even when the source thought is gone. Label editor drafts remain
+temporary. See [project plan](PROJECT_PLAN.md#current-work-and-release-status)
+and [QA checklist](QA_CHECKLIST.md); the published limits below remain the live
+baseline until this candidate is approved and released.
+
+## Thought notes — published behavior
 
 Each thought has one optional note, available in every state through
 More → Add note/Edit note. The editor is closed by default; a saved preview

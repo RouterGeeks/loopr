@@ -3,7 +3,7 @@ import { useUpdateBlocker } from '../lib/updateSafety';
 import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
 import type { LoopItem, LoopStatus } from '../lib/loops';
-import NoteEditor from './NoteEditor';
+import RecoveredEditor from './RecoveredEditor';
 import { revisitLabel, revisitGroup, scheduledContext } from '../lib/resurfacing';
 import { useCardFocus } from '../lib/useCardFocus';
 import { readRevisitTime, presetDate, scheduledDate, localDate, timeLabel } from '../lib/scheduling';
@@ -66,19 +66,9 @@ const LoopCard: FC<LoopCardProps> = ({
   const [mode, setMode] = useState<CardMode>('view');
   const cardRef = useCardFocus(mode);
   const contextId = `loop-context-${loop.id}`;
-  const [draft, setDraft] = useState(loop.text);
   const [departing, setDeparting] = useState(false);
   useUpdateBlocker(saving || departing || mode !== 'view');
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const departTimerRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (mode === 'editing' && textareaRef.current) {
-      const el = textareaRef.current;
-      el.focus();
-      el.setSelectionRange(el.value.length, el.value.length);
-    }
-  }, [mode]);
 
   useEffect(
     () => () => {
@@ -118,32 +108,8 @@ const LoopCard: FC<LoopCardProps> = ({
     }, 180);
   };
 
-  const startEdit = () => {
-    setDraft(loop.text);
-    setMode('editing');
-  };
-
-  const cancelEdit = () => {
-    setDraft(loop.text);
-    setMode('view');
-  };
-
-  const saveEdit = async () => {
-    const trimmed = draft.trim();
-    if (!trimmed || trimmed === loop.text) {
-      setMode('view');
-      return;
-    }
-    if (!await onEdit(loop.id, trimmed)) return;
-    setMode('view');
-  };
-
+  const startEdit = () => setMode('editing');
   const startNote = () => setMode('editing-note');
-  const cancelNote = () => setMode('view');
-  const saveNote = async (value: string) => {
-    if (!await onEditNote(loop.id, value)) return;
-    setMode('view');
-  };
 
   const [delayTime, setDelayTime] = useState('09:00');
   const [delayDate, setDelayDate] = useState('');
@@ -180,7 +146,6 @@ const LoopCard: FC<LoopCardProps> = ({
   const cancelDelete = () => setMode('view');
   const confirmDelete = () => onDelete(loop.id);
 
-  const canSaveEdit = draft.trim().length > 0;
   const hasNote = Boolean(loop.note && loop.note.trim());
   const notePreview = hasNote ? loop.note!.split('\n')[0].trim() : '';
 
@@ -220,47 +185,10 @@ const LoopCard: FC<LoopCardProps> = ({
   })();
 
   if (mode === 'editing') {
-    return (
-      <div ref={cardRef} className="py-5">
-        <span id={contextId} className="sr-only">{loop.text}</span>
-        <label htmlFor={`loop-edit-${loop.id}`} className="sr-only">
-          Edit thought
-        </label>
-
-        <textarea
-          id={`loop-edit-${loop.id}`}
-          ref={textareaRef}
-          readOnly={saving}
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          rows={3}
-          className="edit-field mb-4 block w-full rounded-md border border-rule bg-transparent p-3 font-serif text-lg leading-relaxed text-charcoal placeholder:text-charcoal/70"
-        />
-
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          <button aria-describedby={contextId}
-            type="button"
-            onClick={cancelEdit}
-            className="rounded-full bg-paper-light/90 px-4 py-2 text-sm font-semibold text-charcoal/80 ring-1 ring-charcoal/10 hover:bg-cream-light"
-          >
-            Cancel
-          </button>
-
-          <button aria-describedby={contextId}
-            type="button"
-            onClick={saveEdit}
-            disabled={!canSaveEdit}
-            className={`rounded-md px-5 py-2 text-sm font-semibold transition duration-200 ${
-              canSaveEdit
-                ? 'bg-charcoal text-cream-light shadow-soft hover:bg-charcoal-soft'
-                : 'cursor-not-allowed bg-paper-edge text-charcoal/35'
-            }`}
-          >
-            Save
-          </button>
-        </div>
-      </div>
-    );
+    return <div ref={cardRef} className="py-5">
+      <RecoveredEditor thought={loop} kind="text" saving={saving}
+        onSave={value => onEdit(loop.id, value)} onClose={() => setMode('view')} />
+    </div>;
   }
 
   return (
@@ -298,13 +226,8 @@ const LoopCard: FC<LoopCardProps> = ({
       )}
 
       {mode === 'editing-note' ? (
-        <NoteEditor
-          saving={saving}
-          loopId={loop.id}
-          initialValue={loop.note ?? ''}
-          onSave={saveNote}
-          onCancel={cancelNote}
-        />
+        <RecoveredEditor thought={loop} kind="note" saving={saving}
+          onSave={value => onEditNote(loop.id, value)} onClose={() => setMode('view')} />
       ) : mode === 'choosing-delay' ? (
         <div data-panel className="space-y-3 rounded-md border border-rule bg-paper-light/60 p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/70">

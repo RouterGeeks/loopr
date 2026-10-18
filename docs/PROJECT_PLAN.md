@@ -162,15 +162,16 @@ speech recognition may use remote processing.
 
 # Next priorities — proposed, not implementation approval
 
-1. Reconcile documentation with the shipped app (this documentation-only review).
-2. Consider recovery for unsaved notes and thought edits after agreeing scope;
-   retain explicit Save/Cancel and protect other tabs and newer saved content.
+1. Documentation reconciliation is merged (`62353d8`); current app baseline is
+   still the live Dashboard recovery release (`3626f21`).
+2. Note and thought-edit recovery is locally approved for dev (below);
+   explicit Save/Cancel, other-tab ownership, and newer saved content are protected.
 3. Complete focused iPhone VoiceOver and Files backup/restore QA, recording mode,
    iOS version, and individual results rather than treating general approval as
    proof of every device behavior.
 
 AI, automatic connections, cloud sync, notifications, and further interface
-changes remain deferred. No app work is authorized by this planning section.
+changes remain deferred beyond this scoped, user-authorized recovery candidate.
 
 ---
 
@@ -492,6 +493,48 @@ handlers to resolve the lint error (`e4dd5bb`).
 ---
 
 # Current work and release status
+
+## Note and thought-edit recovery — locally approved, not published
+
+- Reopening Add/Edit note or Edit thought restores unfinished text without saving
+  it. One recovery record per thought field; notes remain available in all five
+  states and thought editing retains its existing state restrictions.
+- Explicit Save applies the edited field through the existing guarded writer.
+  Cancel/Escape discards only this editor draft, leaving saved content intact.
+  Empty notes recover as intentional deletions; empty thought edits cannot save.
+- On secure browsers with Web Locks, one document owns a field until Save/Cancel
+  or tab closure. Navigation retains ownership; another tab (including a duplicate)
+  cannot edit or discard that draft. Close the owner or save/cancel there, then
+  retry in the other tab. Different fields have separate ownership.
+- A recovered draft retains the original saved-thought snapshot. A newer saved
+  version requires explicit review; the editor shows its latest field value.
+  Use my draft after review acknowledges that version but does not save. The
+  existing page-level stale-data review may also be needed before retrying Save.
+  A missing/unreadable thought is never recreated or overwritten by recovery.
+- Dials → Unfinished edits stays collapsed and offers selectable draft text, a
+  link to the thought, and confirmed discard. This also exposes text whose
+  thought was deleted/replaced or moved to a state without text editing. Another
+  tab cannot discard an actively owned draft. No automatic new-thought creation.
+- Failed draft/cleanup writes keep text and surface retry guidance. A pending
+  saved snapshot prevents resurrecting a completed edit if save succeeds before
+  cleanup. Cancel failures keep the editor open; saves block edits and Cancel.
+  Malformed recovery bytes remain untouched; that editor asks for retry.
+- Without Web Locks, drafts use per-tab sessionStorage only. Reload recovery is
+  supported, closed-tab recovery is not promised, and shared local records are
+  not written. Unavailable/denied lock access fails closed with retry guidance.
+- Drafts remain outside saved thoughts, Find, exports, restore, and Clear All.
+  No saved-data/backup schema change, dependency, AI, or sync. Label editor drafts
+  remain temporary. Storage eviction/clearing can still remove all local drafts.
+
+Local validation: 37 Node tests, lint, both production builds, and isolated
+editor-recovery and existing draft/search/offline/update/menu/connection checks
+passed. See QA_CHECKLIST for coverage and limitations. Actual iPhone review and
+publication remain pending; no release approval is implied by local results.
+
+Local approval (2026-10-18): the user approved note and thought-edit recovery
+locally and authorized commit/push to dev with the plan, QA checklist, supporting
+docs, and tests. No specific iPhone/VoiceOver results were supplied. Main merge
+and publication remain separate steps.
 
 ## Dashboard draft recovery — live (`3626f21`)
 
@@ -959,8 +1002,8 @@ assistive-technology review have not been explicitly confirmed; local
 browser checks do not establish those device behaviors.
 
 Voice capture, backup, accessibility, and resurfacing improvements are live.
-Data reliability and offline improvements are also live. Manual thought connections are live; Find a thought is live; Dashboard draft recovery is live (`3626f21`). Current work is documentation
-reconciliation for review, with no app changes.
+Data reliability and offline improvements are also live. Manual thought connections are live; Find a thought is live; Dashboard draft recovery is live (`3626f21`). Current work is committing/pushing the locally approved note and thought-edit
+recovery candidate to dev; publication remains pending.
 
 ## iPhone Safari capture investigation — reverted after device test
 

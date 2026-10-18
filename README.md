@@ -16,6 +16,15 @@ Successful deployments from `main` publish to GitHub Pages; pushing to `dev`
 only runs validation. The latest app release is Dashboard draft recovery
 (`3626f21`, 2026-10-18). See the [release record](docs/PROJECT_PLAN.md#current-work-and-release-status).
 
+## Locally approved candidate — publication pending
+
+Note and thought-edit draft recovery is implemented locally, with explicit
+Save/Cancel, per-field tab ownership, conflict review, and Dials → Unfinished
+edits for retained text. It is not published yet. The live capabilities and
+limits below describe `3626f21`; see the [project plan](docs/PROJECT_PLAN.md#current-work-and-release-status)
+and [QA checklist](docs/QA_CHECKLIST.md) for candidate scope and validation.
+Local review is approved; commit/push to dev is authorized. Publication remains separate.
+
 ## What is live
 
 - Text and supported browser voice capture, multiline entry, and Cmd/Ctrl+Enter.

@@ -24,6 +24,55 @@ Recorded release evidence; this documentation review adds no new device results.
   remain unverified; publication does not establish VoiceOver or every iPhone test.
 
 
+## Note and thought-edit recovery — locally approved (2026-10-18)
+
+Live app baseline remains `3626f21`; documentation reconciliation is merged as
+`62353d8`. The editor-recovery changes below are approved for dev; publication is pending.
+
+* [ ] Type a multiline note/edit, navigate away and reopen the same editor; reload and reopen. Restored text is not saved until Save.
+* [ ] Notes recover in Do/Doing/Delayed/Done/Dropped. Thought edits retain existing state restrictions. One note per thought remains unchanged.
+* [ ] Save persists only the intended field; Cancel/Escape discards only its draft. Focus returns to More. Empty note deletion recovers; empty thought text cannot save.
+* [ ] Two tabs/duplicated tab: a second editor for the same field is read-only and explains ownership. Its Cancel or Dials discard cannot erase the owner's draft. Close the owner and retry to recover.
+* [ ] Note and thought-edit drafts on the same thought are separate; changes to the saved thought trigger review before another draft saves.
+* [ ] Change the saved thought elsewhere, reload or review latest: preserve the draft and show the newer saved value. Use my draft after review does not save; a second concurrent change requires fresh review.
+* [ ] A deleted/replaced thought never gets recreated by recovery. Dials → Unfinished edits retains selectable text; confirmed discard removes only that draft.
+* [ ] Draft-write failures retain visible text and block Save until persistence succeeds. Thought-write failures retain recovery text. Cleanup failure after a committed save cannot silently reapply an old edit.
+* [ ] During an in-flight save, typing, voice append, Cancel, and repeated Save cannot clear/change the submitted draft. Cancel cleanup failure leaves the editor open with retry guidance.
+* [ ] Malformed drafts remain byte-for-byte unchanged, with an editor error rather than silent replacement.
+* [ ] Export/restore/Clear All do not include or remove recovery drafts. Search matches saved content only. Dials explains draft boundaries.
+* [ ] Unsupported Web Locks: session-only recovery after reload, no shared local draft writes. Denied lock access fails closed. Offline reload/reopen works after online installation.
+* [ ] Update now remains blocked by an open editor/voice/save/discard confirmation. Other app windows retain update protection.
+* [ ] iPhone Safari and Home Screen over HTTPS: reopen notes/edits, close/reopen, try two tabs, Save/Cancel, multiline/dictation, VoiceOver status and focus, enlarged text. Record iOS version and mode separately.
+
+Repeat: `npm test`, `npm run lint`, `npm run build:pages`, then
+`node scripts/editor-draft-browser-check.cjs` and the existing draft, search,
+offline, and update browser checks. Root-build menu/connection checks cover
+shared editor integration. `npm run build` restores the local root preview.
+Use disposable data and isolated profiles. iPhone behavior, OS termination,
+and eviction are not established by automated Chromium checks.
+
+Local result (2026-10-18): 37 Node tests, lint, Pages/root builds, and diff checks
+passed. The new isolated Chromium suite passed note/text recovery after reload
+and navigation, exclusive ownership and closed-owner recovery, explicit Save/
+Cancel, newer-content review, failed thought writes, interrupted cleanup,
+empty-note recovery, notes on Done, deleted-thought text in Dials, malformed
+record preservation, offline reopening, session-only fallback, and 320/375/390px
+editor layout with doubled text. Unit cases additionally cover failed draft
+writes/Cancel, busy-save protection, denied locks, changed-again review, and
+Cancel during asynchronous lock acquisition. The latter race was corrected
+before final validation. Existing Dashboard draft, search, offline, two-build
+update, compact-menu/focus, and connection/backup browser suites passed. The
+mobile editor was visually inspected; root preview rebuilt for review.
+Actual iPhone/VoiceOver and OS eviction/termination checks remain unverified.
+No commit, push, or publication was performed during those local checks.
+
+Local approval (2026-10-18): the user approved the recovery behavior locally
+and authorized commit/push to dev, including the project plan, QA checklist,
+supporting docs, and tests. Individual iPhone/VoiceOver outcomes remain
+unverified. Publication remains pending.
+
+
+
 ---
 
 # Session Info

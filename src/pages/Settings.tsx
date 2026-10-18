@@ -1,3 +1,4 @@
+import EditorDrafts from '../components/EditorDrafts';
 import { useUpdateBlocker } from '../lib/updateSafety';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -134,7 +135,7 @@ const Settings: FC = () => {
 
           <p className="text-sm text-charcoal/70">
             All your thoughts are stored locally on this device. You can clear
-            saved thoughts at any time. Unfinished capture drafts are separate from backups and can be discarded on Dashboard.
+            saved thoughts at any time. Unfinished drafts are separate from backups. Capture drafts can be discarded on Dashboard; note and thought-edit drafts are under Unfinished edits.
           </p>
 
           <BackupControls onRestore={reload} needsRecovery={!readable} />
@@ -152,6 +153,7 @@ const Settings: FC = () => {
       {showConfirmation && (
         <ClearDataDialog onCancel={() => handleConfirmationChange(false)} onConfirm={handleClearData} />
       )}
+      <EditorDrafts />
     </PageContainer>
   );
 };

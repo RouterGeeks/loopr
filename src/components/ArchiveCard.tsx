@@ -3,7 +3,7 @@ import { useUpdateBlocker } from '../lib/updateSafety';
 import { useState } from 'react';
 import type { FC } from 'react';
 import type { LoopItem } from '../lib/loops';
-import NoteEditor from './NoteEditor';
+import RecoveredEditor from './RecoveredEditor';
 import { useCardFocus } from '../lib/useCardFocus';
 
 interface ArchiveCardProps {
@@ -80,11 +80,6 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
   const hasNote = Boolean(loop.note && loop.note.trim());
   const notePreview = hasNote ? loop.note!.split('\n')[0].trim() : '';
 
-  const saveNote = async (value: string) => {
-    if (!await onEditNote(loop.id, value)) return;
-    setMode('view');
-  };
-
   return (
     <div ref={cardRef} role="group" aria-labelledby={contextId} className="py-4">
       <p id={contextId} className="font-serif text-base leading-relaxed text-charcoal/85">
@@ -105,13 +100,8 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
 
       {mode === 'editing-note' ? (
         <div className="mt-3">
-          <NoteEditor
-          saving={saving}
-            loopId={loop.id}
-            initialValue={loop.note ?? ''}
-            onSave={saveNote}
-            onCancel={() => setMode('view')}
-          />
+          <RecoveredEditor thought={loop} kind="note" saving={saving}
+            onSave={value => onEditNote(loop.id, value)} onClose={() => setMode('view')} />
         </div>
       ) : mode === 'confirming-delete' ? (
         <div data-panel className="mt-3 rounded-md border border-rule bg-paper-light/60 p-3">
