@@ -494,6 +494,18 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Current work and release status
 
+## Home Screen icon refresh — local candidate, not published
+
+On 2026-10-18 the user confirmed the direct Lavender PNG loads in iPhone Safari,
+but Add to Home Screen still previews a grey D after reloading the app. Live
+HTML references the correct 180px PNG; stale icon metadata is a hypothesis,
+not a confirmed cause. The candidate uses `apple-touch-icon-lavender-v1.png`
+for the explicit Apple icon link, retains the original URL for compatibility,
+and includes both in the verified offline shell. The icon artwork, app URL,
+manifest identity, storage, and update activation behavior remain unchanged.
+Approved for commit and push to `dev` on 2026-10-18. Publication and actual
+iPhone preview/installation results remain pending.
+
 ## Mixed-release offline shell — local fix, not published
 
 Incident (2026-10-18): the user's Chrome tab and iPhone Home Screen shortcut

@@ -2,6 +2,22 @@
 
 > Use this checklist after major features, sprint completions, merges, or AI-assisted coding sessions.
 
+## Home Screen icon refresh — local candidate (2026-10-18)
+
+Observed on the user's iPhone: direct Lavender image loads, but Add to Home
+Screen remains a grey D after Safari reload. A fresh icon filename is a cache
+mitigation to test, not a confirmed resolution. The old PNG remains available.
+
+* [ ] After the candidate activates on a trusted HTTPS origin, verify Add to Home Screen previews Lavender; record iOS version and URL.
+* [ ] Confirm the new icon URL loads as PNG online and offline; verify the old URL still works.
+* [ ] Verify existing thoughts/drafts remain accessible. Do not clear website data or delete the existing installation to force an icon refresh.
+* [ ] Confirm actual installed icon separately from the share-sheet preview; browser automation cannot prove the iPhone result.
+
+Local checks passed: 39 Node tests, lint, Pages and root builds, and the isolated
+offline browser suite including both icon URLs. Root preview restored.
+Approved for commit and push to `dev` on 2026-10-18; publication and iPhone
+confirmation remain pending.
+
 ## Current release status — reconciled 2026-10-18
 
 - Note/thought-edit recovery is live as `7b83c72`: validation and deployment

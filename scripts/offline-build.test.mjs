@@ -12,7 +12,7 @@ const worker = readFileSync('public/sw.js', 'utf8');
 function fixture(run) {
   const dir = mkdtempSync(join(tmpdir(), 'loopr-shell-'));
   mkdirSync(join(dir, 'dist/assets'), { recursive: true });
-  const files = ['index.html', 'favicon.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'assets/app.js', 'assets/app.css'];
+  const files = ['index.html', 'favicon.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'apple-touch-icon-lavender-v1.png', 'assets/app.js', 'assets/app.css'];
   for (const file of files) writeFileSync(join(dir, 'dist', file), file);
   const build = (base) => {
     writeFileSync(join(dir, 'dist/sw.js'), worker);
@@ -64,7 +64,7 @@ test('worker template compiles and does not force activation of waiting updates'
 test('asset navigations return assets; only known app routes receive the offline index', async () => {
   for (const base of ['/', '/loopr/']) {
     const handlers = {};
-    const assets = ['index.html', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'favicon.png', 'manifest.webmanifest', 'assets/app.js'];
+    const assets = ['index.html', 'apple-touch-icon.png', 'apple-touch-icon-lavender-v1.png', 'icon-192.png', 'icon-512.png', 'favicon.png', 'manifest.webmanifest', 'assets/app.js'];
     const shell = assets.map(name => base + name);
     vm.runInNewContext(worker.replace('/* BUILD_CONFIG */ null', JSON.stringify({cacheName:'test',prefix:'test',shell,base})), {
       URL,
@@ -89,7 +89,7 @@ test('asset navigations return assets; only known app routes receive the offline
       assert.equal(await request(base + path), 'network');
     }
     assert.equal(await request(base + 'doing', 'cors'), 'network');
-    assert.equal(await request(base + 'apple-touch-icon.png', 'navigate', 'POST'), 'network');
+    assert.equal(await request(base + 'apple-touch-icon.png', 'apple-touch-icon-lavender-v1.png', 'navigate', 'POST'), 'network');
   }
 });
 
@@ -116,4 +116,22 @@ test('install rejects mixed HTML, wrong asset bytes, and HTTP failures before ca
     if(bad==='put') assert.deepEqual(removed,['candidate']);
     if(bad===null){assert.deepEqual(writes,Object.keys(files));assert.deepEqual(removed,[]);}
   }
+});
+
+test('Home Screen metadata uses a fresh Lavender PNG and preserves the legacy icon', () => {
+  const html = readFileSync('index.html', 'utf8');
+  const name = html.match(/rel="apple-touch-icon"[^>]*href="\/([^"?]+)"/)[1];
+  assert.equal(name, 'apple-touch-icon-lavender-v1.png');
+  const png = readFileSync('public/' + name);
+  assert.deepEqual(png, readFileSync('public/apple-touch-icon.png'));
+  assert.equal(png.subarray(1, 4).toString(), 'PNG');
+  assert.equal(png.readUInt32BE(16), 180);
+  assert.equal(png.readUInt32BE(20), 180);
+  fixture(build => {
+    for (const base of ['/', '/loopr/']) {
+      const { config } = build(base);
+      assert(config.shell.includes(base + name));
+      assert(config.integrity[base + name]);
+    }
+  });
 });

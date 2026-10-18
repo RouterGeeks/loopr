@@ -69,7 +69,7 @@ const server = http.createServer((req, res) => {
     // Direct image navigations must return image bytes, online and offline.
     for (const offline of [false, true]) {
       await context.setOffline(offline);
-      for (const name of ['apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'favicon.png']) {
+      for (const name of ['apple-touch-icon.png', 'apple-touch-icon-lavender-v1.png', 'icon-192.png', 'icon-512.png', 'favicon.png']) {
         for (const query of ['', '?v=lavender']) {
           const response = await page.goto(url + name + query);
           assert.equal(response.headers()['content-type'], 'image/png');

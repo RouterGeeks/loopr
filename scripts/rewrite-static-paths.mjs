@@ -16,7 +16,7 @@ writeFileSync(resolve(dist, 'manifest.webmanifest'), JSON.stringify(manifest, nu
 
 // Only real files: Pages returns HTTP 404 for SPA deep links.
 const files = ['index.html', 'manifest.webmanifest', 'favicon.png', 'icon-192.png',
-  'icon-512.png', 'apple-touch-icon.png',
+  'icon-512.png', 'apple-touch-icon.png', 'apple-touch-icon-lavender-v1.png',
   ...readdirSync(resolve(dist, 'assets')).sort().map((file) => `assets/${file}`)];
 const source = readFileSync(resolve(dist, 'sw.js'), 'utf8');
 const hash = createHash('sha256').update(base).update(source);
