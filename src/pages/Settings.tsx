@@ -75,7 +75,7 @@ const Settings: FC = () => {
             aria-expanded={showAbout}
             className="flex w-full items-baseline justify-between gap-3 text-left"
           >
-            <h2 className="text-lg font-semibold text-charcoal">About Loopr</h2>
+            <h2 className="text-lg font-semibold text-charcoal">About Dash Dot Dot</h2>
             <span className="font-mono text-xs text-charcoal/70">
               {showAbout ? '— hide' : '+ read'}
             </span>
@@ -84,18 +84,18 @@ const Settings: FC = () => {
           {showAbout && (
             <div className="space-y-3 font-serif text-[0.95rem] leading-relaxed text-charcoal/80">
               <p>
-                Loopr is for open loops — thoughts that keep coming back,
+                Dash Dot Dot is for thoughts that keep coming back,
                 ideas you haven't decided about, half-finished things you
                 don't want to forget.
               </p>
               <p>
-                Capture a loop, then choose:{' '}
+                Capture a thought, then choose:{' '}
                 <span className="font-semibold text-charcoal">Do</span> it
                 now,{' '}
                 <span className="font-semibold text-charcoal">Delay</span>{' '}
                 it, or{' '}
                 <span className="font-semibold text-charcoal">Drop</span>{' '}
-                it. Delayed loops resurface when you've asked them to.
+                it. Delayed thoughts resurface when you've asked them to.
                 Dropped ones can be restored.
               </p>
               <p>
@@ -107,11 +107,11 @@ const Settings: FC = () => {
         </div>
 
         <div className="space-y-4 border-t border-rule pt-6">
-          <h2 className="text-lg font-semibold text-charcoal">Your loops</h2>
+          <h2 className="text-lg font-semibold text-charcoal">Your thoughts</h2>
 
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             {countTiles.map((tile) => (
-              <Link to={tile.to} aria-label={`${tile.value} ${tile.label} loops${tile.label === 'Done' ? ' (includes dropped)' : ''}`}
+              <Link to={tile.to} aria-label={`${tile.value} ${tile.label} thoughts${tile.label === 'Done' ? ' (includes dropped)' : ''}`}
                 key={tile.label}
                 className="flex min-h-11 flex-wrap items-baseline gap-1.5 rounded-md border border-rule bg-paper-light/60 px-3 py-2.5"
               >
@@ -133,7 +133,7 @@ const Settings: FC = () => {
           <h2 className="text-lg font-semibold text-charcoal">Data</h2>
 
           <p className="text-sm text-charcoal/70">
-            All your loops are stored locally on this device. You can clear
+            All your thoughts are stored locally on this device. You can clear
             everything at any time.
           </p>
 

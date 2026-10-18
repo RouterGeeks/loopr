@@ -80,7 +80,7 @@ const Archive: FC = () => {
           Done
         </h1>
         <p className="mt-2 text-sm text-charcoal/65">
-          Loops you've completed or consciously released. Restore one any time.
+          Thoughts you've completed or consciously released. Restore one any time.
         </p>
         <SketchPaperStack className="pointer-events-none absolute -top-1 right-0 h-20 w-16" />
       </div>
@@ -93,7 +93,7 @@ const Archive: FC = () => {
               <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" color="ink" />
             </p>
             <p className="font-mono text-xs text-charcoal/70">
-              Completed and released loops will appear here.
+              Completed and released thoughts will appear here.
             </p>
           </div>
           <p className="mt-6 text-right font-serif italic text-sm text-charcoal/70">

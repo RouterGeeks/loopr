@@ -1,6 +1,6 @@
-# Loopr Context
+# Dash Dot Dot Context
 
-Loopr is a mobile-first PWA for capturing open loops and deciding what to do with them.
+Dash Dot Dot (formerly Loopr) is a mobile-first PWA for capturing open loops and deciding what to do with them.
 
 Core flow:
 Capture → Do → Doing → Done / Dropped / Delayed → Revisit
@@ -176,7 +176,7 @@ The notebook feel is carried by:
 - cool stone / pale paper surfaces (no kraft beige)
 - cool graphite ink
 - restrained dusty lavender + muted sage accents
-- italic serif "loopr" wordmark
+- italic serif "Dash Dot Dot" wordmark with a decorative − · · mark
 - serif body type for loop content, sans for UI chrome, mono for date
   eyebrow and small labels
 - hand-drawn pencil underlines (`HandUnderline` SVG) under H1s, empty
@@ -332,3 +332,7 @@ The app should feel:
 - breathable
 - emotionally safe
 - fast
+
+Current identity (locally approved): Dash Dot Dot. Earlier Loopr references describe
+the same product. Storage keys, backup identity, repository and /loopr/ URL remain
+unchanged for compatibility; the name change does not migrate data.

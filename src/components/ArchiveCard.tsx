@@ -153,7 +153,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
       ) : mode === 'confirming-delete' ? (
         <div data-panel className="mt-3 rounded-md border border-rule bg-paper-light/60 p-3">
           <p className="mb-3 text-sm leading-6 text-charcoal/80">
-            Permanently delete this loop?
+            Permanently delete this thought?
           </p>
 
           <div className="flex flex-wrap items-center justify-end gap-2">
@@ -205,7 +205,7 @@ const ArchiveCard: FC<ArchiveCardProps> = ({
             <button aria-describedby={contextId}
               type="button"
               onClick={() => setMode('confirming-delete')}
-              data-focus="more" aria-label="Delete loop"
+              data-focus="more" aria-label="Delete thought"
               className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/65 transition duration-200 hover:bg-paper-light/70 hover:text-charcoal"
             >
               <TrashIcon />

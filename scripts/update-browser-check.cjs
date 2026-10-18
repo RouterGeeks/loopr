@@ -44,11 +44,11 @@ const server = http.createServer((req, res) => {
     assert.equal(await update.isEnabled(), false);
     assert.equal(await page.locator('#loop-input').inputValue(),'Keep my draft');
     await page.evaluate(() => { window.originalSet=Storage.prototype.setItem; Storage.prototype.setItem=()=>{throw new Error('quota');}; });
-    await page.getByRole('button',{name:'Add loop',exact:true}).click();
+    await page.getByRole('button',{name:'Add thought',exact:true}).click();
     await page.getByRole('alert').filter({hasText:'Could not save'}).waitFor();
     assert.equal(await update.isEnabled(),false);
     await page.evaluate(()=>{Storage.prototype.setItem=window.originalSet;});
-    await page.getByRole('button',{name:'Add loop',exact:true}).click();
+    await page.getByRole('button',{name:'Add thought',exact:true}).click();
     await page.waitForFunction(()=>document.querySelector('#loop-input').value==='');
     await update.waitFor({state:'visible'});
     await page.waitForFunction(()=>!Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='Update now').disabled);
@@ -57,8 +57,8 @@ const server = http.createServer((req, res) => {
     assert.equal(await update.isEnabled(),false);
     await page.getByRole('button',{name:'Cancel',exact:true}).click();
     await page.getByRole('button',{name:'More actions'}).click();
-    await page.getByRole('button',{name:'Edit loop',exact:true}).click();
-    await page.getByRole('textbox',{name:'Edit loop',exact:true}).fill('Keep edit');
+    await page.getByRole('button',{name:'Edit thought',exact:true}).click();
+    await page.getByRole('textbox',{name:'Edit thought',exact:true}).fill('Keep edit');
     assert.equal(await update.isEnabled(),false);
     await page.getByRole('button',{name:'Cancel',exact:true}).click();
     await page.getByRole('button',{name:'Delay',exact:true}).click();

@@ -46,18 +46,18 @@ const server = http.createServer((req, res) => {
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     }
     await page.goto(url);
-    await page.getByRole('textbox', { name: 'New loop', exact: true }).fill('Offline thought');
-    await page.getByRole('button', { name: 'Add loop', exact: true }).click();
+    await page.getByRole('textbox', { name: 'New thought', exact: true }).fill('Offline thought');
+    await page.getByRole('button', { name: 'Add thought', exact: true }).click();
     await page.waitForFunction(() => document.querySelector('#loop-input').value === '');
     await page.getByRole('button', { name: 'Add note', exact: true }).click();
     await page.getByRole('textbox', { name: 'Note', exact: true }).fill('Offline note');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.getByRole('textbox', { name: 'Note', exact: true }).waitFor({ state: 'hidden' });
     await page.getByRole('button', { name: 'More actions' }).click();
-    await page.getByRole('button', { name: 'Edit loop', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Edit loop', exact: true }).fill('Offline thought edited');
+    await page.getByRole('button', { name: 'Edit thought', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Edit thought', exact: true }).fill('Offline thought edited');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Edit loop', exact: true }).waitFor({ state: 'hidden' });
+    await page.getByRole('textbox', { name: 'Edit thought', exact: true }).waitFor({ state: 'hidden' });
     const saved = await page.evaluate(() => localStorage.getItem('loopr.loops'));
     assert.equal(JSON.parse(saved)[0].note, 'Offline note');
     await page.close();

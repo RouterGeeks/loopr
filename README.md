@@ -1,4 +1,7 @@
-# Loopr
+# Dash Dot Dot
+
+Formerly Loopr. The existing repository, URLs, storage keys, and backup format
+remain compatible; the new identity is locally approved and awaiting publication.
 
 > A quiet place for your thoughts.
 
@@ -13,9 +16,9 @@ The demo is the full app — capture loops, move them through
 Do → Doing → Done, delay them, drop them, take notes. Data lives in
 your browser's localStorage. Nothing leaves your device.
 
-## What Loopr Is
+## What Dash Dot Dot Is
 
-Loopr is a mobile-first PWA designed to reduce cognitive friction
+Dash Dot Dot is a mobile-first PWA designed to reduce cognitive friction
 around recurring thoughts. Fast, low-pressure capture and a simple
 cognitive workflow:
 
@@ -27,7 +30,7 @@ emotional safety.
 
 ## Loop States
 
-Loopr distinguishes engagement from completion. Loops live in one of
+Dash Dot Dot distinguishes engagement from completion. Loops live in one of
 five states:
 
 | State | Where it lives |
@@ -64,7 +67,7 @@ Editorial notebook / lightweight sketchbook (the earlier
 motel/keychain direction was retired in Sprint 16):
 
 - Cool stone paper shell + pale paper card surface
-- Cool graphite ink, italic serif "loopr" wordmark
+- Cool graphite ink, italic serif "Dash Dot Dot" wordmark and − · · motif
 - Serif body for loop text and notes, sans for UI chrome, mono for
   date / capture label / keyboard hint
 - Hand-drawn pencil underlines (HandUnderline SVG) under H1s and the

@@ -1,8 +1,8 @@
-# Loopr Project Plan
+# Dash Dot Dot Project Plan
 
 ## Product Direction
 
-Loopr is a mobile-first PWA designed to reduce cognitive friction and help users safely capture and revisit recurring thoughts.
+Dash Dot Dot (formerly Loopr) is a mobile-first PWA designed to reduce cognitive friction and help users safely capture and revisit recurring thoughts.
 
 Loopr is intentionally evolving beyond a traditional productivity app.
 
@@ -525,8 +525,38 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Upcoming Priorities
 
+## Dash Dot Dot identity — locally approved, publication pending
 
-## App update notice — locally approved, publication pending
+- Entries are called thoughts throughout visible copy, accessibility labels,
+  confirmations, backup errors, and metadata. Internal names and compatibility
+  identifiers remain unchanged; historical docs retain earlier terminology.
+- Adopted the approved Dash Dot Dot name and Morse D mark: one dash followed
+  by two dots (− · ·). Branding remains within the calm notebook palette.
+- Shared header uses an italic serif wordmark and small decorative mark.
+  Dashboard adds a fine divider and a curved dash/two-dot empty-state sketch.
+  Marks are hidden from assistive technology and do not encode controls or state.
+- Dashboard / Doing / Delayed / Done / Dials, routes, existing controls, capture
+  behavior, and the other page illustrations retain their current behavior.
+- Updated document title, installation metadata, About/update/backup copy,
+  download filenames, and PNG favicon/Home Screen icons. Icon source is editable
+  in public/brand-icon.svg; optional renderer uses existing local Playwright.
+- Compatibility identifiers intentionally stay `loopr`: storage/preference keys,
+  backup `app` identifier and version, write lock, service-worker protocol/cache
+  namespace, repository, package name, and /loopr/ Pages path. Existing thoughts,
+  settings, and older exports need no migration. New exports also remain readable
+  by the previous app. No domain/repository move or publication is included.
+
+Local checks: lint, both builds, 19 Node tests, all-page layout at 320/375/390px
+and 200% text, old stored thoughts/preferences, and backup export/restore passed.
+Offline/update and scheduling browser regressions passed after the thoughts
+wording cleanup. Actual iPhone installed-name/icon
+refresh and VoiceOver review remain pending; no reinstall or data clearing is
+needed for review. The user approved the branding locally on 2026-10-18 and authorized the
+thoughts wording cleanup and commit/push to dev. Publication remains pending.
+
+
+
+## App update notice — live (`029424c`)
 
 - A quiet notice appears when a production service worker has an update waiting.
   Later dismisses that worker's notice for this page session. Update now is an
@@ -555,7 +585,8 @@ edit, note, schedule and default-time guards, rejection with another window,
 Later, explicit activation/reload, and unchanged saved thoughts/preferences.
 The user approved the update notice and draft protection locally on 2026-10-18
 and authorized committing/pushing the implementation, documentation, and tests
-to dev. Publication to main remains pending. Actual iPhone announcement and
+to dev. Published on 2026-10-18; live artifacts matched the release, offline
+checks passed, and the release artifact passed two-build update tests. Actual iPhone announcement and
 activation results have not been explicitly supplied. AI remains deferred.
 
 

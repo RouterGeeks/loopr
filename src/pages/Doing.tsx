@@ -99,7 +99,7 @@ const Doing: FC = () => {
                 <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" color="seafoam" />
               </p>
               <p className="font-mono text-xs text-charcoal/70">
-                Loops you start working on will appear here.
+                Thoughts you start working on will appear here.
               </p>
             </div>
             <p className="mt-6 text-right font-serif italic text-sm text-charcoal/70">

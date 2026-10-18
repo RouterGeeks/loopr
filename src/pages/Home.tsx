@@ -12,7 +12,7 @@ import StorageNotice from '../components/StorageNotice';
 import type { LoopItem, LoopStatus } from '../lib/loops';
 import DateEyebrow from '../components/DateEyebrow';
 import HandUnderline from '../components/HandUnderline';
-import SketchFlowers from '../components/SketchFlowers';
+import DashDotDotMark from '../components/DashDotDotMark';
 import SketchMountain from '../components/SketchMountain';
 import { isSpeechCaptureSupported } from '../lib/useSpeechCapture';
 
@@ -138,10 +138,15 @@ const Home: FC = () => {
           Dashboard
         </h1>
         <p className="mt-3 max-w-[18rem] font-serif italic text-sm leading-relaxed text-charcoal/70 sm:max-w-md sm:text-base">
-          For thoughts that keep coming back — your open loops. Capture
+          For thoughts that keep coming back. Capture
           now, decide later.
         </p>
         <SketchMountain className="pointer-events-none absolute -top-1 right-0 h-14 w-28 sm:h-16 sm:w-32" />
+      </div>
+      <div aria-hidden="true" className="mb-6 flex items-center gap-3">
+        <span className="flex-1 border-t border-rule" />
+        <DashDotDotMark className="h-3 w-12 text-charcoal/60" />
+        <span className="flex-1 border-t border-rule" />
       </div>
 
       <div className="space-y-2">
@@ -154,7 +159,7 @@ const Home: FC = () => {
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={handleDraftKeyDown}
             rows={4}
-            aria-label="New loop"
+            aria-label="New thought"
             placeholder="What's on your mind?"
             className="block w-full resize-none bg-transparent px-4 py-3 font-mono text-sm leading-relaxed text-charcoal placeholder:text-charcoal/70 focus:outline-none"
           />
@@ -164,7 +169,7 @@ const Home: FC = () => {
               {speechSupported && (
                 <MicButton
                   onText={appendVoiceTextToDraft}
-                  label="Voice capture for new loop"
+                  label="Voice capture for new thought"
                 />
               )}
             </div>
@@ -179,7 +184,7 @@ const Home: FC = () => {
                 type="button"
                 onClick={addLoop}
                 disabled={!canAddLoop}
-                aria-label="Add loop"
+                aria-label="Add thought"
                 className={`inline-flex h-9 w-9 items-center justify-center rounded-sm bg-lavender-soft text-lavender-dark shadow-card ring-1 ring-charcoal/10 transition duration-200 active:scale-95 ${
                   canAddLoop
                     ? 'hover:bg-lavender-soft/80'
@@ -234,7 +239,7 @@ const Home: FC = () => {
                 <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
               </p>
               <p className="font-mono text-xs text-charcoal/70">
-                Captured loops will appear here.
+                Captured thoughts will appear here.
               </p>
             </div>
 
@@ -268,13 +273,13 @@ const Home: FC = () => {
                   />
                 </svg>
               </div>
-              <SketchFlowers className="h-24 w-24 shrink-0" />
+              <DashDotDotMark sketch className="h-24 w-28 shrink-0 text-charcoal/70" />
             </div>
           </div>
         ) : (
           <>
             <h2 className="relative mb-1 inline-block pr-1 font-mono text-xs tracking-[0.2em] text-charcoal/70">
-              OPEN LOOPS
+              THOUGHTS
               <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
             </h2>
             <div className="divide-y divide-rule border-t border-rule">

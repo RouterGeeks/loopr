@@ -276,14 +276,14 @@ const LoopCard: FC<LoopCardProps> = ({
       return {
         label: 'Done',
         onClick: () => onTransition(loop.id, 'done'),
-        ariaLabel: 'Mark loop done',
+        ariaLabel: 'Mark thought done',
       };
     }
     // Both 'do' and 'delayed' surface "Do" to start engaging.
     return {
       label: 'Do',
       onClick: triggerDo,
-      ariaLabel: 'Start doing this loop',
+      ariaLabel: 'Start doing this thought',
     };
   })();
 
@@ -292,7 +292,7 @@ const LoopCard: FC<LoopCardProps> = ({
       <div ref={cardRef} className="py-5">
         <span id={contextId} className="sr-only">{loop.text}</span>
         <label htmlFor={`loop-edit-${loop.id}`} className="sr-only">
-          Edit loop
+          Edit thought
         </label>
 
         <textarea
@@ -443,7 +443,7 @@ const LoopCard: FC<LoopCardProps> = ({
       ) : mode === 'confirming-delete' ? (
         <div data-panel className="rounded-md border border-rule bg-paper-light/60 p-4">
           <p className="mb-3 text-sm leading-6 text-charcoal/80">
-            Delete this loop? This can't be undone.
+            Delete this thought? This can't be undone.
           </p>
 
           <div className="flex flex-wrap items-center justify-end gap-2">
@@ -525,7 +525,7 @@ const LoopCard: FC<LoopCardProps> = ({
                   <button aria-describedby={contextId}
                     type="button"
                     onClick={startEdit}
-                    aria-label="Edit loop"
+                    aria-label="Edit thought"
                     className="inline-flex items-center gap-1.5 rounded-full bg-paper-light/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-charcoal/85 ring-1 ring-charcoal/10 transition duration-200 hover:bg-paper-light hover:text-charcoal"
                   >
                     <svg
@@ -548,7 +548,7 @@ const LoopCard: FC<LoopCardProps> = ({
                   <button aria-describedby={contextId}
                     type="button"
                     onClick={startDelete}
-                    aria-label="Delete loop"
+                    aria-label="Delete thought"
                     className="inline-flex h-9 w-9 items-center justify-center rounded-full text-charcoal/70 transition duration-200 hover:bg-paper-light hover:text-charcoal"
                   >
                     <TrashIcon />

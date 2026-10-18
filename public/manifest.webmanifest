@@ -1,7 +1,7 @@
 {
-  "name": "Loopr",
-  "short_name": "Loopr",
-  "description": "Capture open loops and decide what to do next.",
+  "name": "Dash Dot Dot",
+  "short_name": "Dash Dot Dot",
+  "description": "Capture thoughts and decide what to do next.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

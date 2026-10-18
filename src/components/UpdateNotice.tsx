@@ -69,19 +69,19 @@ export default function UpdateNotice() {
     try {
       const allowed = await ask(waiting, 'LOOPR_UPDATE_ACTIVATE');
       if (!allowed) throw new Error('Other windows');
-      setMessage('Updating Loopr…');
+      setMessage('Updating Dash Dot Dot…');
       // If activation stalls, stop blocking the app. Never force a later reload.
       setTimeout(() => {
-        if (armed.current) { armed.current = false; setUpdating(false); setMessage('Update has not finished. Save your work, then close and reopen Loopr.'); }
+        if (armed.current) { armed.current = false; setUpdating(false); setMessage('Update has not finished. Save your work, then close and reopen Dash Dot Dot.'); }
       }, 10000);
     } catch {
       armed.current = false; setUpdating(false); setAlone(false);
-      setMessage('Could not safely start the update. Close other Loopr windows and try again, or update by closing and reopening Loopr.');
+      setMessage('Could not safely start the update. Close other Dash Dot Dot windows and try again, or update by closing and reopening Dash Dot Dot.');
     }
   };
   return <aside aria-label="App update" className="mx-auto my-3 max-w-xl rounded-md border border-lavender/50 bg-paper-light p-4 text-sm text-charcoal">
-    <p role="status" className="font-semibold">A Loopr update is ready</p>
-    <p id="update-help" className="mt-2">{blocked ? 'Save or cancel your open work before updating.' : !alone ? 'Close other Loopr tabs or app windows before updating. Waiting to confirm this is the only window.' : 'Your saved thoughts will stay on this device.'}</p>
+    <p role="status" className="font-semibold">A Dash Dot Dot update is ready</p>
+    <p id="update-help" className="mt-2">{blocked ? 'Save or cancel your open work before updating.' : !alone ? 'Close other Dash Dot Dot tabs or app windows before updating. Waiting to confirm this is the only window.' : 'Your saved thoughts will stay on this device.'}</p>
     {message && <p role="status" className="mt-2">{message}</p>}
     <div className="mt-3 flex flex-wrap gap-3">
       <button type="button" disabled={updating} onClick={() => setDismissed(waiting)} className="min-h-11 rounded-md border border-rule px-4">Later</button>

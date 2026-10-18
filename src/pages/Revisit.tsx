@@ -84,7 +84,7 @@ const Revisit: FC = () => {
           Delayed
         </h1>
         <p className="mt-2 text-sm text-charcoal/65">
-          Loops set aside to resurface later.
+          Thoughts set aside to resurface later.
         </p>
         <SketchMoon className="pointer-events-none absolute -top-1 right-0 h-16 w-16" />
       </div>
@@ -98,7 +98,7 @@ const Revisit: FC = () => {
                 <HandUnderline className="absolute -bottom-1 left-0 h-2 w-full" />
               </p>
               <p className="font-mono text-xs text-charcoal/70">
-                Delayed loops will resurface here.
+                Delayed thoughts will resurface here.
               </p>
             </div>
             <p className="mt-6 text-right font-serif italic text-sm text-charcoal/70">

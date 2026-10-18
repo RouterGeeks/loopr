@@ -1,4 +1,4 @@
-# Loopr QA Checklist
+# Dash Dot Dot QA Checklist
 
 > Use this checklist after major features, sprint completions, merges, or AI-assisted coding sessions.
 
@@ -410,3 +410,31 @@ Local review result (2026-10-18): the user approved the update notice and draft
 protection locally and authorized commit/push to dev, including docs and tests.
 Specific iPhone announcement/activation results were not supplied. Publication
 to main remains pending.
+
+
+# Dash Dot Dot identity — local review
+
+* [ ] Header says Dash Dot Dot; mark order is exactly dash, dot, dot. Divider and empty-state sketch remain decorative and static.
+* [ ] Dashboard / Doing / Delayed / Done / Dials labels, routes, focus, and touch targets stay unchanged.
+* [ ] All pages fit at 320/375/390px and 200% text. Review empty and populated Dashboard layouts and header spacing.
+* [ ] Browser title, About section, update notice, backup instructions, and downloaded filenames use the new name.
+* [ ] Manifest, favicon, and Apple-touch icon show the new identity; review a new installation on iPhone. Record whether an existing installation refreshes its name/icon without clearing data.
+* [ ] Existing loopr.loops and loopr.revisitTime values survive navigation, reload, and update with all notes/states/dates intact.
+* [ ] An older Loopr backup imports, and new exports retain app: loopr and version: 1 for compatibility.
+* [ ] Capture, scheduling, backup failures, offline launch, and update/draft protections still work.
+* [ ] VoiceOver reads the brand as text and ignores decorative marks. No Morse knowledge is needed to operate the app.
+
+Review pending. Repository and deployment path remain loopr; publication is a
+separate step after local approval.
+
+
+## Thoughts wording and branding approval — 2026-10-18
+
+The user approved Dash Dot Dot branding and requested thoughts terminology
+throughout the interface, including accessible names and backup messages.
+Commit/push to dev is authorized; publication remains pending. Earlier QA
+sections use historical loop terminology for the same entries.
+
+* [ ] Dashboard says THOUGHTS; Dials says Your thoughts. Empty states, About, confirmations, and accessible capture/edit/delete labels use thought(s).
+* [ ] Backup export/restore and validation messages use thoughts; older backups remain accepted without changing app: loopr, version: 1, or the loops field.
+* [ ] Old storage keys, write locks, update protocol, DOM identifiers, and /loopr/ routes remain compatible.
