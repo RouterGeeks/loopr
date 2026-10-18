@@ -494,7 +494,27 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Current work and release status
 
-## Home Screen icon refresh — local candidate, not published
+## Embedded Lavender Home Screen icon — local candidate, not published
+
+The user authorized this workaround on 2026-10-18 after the filename refresh
+failed on their iPhone (iOS 27.2, public-beta updates selected). The direct PNG
+loads, but the installation preview remains a grey D with Open as Web App on
+or off and in Private Safari. This does not establish the underlying iOS cause.
+[Firsthand reports](https://www.reddit.com/r/PWA/comments/1wsruwy/pwa_icon_not_working_on_ios_272beta2/)
+describe similar symptoms and success with embedded icons; this is not an
+Apple-confirmed fix.
+
+Production builds embed the existing 180px Lavender PNG as a data URI in the
+single Apple touch icon link before computing the offline shell digest. The
+source HTML keeps the file URL for development; root and Pages production
+previews use embedded bytes. PNG files and manifest icons remain available.
+No storage, app identity, routes, dependencies, or activation changes are made.
+The existing installed app stays intact. Local review and actual iPhone
+preview confirmation are required before calling the workaround successful.
+Approved for commit and push to `dev` on 2026-10-18; publication and iPhone
+confirmation remain pending.
+
+## Home Screen icon refresh — live (`a656ec4`), iPhone preview unresolved
 
 On 2026-10-18 the user confirmed the direct Lavender PNG loads in iPhone Safari,
 but Add to Home Screen still previews a grey D after reloading the app. Live
@@ -503,10 +523,12 @@ not a confirmed cause. The candidate uses `apple-touch-icon-lavender-v1.png`
 for the explicit Apple icon link, retains the original URL for compatibility,
 and includes both in the verified offline shell. The icon artwork, app URL,
 manifest identity, storage, and update activation behavior remain unchanged.
-Approved for commit and push to `dev` on 2026-10-18. Publication and actual
-iPhone preview/installation results remain pending.
+Published with cache prevention after validation; deployment 39161343127 passed.
+Live files matched the artifact and isolated Chromium/WebKit startup passed.
+The subsequent iPhone retest still showed a grey D; the filename change did not
+resolve this device's preview.
 
-## Mixed-release offline shell — local fix, not published
+## Mixed-release offline shell — live (`13c050e`, released with `a656ec4`)
 
 Incident (2026-10-18): the user's Chrome tab and iPhone Home Screen shortcut
 were blank, while iPhone Safari loaded saved thoughts. Chrome's console showed
@@ -531,8 +553,9 @@ waiting update to activate by closing/reopening app windows.
 Node tests and isolated Chromium/WebKit upgrade checks cover stale HTTP-200
 HTML, preservation of the active release and saved thoughts/draft, and successful
 consistent updates. Existing offline/update regressions remain required.
-Approved for commit and push to `dev` on 2026-10-18. Publication to `main`
-remains pending; the iPhone Home Screen retest is not yet confirmed.
+Published in deployment 39161343127; live worker bytes match the release
+artifact. The user confirmed updating on iPhone; its icon preview remains
+unresolved and is tracked separately above.
 
 
 ## Note and thought-edit recovery — live (`7b83c72`)

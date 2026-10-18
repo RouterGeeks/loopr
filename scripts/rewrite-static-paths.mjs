@@ -8,6 +8,17 @@ if (!base.startsWith('/') || !base.endsWith('/')) {
   throw new Error('VITE_BASE_PATH must start and end with /');
 }
 const dist = resolve('dist');
+// Some iOS Home Screen previews fail to fetch a separate icon URL. Embed the
+// existing PNG in production HTML, before calculating the offline shell digest.
+const htmlPath = resolve(dist, 'index.html');
+const html = readFileSync(htmlPath, 'utf8');
+const iconLink = /(<link\s+rel="apple-touch-icon"[^>]*\bhref=")[^"]*(")/g;
+if ([...html.matchAll(iconLink)].length !== 1) {
+  throw new Error('Expected exactly one Apple touch icon link');
+}
+const iconData = readFileSync(resolve(dist, 'apple-touch-icon-lavender-v1.png')).toString('base64');
+writeFileSync(htmlPath, html.replace(iconLink, `$1data:image/png;base64,${iconData}$2`));
+
 const manifest = JSON.parse(readFileSync(resolve(dist, 'manifest.webmanifest'), 'utf8'));
 manifest.start_url = base;
 manifest.scope = base;

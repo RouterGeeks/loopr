@@ -14,6 +14,7 @@ function fixture(run) {
   mkdirSync(join(dir, 'dist/assets'), { recursive: true });
   const files = ['index.html', 'favicon.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'apple-touch-icon-lavender-v1.png', 'assets/app.js', 'assets/app.css'];
   for (const file of files) writeFileSync(join(dir, 'dist', file), file);
+  writeFileSync(join(dir, 'dist/index.html'), readFileSync('index.html'));
   const build = (base) => {
     writeFileSync(join(dir, 'dist/sw.js'), worker);
     writeFileSync(join(dir, 'dist/manifest.webmanifest'), JSON.stringify({ icons: [{ src: '/icon-192.png' }] }));
@@ -21,6 +22,7 @@ function fixture(run) {
     const source = readFileSync(join(dir, 'dist/sw.js'), 'utf8');
     new vm.Script(source);
     return { source, config: JSON.parse(source.match(/const CONFIG = (.*);/)[1]),
+      html: readFileSync(join(dir, 'dist/index.html'), 'utf8'),
       manifest: JSON.parse(readFileSync(join(dir, 'dist/manifest.webmanifest'), 'utf8')) };
   };
   try { run(build, dir); } finally { rmSync(dir, { recursive: true, force: true }); }
@@ -28,14 +30,14 @@ function fixture(run) {
 
 test('offline builds include actual bundles, correct scope, and no virtual route URLs', () => fixture(build => {
   for (const base of ['/', '/loopr/']) {
-    const { config, manifest } = build(base);
+    const { config, manifest, html } = build(base);
     assert.equal(manifest.scope, base);
     assert.equal(manifest.start_url, base);
     assert.equal(manifest.icons[0].src, `${base}icon-192.png`);
     assert(config.shell.includes(`${base}assets/app.js`));
     assert(config.shell.includes(`${base}assets/app.css`));
     assert(config.shell.includes(`${base}index.html`));
-    assert.equal(config.integrity[`${base}index.html`], createHash('sha256').update('index.html').digest('hex'));
+    assert.equal(config.integrity[`${base}index.html`], createHash('sha256').update(html).digest('hex'));
     assert.deepEqual(Object.keys(config.integrity), config.shell);
     assert(!config.shell.includes(`${base}doing`));
   }
@@ -89,7 +91,9 @@ test('asset navigations return assets; only known app routes receive the offline
       assert.equal(await request(base + path), 'network');
     }
     assert.equal(await request(base + 'doing', 'cors'), 'network');
-    assert.equal(await request(base + 'apple-touch-icon.png', 'apple-touch-icon-lavender-v1.png', 'navigate', 'POST'), 'network');
+    for (const icon of ['apple-touch-icon.png', 'apple-touch-icon-lavender-v1.png']) {
+      assert.equal(await request(base + icon, 'navigate', 'POST'), 'network');
+    }
   }
 });
 
@@ -135,3 +139,21 @@ test('Home Screen metadata uses a fresh Lavender PNG and preserves the legacy ic
     }
   });
 });
+
+test('build embeds exact icon bytes before hashing HTML and refreshes them on rebuild', () => fixture((build, dir) => {
+  const pngPath = join(dir, 'dist/apple-touch-icon-lavender-v1.png');
+  writeFileSync(pngPath, readFileSync('public/apple-touch-icon-lavender-v1.png'));
+  for (const base of ['/', '/loopr/']) {
+    const result = build(base);
+    const encoded = result.html.match(/href="data:image\/png;base64,([^"]+)"/)[1];
+    assert.deepEqual(Buffer.from(encoded, 'base64'), readFileSync(pngPath));
+    assert.equal(result.config.integrity[base + 'index.html'], createHash('sha256').update(result.html).digest('hex'));
+    assert.equal(build(base).config.cacheName, result.config.cacheName);
+  }
+  const before = build('/loopr/');
+  writeFileSync(pngPath, 'different icon fixture');
+  const after = build('/loopr/');
+  assert.notEqual(after.html, before.html);
+  assert.notEqual(after.config.cacheName, before.config.cacheName);
+  assert.notEqual(after.config.integrity['/loopr/index.html'], before.config.integrity['/loopr/index.html']);
+}));

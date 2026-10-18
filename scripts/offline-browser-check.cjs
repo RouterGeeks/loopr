@@ -85,6 +85,16 @@ const server = http.createServer((req, res) => {
       }
       await page.goto(url);
       assert.equal(await page.evaluate(() => localStorage.getItem('loopr.loops')), saved);
+      const iconHref = await page.locator('link[rel="apple-touch-icon"]').getAttribute('href');
+      assert(iconHref.startsWith('data:image/png;base64,'));
+      assert.deepEqual(Buffer.from(iconHref.split(',')[1], 'base64'),
+        fs.readFileSync(path.join(root, 'apple-touch-icon-lavender-v1.png')));
+      assert.deepEqual(await page.evaluate(async href => {
+        const image = new Image();
+        image.src = href;
+        await image.decode();
+        return [image.naturalWidth, image.naturalHeight];
+      }, iconHref), [180, 180]);
     }
     await context.setOffline(false);
     await page.locator('#loop-input').fill('Unsaved draft stays');

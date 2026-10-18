@@ -2,7 +2,29 @@
 
 > Use this checklist after major features, sprint completions, merges, or AI-assisted coding sessions.
 
-## Home Screen icon refresh — local candidate (2026-10-18)
+## Embedded Lavender icon — local candidate (2026-10-18)
+
+Device evidence: iOS 27.2 with public-beta updates selected. After the live
+filename refresh, the user still sees a grey D in Add to Home Screen, in both
+web-app toggle states and Private Safari. The direct PNG displays correctly.
+This candidate tests a community-reported workaround; the cause is unconfirmed.
+
+* [ ] On trusted HTTPS after candidate activation, inspect Add to Home Screen on the affected iPhone; record preview result, URL, iOS build, and date.
+* [ ] Keep the existing installed app and website data intact; confirm saved thoughts and unfinished drafts remain accessible.
+* [ ] Check an unaffected iPhone if available, recording its version separately.
+* [ ] Treat preview success and installed-icon success as separate results; cancel the preview initially, without deleting the current installation.
+
+Production builds embed the existing PNG before shell hashing. Dev mode retains
+the source file link. No app identity or storage changes. Approved for commit
+and push to `dev` on 2026-10-18; publication and iPhone confirmation pending.
+
+Local checks passed: 40 Node tests, lint, Pages/root production builds; offline
+browser checks decode the embedded 180px PNG online and offline and preserve
+saved thought/note bytes. Chromium/WebKit mixed-release tests and update guards
+passed, including drafts and other-window protection. Root preview restored.
+These checks do not exercise the native iPhone Add to Home Screen sheet.
+
+## Home Screen icon refresh — live (`a656ec4`), preview still grey
 
 Observed on the user's iPhone: direct Lavender image loads, but Add to Home
 Screen remains a grey D after Safari reload. A fresh icon filename is a cache
@@ -15,8 +37,9 @@ mitigation to test, not a confirmed resolution. The old PNG remains available.
 
 Local checks passed: 39 Node tests, lint, Pages and root builds, and the isolated
 offline browser suite including both icon URLs. Root preview restored.
-Approved for commit and push to `dev` on 2026-10-18; publication and iPhone
-confirmation remain pending.
+Published in deployment 39161343127 after validation passed; live files matched
+the artifact and isolated Chromium/WebKit startup passed. User retest failed
+the Lavender preview check; see embedded-icon candidate above.
 
 ## Current release status — reconciled 2026-10-18
 
@@ -25,7 +48,7 @@ confirmation remain pending.
   passed. Subsequent blank-page investigation exposed an older mixed cache;
   fresh-profile tests alone did not cover that upgrade condition.
 
-## Mixed-release shell prevention — local fix (2026-10-18)
+## Mixed-release shell prevention — live (`13c050e`, released with `a656ec4`)
 
 * [ ] Serve HTTP-200 older HTML with a new worker/asset manifest: installation fails instead of accepting mixed versions.
 * [ ] Changed JS/CSS/icon/manifest bytes, missing digests, and HTTP failures also reject installation. Existing active cache/data remain intact.
@@ -46,8 +69,8 @@ and WebKit mixed-response upgrade checks passed; existing offline/update checks
 passed. Test: after `npm run build:pages`, run
 `node scripts/shell-integrity-browser-check.cjs` (requires both local browser
 engines), followed by offline/update browser checks. Rebuild root preview with
-`npm run build`. Approved for commit and push to `dev` on 2026-10-18;
-publication to `main` and the iPhone Home Screen retest remain pending.
+`npm run build`. Published in deployment 39161343127 with exact live artifact
+comparison. User confirmed updating the iPhone app; the icon issue is separate.
 
 ## Earlier release and local-review evidence
 
