@@ -1,8 +1,8 @@
-# Loopr QA Workflow
+# Dash Dot Dot QA Workflow
 
-This document defines how Loopr should be tested during development.
+This document defines how Dash Dot Dot should be tested during development.
 
-Loopr QA validates:
+Dash Dot Dot QA validates:
 
 * functionality
 * UX quality
@@ -36,6 +36,9 @@ Purpose:
 Run:
 
 ```bash
+npm test
+npm run lint
+npm run build:pages
 npm run build
 npm run preview
 ```
@@ -49,7 +52,10 @@ Purpose:
 * validate installability
 * validate caching
 
-Preview mode is considered the final source of truth before shipping changes.
+Production preview verifies a candidate build, not the live release or actual
+iPhone behavior. Local approval, dev push, main publication, and live
+verification are separate stages. Documentation-only edits need link, accuracy,
+and diff checks; app suites need not be rerun when no executable files change.
 
 ---
 
@@ -113,6 +119,7 @@ Validate:
 * Delayed (/delayed) works offline
 * Done (/done) works offline
 * Dials (/dials) works offline
+* Find and thought/detail/connection/label routes work offline after installation
 * Legacy routes (/revisit, /archive, /settings) redirect to new homes,
   online or offline
 
@@ -126,7 +133,7 @@ Validate:
 * localStorage persists correctly
 * Done page (Done + Dropped) persists correctly
 * delay scheduling persists
-* legacy data migrates on first load
+* legacy data decodes without writes; only an explicit successful save rewrites it
 
 ## Cache Validation
 
@@ -172,12 +179,12 @@ npm run preview
 
 Run regression smoke test:
 
-* add loop (lands in Do on Dashboard)
-* press Do — loop moves to Doing
-* press Done on a Doing loop — moves to Done page (Done section)
-* delay a loop and verify it appears on Delayed
-* drop a loop and verify it appears in Done page (Dropped section)
-* restore from Done page — loop returns to Do on Dashboard
+* add thought (lands in Do on Dashboard)
+* press Do — thought moves to Doing
+* press Done on a Doing thought — moves to Done page (Done section)
+* delay a thought and verify it appears on Delayed
+* drop a thought and verify it appears in Done page (Dropped section)
+* restore from Done page — thought returns to Do on Dashboard
 * refresh every route
 * verify persistence
 
@@ -188,7 +195,7 @@ Run regression smoke test:
 Before implementing significant features or architectural changes:
 
 * review all files in /docs
-* preserve Loopr's emotional UX principles
+* preserve Dash Dot Dot's emotional UX principles
 * preserve low-friction interaction design
 * avoid introducing urgency, guilt, or gamification mechanics
 
@@ -196,7 +203,7 @@ Before implementing significant features or architectural changes:
 
 # Philosophy
 
-Loopr QA is not only about correctness.
+Dash Dot Dot QA is not only about correctness.
 
 It should also validate:
 
@@ -213,19 +220,62 @@ The app should always feel:
 * recognition-first
 
 
-# Offline production regression
+# Production browser regression
 
-Run `npm test`, `npm run lint`, and `npm run build:pages`. The Node tests
-validate generated shell paths, asset coverage, release identity, and failed
-installation behavior. For local browser QA, when Playwright and its Chromium
-binary are available, run `node scripts/offline-browser-check.cjs` after the
-Pages build. This optional browser harness is not part of CI and adds no
-package dependency. It serves real files and HTTP 404 deep-link fallbacks,
-uses isolated browser storage, and simulates offline and successive releases.
-Run `npm run build` afterward to restore the root-path local preview.
+CI runs `npm run lint`, `npm test`, and `npm run build:pages` for dev pushes and
+PRs to dev/main. Main deployment runs these checks before publishing the Pages
+artifact. CI does not run the optional Playwright harnesses or iPhone QA.
 
-Actual iPhone PWA review requires a trusted HTTPS candidate origin. A plain
-HTTP LAN preview can check layout but cannot establish offline/PWA behavior.
-Updates intentionally wait for existing clients to close; saving drafts and
-closing all app windows is part of the update test. Do not clear storage or
-reinstall the user's app merely to force an update.
+With local Playwright and its Chromium binary available, run relevant harnesses
+against the production build. They use isolated browser profiles with disposable
+data; never point destructive test fixtures at a user's real browser profile.
+These optional harnesses are separate from the package-defined CI checks.
+
+After `npm run build:pages`, these scripts start their own Pages-like servers:
+
+```bash
+node scripts/draft-browser-check.cjs
+node scripts/labels-browser-check.cjs
+node scripts/search-browser-check.cjs
+node scripts/offline-browser-check.cjs
+node scripts/update-browser-check.cjs
+```
+
+Run sequentially. Then `npm run build` restores the root-path build. Start
+`npm run preview` in a separate terminal (expected port 4173) for these checks:
+
+```bash
+node scripts/connections-browser-check.cjs
+node scripts/constellation-browser-check.cjs
+node scripts/thought-menu-browser-check.cjs
+node scripts/scheduling-browser-check.cjs
+```
+
+Select checks appropriate to the change; preserve recorded failures and actual
+results in QA_CHECKLIST. Chromium emulation is not iPhone Safari or VoiceOver.
+
+# iPhone and update review
+
+Use a trusted HTTPS candidate and an online first load for service workers and
+full Dashboard draft ownership. HTTP LAN preview only establishes layout and
+session-level draft fallback. Temporary tunnel URLs/build hashes in older QA
+entries are historical snapshots, not durable environments. Record the current
+URL, build, iOS version, and Safari versus Home Screen mode for each review.
+Use disposable test data; different origins have separate storage. Observe
+Safari/Home Screen sharing rather than assuming it.
+
+Update now requires saving/closing blocking work and closing other app windows.
+Only the requester reloads. Later postpones the notice; normal close/reopen
+activation remains supported. Test both a blocked update and a successful one
+with two known builds. Do not clear storage or reinstall to force an update.
+Dashboard recovery is best effort, not a backup or permission to discard editor
+drafts. See [README limits](../README.md#privacy-storage-and-recovery).
+
+# Release verification
+
+After explicit publication authorization, verify GitHub deployment success,
+compare live files with the deployment artifact, and check rendered live behavior
+in isolated storage. Record commit/run identity and results separately from local
+checks. General iPhone approval does not establish every VoiceOver, Files,
+process-termination, or storage-eviction scenario. Do not mark unchecked manual
+steps complete without evidence.

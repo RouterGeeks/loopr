@@ -1,11 +1,11 @@
 # Dash Dot Dot Context
 
-Dash Dot Dot (formerly Loopr) is a mobile-first PWA for capturing open loops and deciding what to do with them.
+Dash Dot Dot (formerly Loopr) is a mobile-first PWA for capturing thoughts and deciding what to do with them.
 
 Core flow:
 Capture → Do → Doing → Done / Dropped / Delayed → Revisit
 
-Loopr is evolving from a lightweight productivity app into a calm cognitive-support tool focused on reducing executive-function friction and helping thoughts resurface safely.
+Dash Dot Dot is evolving from a lightweight productivity app into a calm cognitive-support tool focused on reducing executive-function friction and helping thoughts resurface safely.
 
 ---
 
@@ -21,7 +21,7 @@ Thought → Captured
 
 with as little interruption as possible.
 
-Loopr should optimize:
+Dash Dot Dot should optimize:
 - low cognitive load
 - low visual overwhelm
 - rapid thought capture
@@ -32,11 +32,11 @@ Loopr should optimize:
 
 # Product Philosophy
 
-Loops are recurring thoughts, not failures.
+Recurring thoughts are not failures.
 
 The app should feel calm, breathable, emotionally safe, and quietly supportive.
 
-Loopr avoids:
+Dash Dot Dot avoids:
 - urgency mechanics
 - streaks
 - productivity guilt
@@ -46,10 +46,10 @@ Loopr avoids:
 - excessive notifications
 - cluttered interfaces
 
-The app should never shame users for resurfacing loops repeatedly.
+The app should never shame users for resurfacing thoughts repeatedly.
 
-A loop resurfacing multiple times is treated as useful information:
-- the loop may be too large
+A thought resurfacing multiple times is treated as useful information:
+- the thought may be too large
 - emotionally complex
 - poorly defined
 - blocked
@@ -59,18 +59,18 @@ The app should gently support reflection without judgment.
 
 ---
 
-# Loop State Model
+# Thought State Model
 
-Loops move between five distinct states. Each state names a cognitive
+Thoughts move between five distinct states. Each state names a cognitive
 posture rather than a task-management bucket.
 
 | State | Meaning |
 |---|---|
-| Do | captured / open loops awaiting triage |
-| Doing | loops you are actively engaging with |
-| Delayed | resurfacing loops scheduled for later |
-| Done | completed loops |
-| Dropped | consciously released loops |
+| Do | captured / open thoughts awaiting triage |
+| Doing | thoughts you are actively engaging with |
+| Delayed | resurfacing thoughts scheduled for later |
+| Done | completed thoughts |
+| Dropped | consciously released thoughts |
 
 Transitions are intentional and few:
 
@@ -89,8 +89,8 @@ Do / Doing / Delay / Drop / Done are core identity elements and should
 remain simple and immediately understandable.
 
 Definitions:
-- Do → engage with this loop now (moves it into Doing)
-- Done → mark a Doing loop as complete
+- Do → engage with this thought now (moves it into Doing)
+- Done → mark a Doing thought as complete
 - Delay → revisit later
 - Drop → consciously release it
 
@@ -98,9 +98,9 @@ Definitions:
 replacement for clarity.
 
 Examples:
-- delayed loops can "resurface"
-- revisit areas may reference "waiting at the front desk"
-- loops may "resurface today"
+- delayed thoughts can "resurface"
+- revisit areas use clear Ready to revisit wording
+- thoughts may "resurface today"
 
 But users should never need to decode metaphors to use the app.
 
@@ -110,7 +110,7 @@ Functional clarity always comes first.
 
 # Neurodivergent-Friendly UX Principles
 
-Loopr is intentionally designed to reduce executive-function friction and support neurodivergent users without infantilizing them.
+Dash Dot Dot is intentionally designed to reduce executive-function friction and support neurodivergent users without infantilizing them.
 
 The app should:
 - feel calm and mature
@@ -143,7 +143,7 @@ Tone should feel:
 
 ADHD and neurodivergent users may lose contextual memory around why a thought mattered.
 
-Loopr should help reconnect context gently.
+Dash Dot Dot should help reconnect context gently.
 
 Examples:
 - subtle “Added 3 days ago”
@@ -158,7 +158,7 @@ The goal is reducing cognitive friction.
 
 # Editorial Notebook Direction
 
-Loopr's visual identity is a calm editorial notebook / lightweight
+Dash Dot Dot's visual identity is a calm editorial notebook / lightweight
 sketchbook. The earlier motel/keychain metaphor has been retired —
 references to it in older sections of this doc set are historical, not
 prescriptive.
@@ -177,7 +177,7 @@ The notebook feel is carried by:
 - cool graphite ink
 - restrained dusty lavender + muted sage accents
 - italic serif "Dash Dot Dot" wordmark with a decorative − · · mark
-- serif body type for loop content, sans for UI chrome, mono for date
+- serif body type for thought content, sans for UI chrome, mono for date
   eyebrow and small labels
 - hand-drawn pencil underlines (`HandUnderline` SVG) under H1s, empty
   state titles, and the active bottom-nav tab
@@ -202,7 +202,7 @@ The best implementations feel:
 
 # Resurfacing Philosophy
 
-A resurfacing loop is not a failure state.
+A resurfacing thought is not a failure state.
 
 Repeated resurfacing should feel:
 - informative
@@ -236,7 +236,7 @@ Not:
 
 # V1 Features
 
-Current / near-term features:
+Current live features (2026-10-18):
 - Quick text capture
 - Cmd/Ctrl + Enter capture
 - Do / Doing / Delayed / Done / Dropped state model
@@ -244,21 +244,31 @@ Current / near-term features:
 - Dedicated Doing view at `/doing`
 - Delay scheduling
 - Delayed view at `/delayed`
-- Done view (completed + released loops, with restore) at `/done`
+- Done view (completed + released thoughts, with restore) at `/done`
 - Dials (settings / control panel) at `/dials`
 - Legacy redirects: `/revisit` → `/delayed`, `/archive` → `/done`,
   `/settings` → `/dials`
 - Relative resurfacing labels
-- Edit and delete loops
-- Optional per-loop notes (collapsed by default — context breadcrumbs,
-  not project management; available in every state including Done and
-  Dropped)
+- Edit and delete thoughts
+- One optional note per thought via More → Add note/Edit note; saved previews
+  remain visible, and the editor stays closed until requested
 - Voice-to-text capture using the browser's Web Speech API: append-only,
-  transcripts always editable, no audio ever stored
-- Local storage persistence with backward-compatible migration
+  transcripts always editable, no audio stored by the app
+- Local storage persistence with read-only legacy decoding until explicit save
 - PWA install support
 - Offline shell support
 - Contextual timestamps (Added / Started / Completed / Dropped)
+- Linked counts, clearer revisit cues, default revisit time, custom date/time scheduling
+- Find across thoughts/notes, custom labels, and label/captured-date filters
+- Manual constellation/List connections and explicit shared-label suggestions
+- Versioned backup export/restore, guarded writes, and unreadable-data recovery
+- Update notice with unsaved-work and other-tab protection
+- Dashboard draft recovery (live `3626f21`) and Lavender Home Screen icons
+
+See [README](../README.md#privacy-storage-and-recovery) for the current storage,
+backup, speech privacy, and recovery limits. Browser speech recognition may use
+a provider's remote service; the app does not guarantee on-device transcription.
+Unsaved note/edit/label drafts remain temporary; no automatic connections or AI.
 
 Future considerations:
 - Gentle notifications
@@ -269,7 +279,7 @@ Future considerations:
 
 # Explicit Non-Goals
 
-Loopr is NOT:
+Dash Dot Dot is NOT:
 - a gamified productivity app
 - a hustle tool
 - a KPI dashboard
@@ -344,7 +354,8 @@ Connect the dots adds user-created relationships between saved thoughts.
 Graph and List are alternate views of the same manual connections; dots open
 thought details. Connections never change state or scheduling. There is no AI
 processing or remote request. Connections live in the same guarded thought
-storage and are included in version 2 backups; version 1 remains importable.
+storage. Exports use v2 for connection fields without labels, v3 when label
+fields exist, otherwise v1. The current reader accepts v1/v2/v3.
 See PROJECT_PLAN and QA_CHECKLIST for scope and review status.
 
 
@@ -356,7 +367,7 @@ dots, but never create automatic links. Labeled backups use version 3; existing
 v1/v2 remain readable. See PROJECT_PLAN and QA_CHECKLIST for scope and status.
 
 
-## Dashboard draft recovery (local candidate)
+## Dashboard draft recovery (live `3626f21`)
 
 Unfinished Dashboard text is separate from saved thoughts and backups. Supported
 secure browsers use per-draft ownership locks for safe reload/closed-tab recovery;

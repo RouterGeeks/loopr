@@ -4,7 +4,7 @@
 
 Dash Dot Dot (formerly Loopr) is a mobile-first PWA designed to reduce cognitive friction and help users safely capture and revisit recurring thoughts.
 
-Loopr is intentionally evolving beyond a traditional productivity app.
+Dash Dot Dot is intentionally evolving beyond a traditional productivity app.
 
 The goal is not maximizing output.
 The goal is reducing executive-function friction while preserving clarity, calmness, and emotional safety.
@@ -12,8 +12,8 @@ The goal is reducing executive-function friction while preserving clarity, calmn
 Core philosophy:
 Capture → Do → Doing → Done / Dropped / Delayed → Revisit
 
-Loopr distinguishes between engagement (Doing) and completion (Done).
-Pressing "Do" on an open loop moves it into Doing — not into Done. This
+Dash Dot Dot distinguishes between engagement (Doing) and completion (Done).
+Pressing "Do" on an open thought moves it into Doing — not into Done. This
 separation supports neurodivergent cognition by giving "in progress" its
 own visible state.
 
@@ -56,7 +56,7 @@ Examples:
 ---
 
 ## Emotional Safety
-Loopr avoids:
+Dash Dot Dot avoids:
 - streaks
 - urgency mechanics
 - red overdue states
@@ -64,7 +64,7 @@ Loopr avoids:
 - anxiety-inducing dashboards
 - manipulative engagement loops
 
-Delayed loops are treated as resurfacing thoughts, not failures.
+Delayed thoughts are treated as resurfacing thoughts, not failures.
 
 ---
 
@@ -135,80 +135,50 @@ All AI-assisted development sessions should review /docs before making significa
 
 # Current Feature Set
 
-## Capture
-- Quick text capture
-- Multiline support
-- Cmd/Ctrl + Enter submit
-- Voice-to-text via browser SpeechRecognition (append-only; transcripts
-  editable; mic hidden + calm fallback when API unsupported; no audio
-  stored)
-- Immediate local persistence
+Current as of 2026-10-18, through live release `3626f21`.
 
-## Loop Management
-- Do (engage, moves to Doing)
-- Done (complete, from Doing)
-- Delay (re-schedule, from any state)
-- Drop (release)
-- Edit
-- Delete
-- Restore from Done or Dropped back to Do
-- Optional note on any loop (collapsed; expand to add/edit; small dot
-  indicator when a note exists; works in Do / Doing / Delayed / Done /
-  Dropped)
-- Relative timestamps (Added / Started / Completed / Dropped)
+- **Capture:** multiline text, Cmd/Ctrl+Enter, optional browser speech recognition,
+  explicit save, and protected Dashboard draft recovery across navigation/reload.
+- **Thoughts:** Do / Doing / Delayed / Done / Dropped; state-appropriate actions,
+  confirmed deletion, restore from Done/Dropped, timestamps, and one note via
+  More → Add note/Edit note with a saved preview.
+- **Revisit:** Ready to revisit cue and grouped Delayed view; default time in
+  Dials, quick choices, and explicit custom date/time scheduling. No notifications.
+- **Find:** header search at `/find`, saved text/note matching, custom labels,
+  and inclusive captured-date filters. Queries/filters stay local.
+- **Connect the dots:** manually created links, clickable constellation and List,
+  shared-label suggestions requiring explicit Connect. No automatic links or AI.
+- **Dials:** linked state counts, default revisit preference, versioned export/
+  whole-dataset restore, original-data download for unreadable storage, Clear All.
+- **Reliability:** guarded writes, read-only legacy decoding, stale-tab review,
+  offline shell after online installation, protected update notice, Lavender icons.
+- **Navigation:** Dashboard / Doing / Delayed / Done / Dials; secondary Find,
+  thought detail, connections, and label editing. Legacy redirects remain.
 
-## Delay Scheduling
-- Tomorrow
-- This Weekend
-- Next Week
-- Pick Date
-- Ready to revisit labeling with original scheduled-date context
-- Human-readable resurfacing labels
+[README storage and recovery limits](../README.md#privacy-storage-and-recovery)
+is the current reference: Dashboard drafts are separate best-effort recovery;
+editor drafts remain temporary; backups exclude drafts and preferences; browser
+speech recognition may use remote processing.
 
-## Dashboard (route /)
-- Capture input with Cmd/Ctrl + Enter shortcut
-- Conditional link below capture showing how many delayed thoughts are ready
-- Workflow legend: Do / Delay / Drop
-- List of Do (open) loops
-- Autofocus on mount and on return navigation
+# Next priorities — proposed, not implementation approval
 
-## Doing (route /doing)
-- Dedicated view for actively engaged loops
-- Page heading identifies the Doing state; redundant status pills removed
-- "Started X" contextual timestamp
-- Transitions to Done, Delayed, or Dropped
+1. Reconcile documentation with the shipped app (this documentation-only review).
+2. Consider recovery for unsaved notes and thought edits after agreeing scope;
+   retain explicit Save/Cancel and protect other tabs and newer saved content.
+3. Complete focused iPhone VoiceOver and Files backup/restore QA, recording mode,
+   iOS version, and individual results rather than treating general approval as
+   proof of every device behavior.
 
-## Delayed (route /delayed)
-- Ready to revisit / Later / Choose a date groups, sorted by revisit time
-- Relative resurfacing states
-- Empty-state support
-
-## Done (route /done)
-- Done and Dropped surfaced as named sections
-- Restore returns loops to Do
-- Permanent delete with confirmation
-- Empty-state support
-
-## Dials (route /dials)
-- Four-tile count grid: Do / Doing / Delayed / Done
-- Export and restore versioned JSON backups (live)
-- Clear all data
-- Confirmation protection
-
-## Legacy route redirects
-- /revisit → /delayed
-- /archive → /done
-- /settings → /dials
-
-## PWA
-- Installable app
-- Offline shell support
-- PNG icon support
-- Mobile-first behavior
+AI, automatic connections, cloud sync, notifications, and further interface
+changes remain deferred. No app work is authorized by this planning section.
 
 ---
 
-# Completed Sprints
+# Completed Sprints — historical record
+
+The following sprint snapshots describe behavior and test evidence at the time.
+Later releases supersede earlier interfaces, cache names, and backup versions.
+Use the current feature summary and release sections for present behavior.
 
 ## Sprint 1 — App Shell
 Completed:
@@ -403,15 +373,13 @@ Completed:
   transcripts remain editable, voice flow works in notes and persists
   as edited text, error states surface calmly, no console errors
 
-Compatibility notes:
-- Chrome/Edge: full support
-- Safari (macOS + iOS): supports `webkitSpeechRecognition`; requires a
-  user gesture (button tap is fine) and microphone permission
-- Firefox desktop: no support → fallback message
-- Capacitor wrapper: the Web API works inside iOS WebView when the host
-  app adds `NSSpeechRecognitionUsageDescription` and
-  `NSMicrophoneUsageDescription` to Info.plist. No app-side code change
-  is needed.
+Compatibility clarification (2026-10-18): browser support and provider behavior
+vary by browser/version and installed mode. Feature detection is not proof of
+successful recognition or offline operation. Mocked tests above validate app
+handling, not actual microphone/provider behavior. A future native wrapper
+would need its own integration and device verification; plist permissions alone
+do not establish support. The app stores transcripts, not audio; the browser
+may send audio to a remote recognition service. See the README privacy section.
 
 No state model, persistence schema, workflow logic, or stored data
 shape changed. The only new behaviour is the transcribed-text input
@@ -525,7 +493,13 @@ handlers to resolve the lint error (`e4dd5bb`).
 
 # Current work and release status
 
-## Dashboard draft recovery — iPhone approved, publication pending
+## Dashboard draft recovery — live (`3626f21`)
+
+Published to main and GitHub Pages on 2026-10-18. Deployment run
+[39158350787](https://github.com/RouterGeeks/loopr/actions/runs/39158350787)
+succeeded. Live HTML, worker, manifest, icon, and JS/CSS matched the deployment
+artifact; isolated live draft/offline checks passed. These are the recorded
+release results, not a new device test during this documentation review.
 
 - Dashboard capture text is retained across in-app navigation and stored locally
   as it changes. Returning/reloading restores the owned draft with a quiet Draft
@@ -560,7 +534,8 @@ Local checks and actual iPhone results are tracked separately in QA_CHECKLIST.
 On 2026-10-18 the user reported that draft recovery looks good on their iPhone
 and authorized commit/push to dev, including the plan, QA checklist, release
 status corrections, and tests. Individual device steps and iOS version were not
-supplied; publication remains a separate step.
+supplied; individual VoiceOver, process-termination, and storage-eviction
+checks remain unverified despite publication.
 
 
 ## Find a thought — live (`77b57a7`)
@@ -570,11 +545,12 @@ supplied; publication remains a separate step.
   updates, so opening search does not discard that work.
 - Search saved thought text and its single note across Do, Doing, Delayed, Done,
   and Dropped. Match every whitespace-separated word, case-insensitively and
-  literally; no AI, fuzzy matching, labels, remote queries, or new dependencies.
+  literally; no AI, fuzzy matching, remote queries, or new dependencies.
+  Labels and date filters were added in `290457f`.
 - Results keep saved order, include state and text/note excerpts around matches,
   and open the existing thought detail. Back to search retains the query in
   session navigation history, not the URL or saved-thought storage.
-- Blank searches show guidance. No matches, unreadable data, and stale-tab data
+- Blank searches with no active filters show guidance. No matches, unreadable data, and stale-tab data
   have distinct handling using the existing storage notice/review controls.
   Show more exposes further results in batches of 20. /find works offline.
 - Storage schema, backups, states, schedules, and manual connections are unchanged.
@@ -649,7 +625,8 @@ Saved-thought storage and update activation protections are unchanged.
 ## Connect the dots — live (`e33e775`, `e6c2304`)
 
 - Manual, undirected connections between existing thoughts in all five states.
-  No AI processing, suggestions, API keys, backend, or new dependencies.
+  No AI processing, API keys, backend, or new dependencies. Shared-label
+  suggestions were added later in `290457f`; links remain explicit.
 - Active cards expose Connect the dots in a compact More panel; completed/dropped cards
   expose it alongside their existing controls. Current bottom navigation remains.
 - A focused graph shows up to four neighbors per page. The local constellation
@@ -671,9 +648,10 @@ Saved-thought storage and update activation protections are unchanged.
   closed. Successful mutations prune links to deleted thoughts atomically with
   the existing write. State changes and Restore preserve links. Removing a
   connection leaves both thoughts untouched; Clear All removes both.
-- Backups with connections use version 2 so older builds reject them rather
-  than silently discarding links. Backups without connections retain version 1;
-  the new reader accepts both. Restoring an old backup replaces the full dataset
+- Exports with label fields use v3; connection fields without labels select v2;
+  otherwise exports use v1. Older builds reject unsupported versions rather
+  than silently discarding links/labels. The current reader accepts v1/v2/v3.
+  Restoring an old backup replaces the full dataset
   and therefore its connections too. Existing app identifier remains loopr.
 - AI suggestions, automatic linking, whole-library graphs, and sync are deferred.
 - Local refinement: More opens matching Note/Connect/Edit/Delete rows without expanding
@@ -705,8 +683,9 @@ AI suggestions remain deferred.
 - Compatibility identifiers intentionally stay `loopr`: storage/preference keys,
   backup `app` identifier and version, write lock, service-worker protocol/cache
   namespace, repository, package name, and /loopr/ Pages path. Existing thoughts,
-  settings, and older exports need no migration. New exports also remain readable
-  by the previous app. No domain/repository move or publication is included.
+  settings, and older exports need no branding migration. The branding-only
+  release retained its backup version; subsequent connections/labels use v2/v3
+  which older builds may reject. No domain/repository move is included.
 
 Local checks: lint, both builds, 19 Node tests, all-page layout at 320/375/390px
 and 200% text, old stored thoughts/preferences, and backup export/restore passed.
@@ -798,7 +777,8 @@ old shell also omitted the built JS/CSS and cleared unrelated origin caches.
 - New workers install the complete shell before activation. They wait until
   existing app windows close; no forced reload or draft interruption. A failed
   install leaves the previous release usable. Open windows can intentionally
-  remain on the old version until all are closed and Loopr is reopened.
+  remain on the old version. The later update-notice release (`029424c`) adds
+  guarded Update now activation; normal close/reopen still works.
 - Cleanup targets this app's scope-specific caches and known legacy Loopr
   caches, preserving unrelated caches. Thought storage is untouched.
 - No new dependencies, screens, storage migration, or notifications.
@@ -827,8 +807,9 @@ explicitly confirmed by this approval.
 
 - Capture, editing, notes, transitions, deletion, and restore now persist
   before updating the displayed data or closing the editor. Failed saves
-  retain drafts; a calm message explains retry/review options. Drafts are
-  in memory: keep the page open or copy them before navigating/reloading.
+  retain drafts; a calm message explains retry/review options. Note/edit/label
+  drafts remain in memory: save or copy before leaving. Dashboard drafts gained
+  separate best-effort recovery in `3626f21`.
 - Loading and legacy migration no longer write to storage. Invalid JSON,
   malformed records, and duplicate IDs are rejected without replacing the
   original bytes. Known legacy statuses and numeric string IDs still load.
@@ -946,8 +927,9 @@ behavior. The keyboard-retention experiment remains reverted.
 
 Dials → Data now offers a dated JSON backup download and a labeled file
 picker for restoration. Backups contain all five loop states, text, notes,
-IDs, and available timestamps, with `app: "loopr"`, `version: 1`, and an
-export timestamp. No account, server, or new dependency is required.
+IDs, and available timestamps. The original release used version 1; current
+exports select v1/v2/v3 according to connection/label fields, with `app: "loopr"`
+and an export timestamp. Drafts and preferences are excluded. No account, server, or new dependency is required.
 
 Restore validates the entire file before offering an inline confirmation.
 It rejects unsupported versions, malformed records, duplicate IDs, invalid
@@ -977,7 +959,8 @@ assistive-technology review have not been explicitly confirmed; local
 browser checks do not establish those device behaviors.
 
 Voice capture, backup, accessibility, and resurfacing improvements are live.
-Data reliability and offline improvements are also live. Manual thought connections are live; Find a thought is live; current work is local review of Dashboard draft recovery.
+Data reliability and offline improvements are also live. Manual thought connections are live; Find a thought is live; Dashboard draft recovery is live (`3626f21`). Current work is documentation
+reconciliation for review, with no app changes.
 
 ## iPhone Safari capture investigation — reverted after device test
 
@@ -1022,7 +1005,7 @@ These are exploratory and secondary to maintaining clarity and low friction.
 
 # Explicit Non-Goals
 
-Loopr is NOT:
+Dash Dot Dot is NOT:
 - a gamified productivity system
 - a hustle/productivity-maximization tool
 - a KPI dashboard

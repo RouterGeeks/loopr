@@ -1,4 +1,4 @@
-# Loopr QA Notes
+# Dash Dot Dot QA Notes
 
 This document captures intentional product decisions, QA observations, and behavioral notes discovered during development and testing.
 
@@ -15,20 +15,20 @@ These notes exist to:
 
 ## State Model (Sprint 10) + Nav Terminology (Sprint 11) + Routes (Sprint 12)
 
-Loops live in one of five states: Do, Doing, Delayed, Done, Dropped.
+Thoughts live in one of five states: Do, Doing, Delayed, Done, Dropped.
 
-* **Do** — captured/open loops awaiting triage. Lives on the Dashboard page (route `/`).
-* **Doing** — actively engaged loops. Lives on the Doing page (route `/doing`).
-* **Delayed** — resurfacing loops scheduled for later. Lives on the Delayed page (route `/delayed`).
-* **Done** — completed loops. Lives on the Done page (route `/done`), in the Done section.
-* **Dropped** — consciously released loops. Lives on the Done page, in the Dropped section.
+* **Do** — captured/open thoughts awaiting triage. Lives on the Dashboard page (route `/`).
+* **Doing** — actively engaged thoughts. Lives on the Doing page (route `/doing`).
+* **Delayed** — resurfacing thoughts scheduled for later. Lives on the Delayed page (route `/delayed`).
+* **Done** — completed thoughts. Lives on the Done page (route `/done`), in the Done section.
+* **Dropped** — consciously released thoughts. Lives on the Done page, in the Dropped section.
 
 "Do" is engagement, not completion. Completion is only reachable from
 Doing → Done. This separation gives in-progress work its own visible
 state, which matters for neurodivergent users who need to see what they
 are currently holding.
 
-Restore from the Done page returns the loop to Do (not directly to
+Restore from the Done page returns the thought to Do (not directly to
 Doing), so the user can decide what to do with it as if it were freshly
 captured.
 
@@ -39,10 +39,11 @@ redirects:
 * `/archive` → `/done`
 * `/settings` → `/dials`
 
-This keeps installed PWAs and existing bookmarks working. The service
+This keeps installed PWAs and existing bookmarks working. Historically, the service
 worker cache version was bumped to `loopr-shell-v5` when the new routes
 joined the precache SHELL, so old caches are cleared on next
-service-worker activation.
+service-worker activation at that release. Current builds use content-derived,
+scope-specific cache identities and guarded update activation.
 
 **Renaming trail** (for archaeology): the Done page was originally
 called Archive, then Resolved (Sprint 10), then Done (Sprint 11). Its
@@ -61,14 +62,13 @@ is desktop-only. It renders only when:
 * `window.Capacitor` is undefined (i.e. not running inside a Capacitor
   native wrapper)
 
-On phones and tablets the hint would just be noise — no physical keyboard
-is reachable. Inside Capacitor, even if the primary pointer happens to be
+The hint is hidden on coarse-pointer devices and below the small-screen
+breakpoint to avoid crowding; hardware-keyboard shortcuts still work. Inside Capacitor, even if the primary pointer happens to be
 fine (e.g. iPad with keyboard), the hint stays hidden, because the host
 app should be the source of truth for input affordances in that context.
 
-The detection runs once at mount via `useMemo`. If a user plugs in a
-keyboard mid-session, the hint will appear after the next reload — a
-minor staleness we accept to keep the implementation calm.
+The detection runs once at mount via `useMemo`. Pointer capability detection does not establish whether a physical keyboard
+is connected; the hint is only an affordance, not a shortcut gate.
 
 ---
 
@@ -76,11 +76,13 @@ minor staleness we accept to keep the implementation calm.
 
 Voice-to-text uses the browser's `SpeechRecognition` (Chrome/Edge) or
 `webkitSpeechRecognition` (Safari, including iOS) directly. There is no
-backend, no cloud transcription, and no Anthropic/OpenAI integration.
+app transcription backend and no Anthropic/OpenAI integration. The browser
+may use a remote recognition provider; on-device processing and offline voice
+are not guaranteed. See [MDN SpeechRecognition](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition).
 
 Hard constraints baked into the implementation:
 
-* **No audio is ever stored.** The Web Speech API exposes transcripts
+* **The app does not record or store audio.** The Web Speech API exposes transcripts
   only; we never touch MediaRecorder, AudioBuffer, or Blob. Storage
   schema unchanged.
 * **Transcripts are always editable.** Voice fills (or appends to) the
@@ -112,15 +114,10 @@ Error → user-facing copy mapping:
 | `aborted`          | (silent — intentional)                  |
 | anything else      | "Voice capture had a hiccup."           |
 
-Capacitor / iOS wrapper readiness:
-
-* The Web API works inside an iOS WKWebView when the host app adds
-  `NSSpeechRecognitionUsageDescription` and
-  `NSMicrophoneUsageDescription` to its Info.plist.
-* No app-side code change is needed for the wrapper. If we ever want
-  native-quality transcription on iOS, we could swap the hook
-  implementation for `@capacitor-community/speech-recognition` behind
-  the same `useSpeechCapture` interface.
+Native-wrapper support is unverified. A future Capacitor/WKWebView wrapper
+requires its own API/integration and device tests; permissions alone do not
+establish speech-recognition support. Browser feature detection and mocked QA
+do not prove actual microphone, provider, or installed-mode availability.
 
 What voice is **not**:
 
@@ -128,12 +125,13 @@ What voice is **not**:
   user edits)
 * not background recording — listening only fires from explicit user
   taps
-* not cloud-routed — everything happens locally in the browser
+* not a guarantee of local-only processing — browser and system dictation
+  providers control their own processing and retention
 
 ## Two voice paths, one text field
 
-Every platform Loopr runs on has a **system-level dictation** path that
-types speech into any focused text field, independent of any web API:
+Many devices offer **system-level dictation**, depending on settings and
+availability, independently of the web speech API:
 
 | Platform | System dictation |
 |---|---|
@@ -142,7 +140,7 @@ types speech into any focused text field, independent of any web API:
 | macOS | Fn key twice / Edit → Start Dictation |
 | Windows | Win + H |
 
-Loopr's in-app mic is a **convenience**, not the only path. When the
+Dash Dot Dot's in-app mic is a **convenience**, not the only path. When the
 Web Speech API is unsupported (notably iOS PWA mode in some versions),
 users can still dictate via their keyboard. The fallback copy points
 them there explicitly.
@@ -152,31 +150,18 @@ fallback message works universally.
 
 ---
 
-## Loop Notes (Sprint 13)
+## Thought notes — current behavior
 
-Notes are intentionally minimal: a single optional string per loop,
-collapsed by default, accessible through a "Note" button in the utility
-row of every card. They are framed as **context breadcrumbs**, not task
-management — Loopr is not becoming a project tracker.
+Each thought has one optional note, available in every state through
+More → Add note/Edit note. The editor is closed by default; a saved preview
+remains visible beneath the thought. Notes are context, not a comment thread
+or checklist.
 
-Behavior:
-
-* Notes exist in every state (Do, Doing, Delayed, Done, Dropped)
-* Notes persist through state transitions and through Restore
-* An empty Save deletes the field entirely (no empty-string artifacts)
-* Cancel and Esc discard the draft
-* A small lavender dot on the Note button indicates a note exists, but
-  there is no count, no preview, and no metric — recognition only
-
-What notes are NOT:
-
-* not a comments thread
-* not a todo sublist
-* not a checklist
-* not a place for assignments, due dates, or tags
-
-If we add structure here later (e.g. a second field for "next action"),
-it should still feel like context, not project management.
+- Save replaces the one note; empty Save removes it.
+- Cancel/Escape discards unsaved edits and preserves the saved note.
+- Notes survive state changes, restore from Done/Dropped, and JSON backups.
+- Failed saves keep the open draft for retry. Note drafts are in memory only;
+  save or copy before reload/closure. Dashboard recovery does not cover notes.
 
 ---
 
@@ -186,35 +171,35 @@ Drop is intentionally reversible.
 
 Behavior:
 
-* Drop moves a loop into the Done page → Dropped section
-* Dropped loops can be restored later (to Do)
+* Drop moves a thought into the Done page → Dropped section
+* Dropped thoughts can be restored later (to Do)
 * Drop does NOT require confirmation
 
 Delete is permanent.
 
 Behavior:
 
-* Delete permanently removes the loop
+* Delete permanently removes the thought
 * Delete requires confirmation
-* Deleted loops cannot be restored
+* Deleted thoughts cannot be restored
 
 Rationale:
-Dropping a loop is intended to feel low-pressure and emotionally safe.
+Dropping a thought is intended to feel low-pressure and emotionally safe.
 Permanent deletion should require deliberate confirmation.
 
 ---
 
 ## Delay / Resurface Philosophy
 
-Delayed loops are not failures.
+Delayed thoughts are not failures.
 
-Loopr intentionally avoids:
+Dash Dot Dot intentionally avoids:
 
 * overdue language
 * urgency
 * shame-oriented productivity mechanics
 
-Delayed loops are treated as resurfacing thoughts.
+Delayed thoughts are treated as resurfacing thoughts.
 
 The app should feel:
 
@@ -240,7 +225,7 @@ Delay actions should schedule future resurfacing rather than same-day deferral.
 
 ## Editorial Notebook Theme
 
-The motel/keychain metaphor was retired in Sprint 16. Loopr's current
+The motel/keychain metaphor was retired in Sprint 16. Dash Dot Dot's current
 identity is a calm editorial notebook / lightweight sketchbook (cool
 stone paper, cool graphite ink, dusty lavender + muted sage accents,
 hand-drawn pencil sketch motifs).
@@ -297,22 +282,17 @@ Avoid:
 
 ---
 
-## Card Action Hierarchy (Sprint 9 → 17)
+## Card action hierarchy — current behavior
 
-Hierarchy on LoopCard's utility row evolved with the visual identity:
+Primary state actions remain visible where applicable. More (⋯) opens a compact
+floating disclosure with Add note/Edit note, Connect the dots, Edit labels,
+Edit thought where supported, and Delete thought. Completed/dropped thoughts
+retain their state-appropriate controls. There is no separate Note or Close
+button and no expanded inline toolbar. Saved note previews remain visible.
 
-1. Primary row — Do / Delay / Drop on Do/Delayed cards; Done / Delay
-   / Drop on Doing cards.
-2. Always-visible secondary — Note button (lavender dot indicates a
-   note exists).
-3. Hidden behind a More (⋯) overflow button — Edit, Delete (trash
-   icon), and a Close (✕) action.
-
-The Sprint 17 change reduced default-visible actions per card from
-six to three: tap More to reveal Edit + trash inline. Delete still
-requires the existing confirmation step, so the destructive action
-is never one tap from default. Trash is recessive charcoal — never
-red, per the "no warning states" rule.
+Actions use ordinary link/button keyboard navigation. Selection, Escape,
+outside tap, or focus leaving dismisses the panel; Escape returns focus to More.
+Delete still requires confirmation. No connection count is shown.
 
 ---
 
@@ -336,17 +316,20 @@ it at all.
 
 ## localStorage
 
-Loopr currently persists data using:
+Dash Dot Dot currently persists data using:
 
 ```txt
 loopr.loops
 ```
 
-All read/write goes through `src/lib/loops.ts`. The loader detects legacy
+Saved-thought reads/writes go through `src/lib/loops.ts`. The loader detects legacy
 schemas (V1 `pending`/`delay`/`drop`/`do`-as-completed and V4 `active`)
-and normalizes them into the current model. Once the loader has touched
-a dataset, the writer always saves new-schema strings, so the legacy
-detection only fires once per device.
+and decodes them in memory into the current model. Loading never rewrites
+storage. Only an explicit successful mutation writes current-schema values.
+Invalid data is preserved for recovery; stale writes require review/retry.
+`src/lib/captureDraft.ts` owns separate Dashboard draft storage; the default
+revisit preference is separate too. See [README limits](../README.md#privacy-storage-and-recovery)
+for backup scope, session fallback, browser storage loss, and other-tab ownership.
 
 Persistence is verified across:
 
@@ -355,7 +338,7 @@ Persistence is verified across:
 * preview mode
 * offline mode
 * upgrade from V4 (`active`/`delayed`/`done`/`dropped`) — existing
-  `active` loops become `do`, all other states preserved
+  `active` thoughts become `do`, all other states preserved
 
 ---
 
@@ -366,7 +349,7 @@ The following errors may appear during development:
 * “Could not establish connection. Receiving end does not exist”
 * “message channel closed before a response was received”
 
-These are browser-extension related and not Loopr application errors.
+These are browser-extension related and not Dash Dot Dot application errors.
 
 Ignore unless app functionality is affected.
 
@@ -386,13 +369,14 @@ Ignore unless app functionality is affected.
 * validates PWA functionality
 * validates offline/caching/installability
 
-Preview mode is the final QA validation target before commit/merge.
+Production preview validates the candidate; actual iPhone testing and live
+release verification are separate evidence. See [QA workflow](QA_WORKFLOW.md).
 
 ---
 
 # UX QA Focus Areas
 
-Loopr QA should validate:
+Dash Dot Dot QA should validate:
 
 * technical correctness
 * emotional safety

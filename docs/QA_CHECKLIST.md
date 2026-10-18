@@ -4,6 +4,8 @@
 
 ## Current release status — reconciled 2026-10-18
 
+Recorded release evidence; this documentation review adds no new device results.
+
 - Live: linked counts/scheduling (`1428fed`), update protection (`029424c`),
   Dash Dot Dot identity (`9ba5f9c`), manual connections/menu (`e33e775`),
   constellation (`e6c2304`), Lavender icons (`3b9b459`), and offline routing (`aa3af0b`).
@@ -13,7 +15,10 @@
 - Find a thought (`77b57a7`) is live; deployment, artifact comparison, and
   isolated live search/draft/offline checks passed. Labels/filters (`290457f`) are also live; deployment, artifact comparison, and
   isolated live label/filter/backup/offline checks passed. Dashboard draft recovery
-  is approved on iPhone for commit/push to dev; publication remains pending.
+  is live (`3626f21`, 2026-10-18). Deployment run
+  [39158350787](https://github.com/RouterGeeks/loopr/actions/runs/39158350787)
+  passed; live artifact comparison and isolated live draft/offline checks passed.
+  User iPhone approval did not include iOS version or individual test results.
 - Older “local review” / “publication pending” entries below are historical
   snapshots, superseded by this release record. Unchecked manual/device steps
   remain unverified; publication does not establish VoiceOver or every iPhone test.
@@ -33,7 +38,7 @@
 
 # Build & Startup
 
-* [ ] `npm run build` succeeds
+* [ ] `npm test`, `npm run lint`, `npm run build:pages`, and `npm run build` succeed
 * [ ] `npm run dev` starts correctly
 * [ ] `npm run preview` starts correctly
 * [ ] No unexpected console errors
@@ -66,13 +71,13 @@
 
 # Capture Flow
 
-* [ ] "+" Add Loop button disabled (lavender at reduced opacity) when empty
+* [ ] "+" Add Thought button disabled (lavender at reduced opacity) when empty
 * [ ] Valid text enables the "+" button at full lavender
-* [ ] "+" creates loop
+* [ ] "+" creates thought
 * [ ] Textarea clears after add
 * [ ] Capture textarea has no visible internal ruled rows when empty
 * [ ] Capture container has a hairline border but no card-shadow weight
-* [ ] Multiple loops stack correctly
+* [ ] Multiple thoughts stack correctly
 * [ ] Autofocus works
 * [ ] FAB (lavender +) visible on every non-Dashboard page; tap navigates to /
 
@@ -97,14 +102,14 @@
 * [ ] Mic button visible inside NoteEditor (supported browsers)
 * [ ] First mic tap requests microphone permission (real browser)
 * [ ] Listening… indicator appears while recording
-* [ ] Spoken text fills the loop textarea
+* [ ] Spoken text fills the thought textarea
 * [ ] Spoken text appends to a non-empty textarea with a space separator
-* [ ] Transcript is editable before Save / Add Loop
+* [ ] Transcript is editable before Save / Add Thought
 * [ ] Spoken text in a note appends to the existing note value
 * [ ] Permission denied shows "Microphone permission was denied."
 * [ ] Silence shows "Didn't catch that."
 * [ ] No microphone shows "No microphone found."
-* [ ] In an unsupported browser (Firefox desktop, iOS PWA mode), the
+* [ ] When the browser/mode lacks the speech API, the
       mic is hidden and "Voice capture isn't built into this browser.
       Try your keyboard's mic instead." appears
 * [ ] No audio data appears in localStorage — only the transcribed text
@@ -113,24 +118,24 @@
 
 ---
 
-# Loop Actions
+# Thought Actions
 
-* [ ] Do moves loop from Do → Doing
-* [ ] Done moves loop from Doing → Done (Done section)
-* [ ] Delay moves loop from any state → Delayed
-* [ ] Do on a Delayed loop moves it to Doing
-* [ ] Drop moves loop from Do / Doing / Delayed → Done (Dropped section)
+* [ ] Do moves thought from Do → Doing
+* [ ] Done moves thought from Doing → Done (Done section)
+* [ ] Delay moves an active thought (Do/Doing/Delayed) → Delayed
+* [ ] Do on a Delayed thought moves it to Doing
+* [ ] Drop moves thought from Do / Doing / Delayed → Done (Dropped section)
 * [ ] Edit works in Do, Doing, and Delayed states
 * [ ] Delete works in every state
-* [ ] Restore from Done page sends loop back to Do
+* [ ] Restore from Done page sends thought back to Do
 * [ ] Delete confirmation appears
 * [ ] No double borders/cards
 * [ ] Doing dot is visually distinct (sage tone) but calm
 
-# Compact thought actions — local review
+# Compact thought actions — current regression
 
 * [ ] Default LoopCard footer shows only More (⋯); Note is inside the menu
-* [ ] Tapping More opens a compact floating panel with Add note/Edit note, Connect the dots, Edit thought, and Delete thought; the card does not expand or move.
+* [ ] Tapping More opens a compact floating panel with Add note/Edit note, Connect the dots, Edit labels, Edit thought where supported, and Delete thought; the card does not expand or move.
 * [ ] Selecting an action, tapping outside, tapping More again, or pressing Escape closes the panel. No extra Close icon is shown.
 * [ ] Opening focuses Add note/Edit note; Tab/Shift+Tab follow ordinary links/buttons and dismiss on leaving. Escape returns focus to More.
 * [ ] Clicking an outside control dismisses without stealing focus; edit/delete Cancel returns to More.
@@ -147,7 +152,7 @@
 
 * [ ] Add note/Edit note available through More in every state (Do, Doing, Delayed, Done, Dropped)
 * [ ] Notes are collapsed by default (no expanded editor on first render)
-* [ ] Clicking Note opens an inline editor with a focused textarea
+* [ ] Choosing Add note/Edit note opens an inline editor with a focused textarea
 * [ ] Save persists the note to localStorage
 * [ ] Edit replaces the previous value
 * [ ] Empty Save clears the note (no empty-string artifact in storage)
@@ -176,12 +181,12 @@
 # Delayed (route /delayed)
 
 * [ ] Page heading reads "Delayed"
-* [ ] Only delayed loops appear
-* [ ] Delayed loops editable
-* [ ] Delayed loops deletable
-* [ ] Do from Delayed moves loop to Doing
-* [ ] Drop from Delayed moves loop to Done page (Dropped section)
-* [ ] Delay from Delayed re-schedules the loop
+* [ ] Only delayed thoughts appear
+* [ ] Delayed thoughts editable
+* [ ] Delayed thoughts deletable
+* [ ] Do from Delayed moves thought to Doing
+* [ ] Drop from Delayed moves thought to Done page (Dropped section)
+* [ ] Delay from Delayed re-schedules the thought
 * [ ] Empty state displays correctly
 
 ## Resurfacing clarity
@@ -192,7 +197,7 @@
 * [ ] Ready and future groups are chronological; missing/invalid dates stay visible under Choose a date
 * [ ] Ready cards preserve original scheduled date/time; future labels distinguish Today at [time], Tomorrow, and later dates
 * [ ] Due-time and midnight updates occur while open; tab/app return refreshes stale labels
-* [ ] Time-driven changes preserve capture text, open note/edit drafts, focus, and loop state
+* [ ] Time-driven changes preserve capture text, open note/edit drafts, focus, and thought state
 * [ ] Rescheduling updates group/count; Do moves to Doing and Drop moves to Done as before
 * [ ] Check daylight-saving transitions, local timezone changes, and overnight background return
 * [ ] On iPhone, review cue discoverability, VoiceOver headings/link text, and background/foreground behavior
@@ -204,7 +209,7 @@
 * [ ] Page heading reads "Done"
 * [ ] Done section works
 * [ ] Dropped section works
-* [ ] Restore sends loops back to Do
+* [ ] Restore sends thoughts back to Do
 * [ ] Permanent delete works
 * [ ] Empty state displays correctly
 * [ ] Page feels calm and uncluttered
@@ -218,18 +223,18 @@
 * [ ] Counts update live after Clear All
 * [ ] Counts reload when the confirmation modal closes
 * [ ] Clear All confirmation works
-* [ ] Clear All resets app correctly
+* [ ] Clear All removes saved thoughts, notes, labels, and connections; retains Dashboard drafts and default revisit time
 
 ## Backup export and restore
 
-* [ ] Export downloads a dated JSON file with all loops, notes, states, and dates
+* [ ] Export downloads a dated JSON file with all thoughts, notes, labels, connections, states, and dates; drafts/preferences are excluded
 * [ ] Restore validates a selected file before any storage changes
 * [ ] Confirmation clearly says replacement, not merge; Cancel keeps current data
-* [ ] Empty backups explicitly warn that restoration removes all current loops
+* [ ] Empty backups explicitly warn that restoration removes all current thoughts
 * [ ] Full export/restore round trip preserves data after refresh and navigation
 * [ ] Invalid JSON, unsupported versions, duplicate IDs, malformed records, and files over 5 MB are rejected
 * [ ] Storage-write failure leaves existing data and counts intact
-* [ ] Changes to current loops during review require choosing the backup again
+* [ ] Changes to current thoughts during review require choosing the backup again
 * [ ] Dials counts update after restore
 * [ ] File selection and confirmation work with keyboard and screen reader
 * [ ] iPhone Safari can save an export and select it again from Files
@@ -253,10 +258,10 @@
 * [ ] Route changes preserve state
 * [ ] Done page (Done + Dropped) persists
 * [ ] Delay timestamps persist
-* [ ] `startedAt` persists for Doing loops
+* [ ] `startedAt` persists for Doing thoughts
 * [ ] `note` field persists for any state
-* [ ] Legacy data (`active` / `pending` / `delay` / `drop` / legacy `do`) migrates on first load
-* [ ] Legacy loops without a `note` field render and function normally
+* [ ] Legacy data (`active` / `pending` / `delay` / `drop` / legacy `do`) decodes on first load without rewriting stored bytes
+* [ ] Legacy thoughts without a `note` field render and function normally
 
 ---
 
@@ -281,20 +286,20 @@
 * [ ] Buttons are easy to tap
 * [ ] Text remains readable
 * [ ] Navigation fits correctly
-* [ ] Layout still feels calm with many loops
+* [ ] Layout still feels calm with many thoughts
 
 ## Mobile accessibility
 
 * [ ] All fields and keyboard-focused controls have a clear focus outline
 * [ ] Focus stays visible above fixed navigation
 * [ ] Save/Cancel from note and edit returns focus to More; delay/delete Cancel returns to its trigger
-* [ ] More announces expanded state and actions include the relevant loop context
+* [ ] More announces expanded state and actions include the relevant thought context
 * [ ] Clear All announces its title and description, starts on Cancel, traps Tab in both directions, closes with Escape, and returns focus
 * [ ] VoiceOver cannot browse or activate background controls while Clear All is open
 * [ ] Common controls have at least 44px hit areas with no overlapping targets
 * [ ] Secondary labels, hints, placeholders, and navigation text are readable
 * [ ] All routes and compact action panels fit at 320/375/390px and 200% text enlargement
-* [ ] iPhone VoiceOver reads loop context, control names, and confirmation content in a useful order
+* [ ] iPhone VoiceOver reads thought context, control names, and confirmation content in a useful order
 * [ ] Capture shortcuts, multiline entry, voice capture, state transitions, and backup/restore still work
 
 ---
@@ -313,14 +318,14 @@
 
 # Regression Smoke Test
 
-* [ ] Add loop (lands in Do on Dashboard)
-* [ ] Add a note to that loop; verify dot indicator appears
-* [ ] Press Do — loop moves to Doing page; note persists
-* [ ] Press Done on Doing card — loop moves to Done page (Done section); note persists
-* [ ] Add another loop, press Delay → schedule
+* [ ] Add thought (lands in Do on Dashboard)
+* [ ] Add a note to that thought; verify the saved preview and Edit note wording appear
+* [ ] Press Do — thought moves to Doing page; note persists
+* [ ] Press Done on Doing card — thought moves to Done page (Done section); note persists
+* [ ] Add another thought, press Delay → schedule
 * [ ] Verify Delayed page shows it
 * [ ] Press Do on a Delayed card → moves to Doing
-* [ ] Add another loop, press Drop → Done page (Dropped section)
+* [ ] Add another thought, press Drop → Done page (Dropped section)
 * [ ] Restore from Done page → reappears in Do on Dashboard
 * [ ] Refresh every route, verify persistence
 * [ ] Verify offline shell still loads each route
@@ -358,14 +363,25 @@ not assumed. Use disposable thoughts for replacement/restore checks.
 * [ ] Offline: add three thoughts, edit one, add a note, and move one to Doing. Close and reopen the app; confirm every saved change survives.
 * [ ] Open a delayed thought, background the app, then return after its scheduled time. Confirm the ready label updates.
 * [ ] Export to Files and restore the test backup in the same mode; confirm text, notes, states, and dates. Repeat file selection in Safari and Home Screen mode.
-* [ ] With a newer candidate served, keep a draft open and confirm it is not reloaded. Save it, close every Loopr window, reopen online, then relaunch offline and verify the new build and saved data. This requires two known candidate builds.
+* [ ] With a newer candidate served, keep a draft open and confirm it is not reloaded. Save it, close every Dash Dot Dot window, reopen online, then relaunch offline and verify the new build and saved data. This requires two known candidate builds.
 * [ ] Check VoiceOver reading order, enlarged text, and Clear All dialog cancellation in both modes; record any differences.
 
-Expected limits: first-ever offline launch is unsupported; unsaved drafts are
-not durable across closing the app; browser/OS storage removal can remove both
-offline assets and thoughts. Keep exported backups. In-app voice recognition
+Expected limits: first-ever offline launch is unsupported. Dashboard drafts have
+best-effort recovery with working storage and ownership locks; session fallback
+does not promise closed-tab recovery. Note/edit/label drafts remain in memory.
+Browser/OS storage removal can remove assets, thoughts, and drafts. Backups
+exclude unfinished drafts and preferences. Keep exported saved-thought backups. In-app voice recognition
 is not an offline guarantee; typed capture is the offline test target.
 
+
+# Historical release QA snapshots
+
+The sections below preserve results and approvals at each stage. “Local”,
+“pending”, and “not published” describe that past stage, not today's release.
+All shipped features listed at the top are live. Temporary tunnel URLs and cache
+IDs are historical and may no longer work. Checklists remain useful for repeats;
+unchecked device steps remain unverified. Later label and draft releases supersede
+earlier version-1-only backup and in-memory-only capture assumptions.
 
 ## Temporary HTTPS candidate — 2026-10-18
 
@@ -716,7 +732,7 @@ approval does not mark individual iPhone/VoiceOver steps as verified. Production
 publication remains pending.
 
 
-## Dashboard draft recovery — local review
+## Dashboard draft recovery — live regression (`3626f21`)
 
 * [ ] Type multiline text or append dictation, navigate away/back, reload, and reopen offline. The owned draft is restored without changing saved thoughts or moving the capture field.
 * [ ] Two open tabs keep separate drafts. Duplicate a tab: its inherited session pointer cannot overwrite or clear the original tab's draft.
@@ -761,4 +777,5 @@ recovery looks good on their iPhone and authorized commit/push to dev with the
 project plan, QA checklist, release-status corrections, and tests. The iOS
 version and individual device-step results were not supplied; this approval
 does not mark every VoiceOver/process-termination/storage-eviction check complete.
-Earlier local results remain historical. Production publication remains pending.
+Earlier local results remain historical. Published as `3626f21`; see the current
+release record above. Unchecked device scenarios remain open.
